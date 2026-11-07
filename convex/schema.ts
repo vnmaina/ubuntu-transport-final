@@ -739,6 +739,7 @@ const schema = defineSchema({
         discountAmount: v.optional(v.string()),
         subtotal: v.optional(v.union(v.number(), v.string())),
         total: v.union(v.number(), v.string()),
+        currency: v.optional(v.string()),
         // Notes
         notes: v.optional(v.string()),
         terms: v.optional(v.string()),
@@ -789,6 +790,7 @@ const schema = defineSchema({
         // Subtotal and total
         subtotal: v.optional(v.union(v.number(), v.string())),
         total: v.union(v.number(), v.string()),
+        currency: v.optional(v.string()),
         // Payment tracking
         paidAmount: v.optional(v.string()),
         balanceDue: v.optional(v.string()),
@@ -831,6 +833,7 @@ const schema = defineSchema({
         receiptDate: v.number(),
         // Amount received
         amount: v.string(),
+        currency: v.optional(v.string()),
         // Payment method
         paymentMethod: v.union(
             v.literal("cash"),

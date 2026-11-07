@@ -33,6 +33,7 @@ import { InlineClientCreator } from "@/components/admin/forms/InlineClientCreato
 import { QuotationPreview } from "./QuotationPreview";
 import { UbuntuQuotationPreview } from "@/components/admin/quotations/UbuntuQuotationPreview";
 import { getOrganization } from "@/app/actions/organization";
+import { CURRENCY_OPTIONS, formatCurrency } from "@/utils/currency";
 
 interface QuotationFormSheetProps {
   quotation?: QuotationRow | null;
@@ -74,6 +75,7 @@ export function QuotationFormSheet({
     quotationDate: new Date().toISOString().split('T')[0],
     validUntil: "",
     status: "draft" as "draft" | "sent" | "accepted" | "rejected" | "expired",
+    currency: "KES" as string,
     items: [] as LineItem[],
     notes: "",
     terms: "",
@@ -99,6 +101,7 @@ export function QuotationFormSheet({
         quotationDate: new Date(quotation.quotationDate).toISOString().split('T')[0],
         validUntil: quotation.validUntil ? new Date(quotation.validUntil).toISOString().split('T')[0] : "",
         status: quotation.status,
+        currency: (quotation as any).currency || "KES",
         items: (quotation.items as LineItem[]).map(item => ({
           ...item,
           itemDate: item.itemDate ? new Date(item.itemDate).toISOString().split('T')[0] : undefined,
@@ -113,10 +116,19 @@ export function QuotationFormSheet({
         quotationDate: new Date().toISOString().split('T')[0],
         validUntil: "",
         status: "draft" as "draft" | "sent" | "accepted" | "rejected" | "expired",
+        currency: "KES",
         items: [],
         notes: "",
         terms: "",
       });
+
+      if (open && isCreating) {
+        generateQuotationNumberAction().then((result) => {
+          if (result.success && result.number) {
+            setFormData((prev) => ({ ...prev, quotationNumber: result.number! }));
+          }
+        });
+      }
     }
     setCurrentStep(0);
     setShowPreview(false);
@@ -276,7 +288,7 @@ export function QuotationFormSheet({
             {/* Step 1: Basic Information */}
             {currentStep === 0 && (
               <div className="space-y-5">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="quotationNumber" className="text-[10px]">Quotation Number *</Label>
                     <div className="flex gap-2">
@@ -324,6 +336,26 @@ export function QuotationFormSheet({
                         <SelectItem value="accepted">Accepted</SelectItem>
                         <SelectItem value="rejected">Rejected</SelectItem>
                         <SelectItem value="expired">Expired</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="currency" className="text-[10px]">Currency</Label>
+                    <Select
+                      value={formData.currency || "KES"}
+                      onValueChange={(value) =>
+                        value && setFormData({ ...formData, currency: value })
+                      }
+                    >
+                      <SelectTrigger className="h-7 text-xs">
+                        <SelectValue placeholder="Select Currency" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CURRENCY_OPTIONS.map((opt) => (
+                          <SelectItem key={opt.code} value={opt.code}>
+                            {opt.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -405,11 +437,11 @@ export function QuotationFormSheet({
                 <div className="grid grid-cols-2 gap-4 p-4 bg-muted rounded-lg">
                   <div>
                     <Label className="text-[10px]">Subtotal</Label>
-                    <p className="text-lg font-bold">Ksh {totals.subtotal}</p>
+                    <p className="text-lg font-bold">{formatCurrency(totals.subtotal, formData.currency)}</p>
                   </div>
                   <div>
                     <Label className="text-[10px]">Total</Label>
-                    <p className="text-lg font-bold">Ksh {totals.total}</p>
+                    <p className="text-lg font-bold">{formatCurrency(totals.total, formData.currency)}</p>
                   </div>
                 </div>
               </div>
@@ -460,7 +492,7 @@ export function QuotationFormSheet({
                     </div>
                     <div className="flex justify-between">
                       <span>Total Amount:</span>
-                      <span className="font-bold">Ksh {totals.total}</span>
+                      <span className="font-bold">{formatCurrency(totals.total, formData.currency)}</span>
                     </div>
                     {formData.validUntil && (
                       <div className="flex justify-between">

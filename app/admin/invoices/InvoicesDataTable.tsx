@@ -123,6 +123,22 @@ export function InvoicesDataTable({ data, clients, services, quotations, templat
                     }
                     className="max-w-xs"
                 />
+                 <Input
+                    placeholder="Search by Client Name..."
+                    value={(table.getColumn("client.name")?.getFilterValue() as string) ?? ""}
+                    onChange={(e) =>
+                        table.getColumn("client.name")?.setFilterValue(e.target.value)
+                    }
+                    className="max-w-xs"
+                />
+                 <Input
+                    placeholder="Search by Invoice Number..."
+                    value={(table.getColumn("invoiceNumber")?.getFilterValue() as string) ?? ""}
+                    onChange={(e) =>
+                        table.getColumn("invoiceNumber")?.setFilterValue(e.target.value)
+                    }
+                    className="max-w-xs"
+                />
 
                 {/* Status filter */}
                 <Select

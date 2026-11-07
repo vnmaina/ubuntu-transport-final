@@ -57,6 +57,7 @@ export function UbuntuQuotationPreview({
   const orgName = organization?.name || "Ubuntu Logistics";
   const orgEmail = organization?.email || "info@ubuntulogistics.co.ke";
   const client = quotation.client || {};
+  const currency = quotation.currency || "KES";
 
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-6 sm:px-6 lg:px-12">
@@ -221,10 +222,10 @@ export function UbuntuQuotationPreview({
                       <td className="py-2 px-3">{item.description}</td>
                       <td className="py-2 px-3 text-center">{item.quantity}</td>
                       <td className="py-2 px-3 text-right">
-                        KES {Number(item.unitPrice).toFixed(2)}
+                        {currency} {Number(item.unitPrice).toFixed(2)}
                       </td>
                       <td className="py-2 px-3 text-right font-semibold">
-                        KES {Number(item.total).toFixed(2)}
+                        {currency} {Number(item.total).toFixed(2)}
                       </td>
                     </tr>
                   ))}
@@ -237,7 +238,7 @@ export function UbuntuQuotationPreview({
               <div className="w-full sm:w-60 bg-gray-50 border rounded-xl p-3">
                 <div className="flex justify-between font-bold text-xs sm:text-sm">
                   <span>Total</span>
-                  <span>KES {Number(quotation.total).toFixed(2)}</span>
+                  <span>{currency} {Number(quotation.total).toFixed(2)}</span>
                 </div>
               </div>
             </div>

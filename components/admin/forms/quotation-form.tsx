@@ -26,6 +26,11 @@ export default function QuotationForm() {
         onDateChange={(val) => updateQuotation({ date: val })}
         dueDate={quotation.dueDate || ""}
         onDueDateChange={(val) => updateQuotation({ dueDate: val })}        
+        currency={quotation.currency || "KES"}
+        onCurrencyChange={(val) => updateQuotation({ currency: val })}
+        status={quotation.status}
+        onStatusChange={(val) => updateQuotation({ status: val })}
+        statusOptions={QUOTATION_STATUS_OPTIONS}
       />
       <ContactDetails
         fromName={quotation.fromName}

@@ -29,6 +29,7 @@ import {
     updateInvoiceAction,
 } from "@/app/actions/documents";
 import { toast } from "sonner";
+import { CURRENCY_OPTIONS, formatCurrency } from "@/utils/currency";
 
 interface InvoiceDialogProps {
     invoice?: InvoiceRow | null;
@@ -52,12 +53,15 @@ interface LineItem {
 
 export function InvoiceDialog({ invoice, clients, services, quotations, templates, open, onClose, isCreating }: InvoiceDialogProps) {
     const [isLoading, setIsLoading] = useState(false);
+    const [isGeneratingNumber, setIsGeneratingNumber] = useState(false);
     const [formData, setFormData] = useState({
+        invoiceNumber: "" as string,
         clientId: "" as string,
         quotationId: "" as string,
         invoiceDate: new Date().toISOString().split('T')[0],
         dueDate: "",
         status: "draft" as "draft" | "sent" | "paid" | "partially_paid" | "overdue" | "cancelled",
+        currency: "KES" as string,
         items: [] as LineItem[],
         taxRate: 0,
         discountAmount: "0",
@@ -74,11 +78,13 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
     useEffect(() => {
         if (invoice && !isCreating) {
             setFormData({
+                invoiceNumber: invoice.invoiceNumber,
                 clientId: invoice.clientId,
                 quotationId: invoice.quotationId || "",
                 invoiceDate: new Date(invoice.invoiceDate).toISOString().split('T')[0],
                 dueDate: invoice.dueDate ? new Date(invoice.dueDate).toISOString().split('T')[0] : "",
                 status: invoice.status,
+                currency: (invoice as any).currency || "KES",
                 items: (invoice.items as LineItem[]).map(item => ({
                     ...item,
                     itemDate: item.itemDate ? new Date(item.itemDate).toISOString().split('T')[0] : undefined,
@@ -96,11 +102,13 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
             });
         } else {
             setFormData({
+                invoiceNumber: "",
                 clientId: "",
                 quotationId: "",
                 invoiceDate: new Date().toISOString().split('T')[0],
                 dueDate: "",
                 status: "draft",
+                currency: "KES",
                 items: [],
                 taxRate: 0,
                 discountAmount: "0",
@@ -113,8 +121,30 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                 paymentReference: "",
                 paymentDate: "",
             });
+
+            if (open && isCreating) {
+                generateInvoiceNumberAction().then((result) => {
+                    if (result.success && result.number) {
+                        setFormData((prev) => ({ ...prev, invoiceNumber: result.number! }));
+                    }
+                });
+            }
         }
     }, [invoice, isCreating, open]);
+
+    const generateNumber = async () => {
+        setIsGeneratingNumber(true);
+        try {
+            const result = await generateInvoiceNumberAction();
+            if (result.success && result.number) {
+                setFormData((prev) => ({ ...prev, invoiceNumber: result.number! }));
+            }
+        } catch (error) {
+            toast.error("Failed to generate invoice number");
+        } finally {
+            setIsGeneratingNumber(false);
+        }
+    };
 
     const loadFromQuotation = async (quotationId: string) => {
         const quotation = quotations.find(q => q._id === quotationId);
@@ -122,6 +152,7 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
             setFormData({
                 ...formData,
                 clientId: quotation.clientId,
+                currency: (quotation as any).currency || formData.currency || "KES",
                 items: quotation.items,
                 terms: quotation.terms || "",
             });
@@ -259,7 +290,37 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="flex flex-col h-full">
                     <div className="flex-1 overflow-y-auto grid gap-5 py-4 pr-2">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="invoiceNumber" className="text-xs font-medium">Invoice Number *</Label>
+                                <div className="flex gap-2">
+                                    <Input
+                                        id="invoiceNumber"
+                                        value={formData.invoiceNumber}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, invoiceNumber: e.target.value })
+                                        }
+                                        required
+                                        className="h-9 text-sm"
+                                    />
+                                    {isCreating && (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="icon"
+                                            onClick={generateNumber}
+                                            disabled={isGeneratingNumber}
+                                            className="h-9 w-9 shrink-0"
+                                        >
+                                            {isGeneratingNumber ? (
+                                                <Loader2 className="size-4 animate-spin" />
+                                            ) : (
+                                                <Plus className="size-4" />
+                                            )}
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
                             <div className="space-y-2">
                                 <Label htmlFor="status" className="text-xs font-medium">Status</Label>
                                 <Select
@@ -278,6 +339,26 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                                         <SelectItem value="partially_paid">Partially Paid</SelectItem>
                                         <SelectItem value="overdue">Overdue</SelectItem>
                                         <SelectItem value="cancelled">Cancelled</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="currency" className="text-xs font-medium">Currency</Label>
+                                <Select
+                                    value={formData.currency || "KES"}
+                                    onValueChange={(value: any) =>
+                                        setFormData({ ...formData, currency: value })
+                                    }
+                                >
+                                    <SelectTrigger className="h-9 text-sm">
+                                        <SelectValue placeholder="Select Currency" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {CURRENCY_OPTIONS.map((opt) => (
+                                            <SelectItem key={opt.code} value={opt.code}>
+                                                {opt.label}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -573,11 +654,11 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-muted rounded-lg">
                             <div>
                                 <Label className="text-xs font-medium">Subtotal</Label>
-                                <p className="text-lg font-bold">Ksh {totals.subtotal}</p>
+                                <p className="text-lg font-bold">{formatCurrency(totals.subtotal, formData.currency)}</p>
                             </div>
                             <div>
                                 <Label className="text-xs font-medium">Tax ({formData.taxRate}%)</Label>
-                                <p className="text-lg font-bold">Ksh {totals.taxAmount}</p>
+                                <p className="text-lg font-bold">{formatCurrency(totals.taxAmount, formData.currency)}</p>
                             </div>
                             <div>
                                 <Label className="text-xs font-medium">Discount</Label>
@@ -594,7 +675,7 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                             </div>
                             <div>
                                 <Label className="text-xs font-medium">Total</Label>
-                                <p className="text-xl font-bold">Ksh {totals.total}</p>
+                                <p className="text-xl font-bold">{formatCurrency(totals.total, formData.currency)}</p>
                             </div>
                         </div>
 

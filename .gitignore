@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# temp archives & system files
+dev-snapshot.zip
+desktop.ini

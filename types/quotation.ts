@@ -19,6 +19,7 @@ export interface QuotationData {
   toEmail: string;
   items: QuotationItem[];
   total: number;
+  currency?: string;
   notes?: string;
   terms?: string;
   status?: string;

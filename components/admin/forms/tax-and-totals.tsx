@@ -2,6 +2,7 @@ import { useInvoice } from "@/context/invoice-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { formatCurrency } from "@/utils/currency";
 
 export default function TaxAndTotals() {
   const { invoice, updateInvoice } = useInvoice();
@@ -47,18 +48,18 @@ export default function TaxAndTotals() {
         <div className="space-y-2">
           <div className="flex justify-between">
             <span>Subtotal:</span>
-            <span>KES {invoice.subtotal.toFixed(2)}</span>
+            <span>{formatCurrency(invoice.subtotal, invoice.currency)}</span>
           </div>
           <div className="flex justify-between">
             <span>
               Tax ({typeof invoice.taxRate === "number" ? invoice.taxRate : 0}
               %):
             </span>
-            <span>KES {invoice.taxAmount.toFixed(2)}</span>
+            <span>{formatCurrency(invoice.taxAmount, invoice.currency)}</span>
           </div>
           <div className="flex justify-between font-bold text-lg border-t pt-2">
             <span>Total:</span>
-            <span>KES {invoice.total.toFixed(2)}</span>
+            <span>{formatCurrency(invoice.total, invoice.currency)}</span>
           </div>
         </div>
       </CardContent>

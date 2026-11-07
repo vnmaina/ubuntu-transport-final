@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { CURRENCY_OPTIONS, CurrencyCode } from "@/utils/currency";
 
 export interface StatusOption {
   value: string;
@@ -28,6 +29,8 @@ interface BasicDetailsProps {
   status?: string;
   onStatusChange?: (value: string) => void;
   statusOptions?: StatusOption[];
+  currency?: string;
+  onCurrencyChange?: (value: string) => void;
 }
 
 export default function BasicDetails({
@@ -42,17 +45,24 @@ export default function BasicDetails({
   status = "draft",
   onStatusChange,
   statusOptions,
+  currency = "KES",
+  onCurrencyChange,
 }: BasicDetailsProps) {
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>{title}</CardTitle>
-          {status && (
-            <Badge variant="outline" className="font-semibold text-xs px-2.5 py-0.5 uppercase tracking-wider">
-              {status}
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary" className="font-semibold text-xs px-2.5 py-0.5 uppercase tracking-wider">
+              {currency}
             </Badge>
-          )}
+            {status && (
+              <Badge variant="outline" className="font-semibold text-xs px-2.5 py-0.5 uppercase tracking-wider">
+                {status}
+              </Badge>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -63,6 +73,25 @@ export default function BasicDetails({
             onChange={(e) => onNumberChange(e.target.value)}
             id="documentNumber"
           />
+        </div>
+        <div>
+          <Label htmlFor="currencySelect">Currency</Label>
+          <Select
+            value={currency}
+            onValueChange={(val) => val && onCurrencyChange?.(val)}
+            disabled={!onCurrencyChange}
+          >
+            <SelectTrigger id="currencySelect" className="w-full">
+              <SelectValue placeholder="Select Currency" />
+            </SelectTrigger>
+            <SelectContent>
+              {CURRENCY_OPTIONS.map((opt) => (
+                <SelectItem key={opt.code} value={opt.code}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div>
           <Label htmlFor="date">Issue Date</Label>

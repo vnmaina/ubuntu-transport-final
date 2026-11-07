@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState } from "react";
 import { InvoiceData, InvoiceItem } from "@/types/invoice";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { formatDateDDMMYY } from "@/utils/document-number";
 
 interface InvoiceContextProps {
   invoice: InvoiceData;
@@ -31,9 +32,7 @@ const defaultInvoice = (): InvoiceData => {
   const today = new Date().toISOString().split("T")[0];
 
   return {
-    invoiceNumber: `INV-${Math.floor(
-      100000 + Math.random() * 900000
-    )}`,
+    invoiceNumber: `INV-1-${formatDateDDMMYY()}`,
     date: today,
     fromName: "Ubuntu Logistics",
     fromEmail: "info@ubuntulogistics.co.ke",
@@ -44,6 +43,7 @@ const defaultInvoice = (): InvoiceData => {
     taxAmount: 0,
     subtotal: 0,
     total: 0,
+    currency: "KES",
     notes: "",
     status: "draft",
     numberOfDays: 1,
@@ -186,14 +186,23 @@ export function InvoiceProvider({
       taxAmount: invoice.taxAmount,
       subtotal: invoice.subtotal,
       total: invoice.total,
+      currency: invoice.currency || "KES",
       notes: invoice.notes || undefined,
       status: (invoice.status || "draft") as any,
       numberOfDays: invoice.numberOfDays,
     };
 
     try {
-      await createInvoice(invoiceData);
-      console.log("Invoice saved to Convex:", invoiceData);
+      if (invoice._id) {
+        await updateInvoiceMutation({
+          id: invoice._id as any,
+          ...invoiceData,
+        });
+        console.log("Invoice updated in Convex:", invoiceData);
+      } else {
+        await createInvoice(invoiceData);
+        console.log("Invoice saved to Convex:", invoiceData);
+      }
     } catch (error) {
       console.error("Failed to save invoice to Convex:", error);
       // Fallback to localStorage

@@ -1,15 +1,36 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
+function formatQuotationNumber(existingQuotations: Array<{ quotationNumber?: string }>): string {
+  let maxNum = 0;
+  for (const q of existingQuotations) {
+    if (q.quotationNumber) {
+      const match = q.quotationNumber.match(/^(?:QTN|QT)-(\d+)-\d{2}-\d{2}-\d{2}$/i);
+      if (match) {
+        const num = parseInt(match[1], 10);
+        if (!isNaN(num) && num > maxNum) {
+          maxNum = num;
+        }
+      }
+    }
+  }
+  const nextNum = maxNum + 1;
+  const now = new Date();
+  const day = String(now.getDate()).padStart(2, "0");
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const year = String(now.getFullYear()).slice(-2);
+  return `QTN-${nextNum}-${day}-${month}-${year}`;
+}
+
 export const createQuotation = mutation({
   args: {
-    quotationNumber: v.string(),
-    date: v.string(),
+    quotationNumber: v.optional(v.string()),
+    date: v.optional(v.string()),
     dueDate: v.optional(v.string()),
-    fromName: v.string(),
-    fromEmail: v.string(),
-    toName: v.string(),
-    toEmail: v.string(),
+    fromName: v.optional(v.string()),
+    fromEmail: v.optional(v.string()),
+    toName: v.optional(v.string()),
+    toEmail: v.optional(v.string()),
     items: v.array(v.object({
       id: v.string(),
       date: v.string(),
@@ -19,7 +40,16 @@ export const createQuotation = mutation({
       numberOfDays: v.union(v.number(), v.string()),
       status: v.string(),
     })),
-    total: v.number(),
+    total: v.union(v.number(), v.string()),
+    currency: v.optional(v.string()),
+    subtotal: v.optional(v.union(v.number(), v.string())),
+    taxRate: v.optional(v.union(v.number(), v.string())),
+    taxAmount: v.optional(v.union(v.number(), v.string())),
+    discountAmount: v.optional(v.string()),
+    terms: v.optional(v.string()),
+    clientId: v.optional(v.union(v.id("clients"), v.string())),
+    quotationDate: v.optional(v.number()),
+    validUntil: v.optional(v.number()),
     notes: v.optional(v.string()),
     status: v.union(
       v.literal("draft"),
@@ -31,8 +61,21 @@ export const createQuotation = mutation({
     numberOfDays: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    let quotationNumber = args.quotationNumber;
+    if (!quotationNumber || quotationNumber.trim() === "") {
+      const quotations = await ctx.db.query("quotations").collect();
+      quotationNumber = formatQuotationNumber(quotations);
+    }
+
+    const today = new Date().toISOString().split("T")[0];
     const quotationId = await ctx.db.insert("quotations", {
+      fromName: args.fromName ?? "Ubuntu Logistics",
+      fromEmail: args.fromEmail ?? "info@ubuntulogistics.co.ke",
+      toName: args.toName ?? "",
+      toEmail: args.toEmail ?? "",
+      date: args.date ?? today,
       ...args,
+      quotationNumber,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });
@@ -59,7 +102,16 @@ export const updateQuotation = mutation({
       numberOfDays: v.union(v.number(), v.string()),
       status: v.string(),
     }))),
-    total: v.optional(v.number()),
+    total: v.optional(v.union(v.number(), v.string())),
+    currency: v.optional(v.string()),
+    subtotal: v.optional(v.union(v.number(), v.string())),
+    taxRate: v.optional(v.union(v.number(), v.string())),
+    taxAmount: v.optional(v.union(v.number(), v.string())),
+    discountAmount: v.optional(v.string()),
+    terms: v.optional(v.string()),
+    clientId: v.optional(v.union(v.id("clients"), v.string())),
+    quotationDate: v.optional(v.number()),
+    validUntil: v.optional(v.number()),
     notes: v.optional(v.string()),
     status: v.optional(v.union(
       v.literal("draft"),
@@ -117,9 +169,7 @@ export const generateQuotationNumber = query({
   args: {},
   handler: async (ctx) => {
     const quotations = await ctx.db.query("quotations").collect();
-    const count = quotations.length + 1;
-    const year = new Date().getFullYear();
-    return `QT-${year}-${String(count).padStart(4, "0")}`;
+    return formatQuotationNumber(quotations);
   },
 });
 

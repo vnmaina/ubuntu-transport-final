@@ -77,6 +77,8 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { migrateQuotationsAction } from "@/app/actions/documents";
+import { formatCurrency } from "@/utils/currency";
+import { getNextDocumentNumber } from "@/utils/document-number";
 
 interface QuotationsClientProps {
   initialQuotations?: QuotationData[];
@@ -138,12 +140,11 @@ function QuotationsClientInner({
 
   const handleCreateNew = () => {
     const today = new Date().toISOString().split("T")[0];
+    const newQuotationNumber = getNextDocumentNumber("QTN", quotations.map((q) => q.quotationNumber));
 
     updateQuotation({
       _id: undefined,
-      quotationNumber: `QTN-${Math.floor(
-        100000 + Math.random() * 900000
-      )}`,
+      quotationNumber: newQuotationNumber,
       date: today,
       dueDate: "",
       fromName: "Ubuntu Logistics & Transport",
@@ -162,6 +163,7 @@ function QuotationsClientInner({
         },
       ],
       total: 0,
+      currency: "KES",
       notes: "",
     });
 
@@ -396,7 +398,7 @@ function QuotationsClientInner({
         ),
         cell: ({ row }) => (
           <div className="text-right font-semibold text-sm">
-            KES {Number(row.original.total || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {formatCurrency(row.original.total || 0, row.original.currency)}
           </div>
         ),
       },
@@ -637,6 +639,17 @@ function QuotationsClientInner({
                           value={(table.getColumn("toName")?.getFilterValue() as string) ?? ""}
                           onChange={(event) =>
                             table.getColumn("toName")?.setFilterValue(event.target.value)
+                          }
+                          className="pl-8 h-8 text-xs bg-background"
+                        />
+                      </div>
+                       <div className="relative flex-1 min-w-[200px] max-w-xs">
+                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Search quotation number..."
+                          value={(table.getColumn("quotationNumber")?.getFilterValue() as string) ?? ""}
+                          onChange={(event) =>
+                            table.getColumn("quotationNumber")?.setFilterValue(event.target.value)
                           }
                           className="pl-8 h-8 text-xs bg-background"
                         />

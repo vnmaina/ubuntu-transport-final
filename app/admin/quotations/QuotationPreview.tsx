@@ -76,6 +76,7 @@ export function QuotationPreview({
     taxAmount: quotation.taxAmount,
     discountAmount: quotation.discountAmount,
     total: quotation.total || "0.00",
+    currency: quotation.currency || "KES",
     terms: quotation.terms || "This quotation is valid for 14 days from the date of issue. Prices are subject to change without prior notice. Payment terms: 50% advance, 50% upon completion.",
     notes: quotation.notes,
   };

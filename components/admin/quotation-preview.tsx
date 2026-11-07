@@ -23,6 +23,7 @@ export function QuotationDocument({
   quotation,
   id = "quotation-document",
 }: QuotationDocumentProps) {
+  const currency = quotation.currency || "KES";
   return (
     <div
       id={id}
@@ -156,7 +157,7 @@ export function QuotationDocument({
                   Dropoff / Return
                 </th>
                 <th className="text-right py-2.5 px-3.5 font-semibold text-[11px] sm:text-xs tracking-wider uppercase w-28 sm:w-32">
-                  Amount (KES)
+                  Amount ({currency})
                 </th>
               </tr>
             </thead>
@@ -230,7 +231,7 @@ export function QuotationDocument({
               <div className="flex justify-between font-black text-sm sm:text-base text-[#262559]">
                 <span>Quotation Total</span>
                 <span className="font-mono">
-                  KES{" "}
+                  {currency}{" "}
                   {Number(quotation.total).toLocaleString(undefined, {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,

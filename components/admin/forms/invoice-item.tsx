@@ -16,7 +16,8 @@ export default function InvoiceItem({
   index,
   canRemove,
 }: InvoiceItemProps) {
-  const { removeItem, updateItem } = useInvoice();
+  const { removeItem, updateItem, invoice } = useInvoice();
+  const currency = invoice.currency || "KES";
 
   const handleQuantityChange = (value: string) => {
     if (value === "") {
@@ -90,7 +91,7 @@ export default function InvoiceItem({
         />
       </div>
       <div className="col-span-8 sm:col-span-4 md:col-span-2">
-        <Label className="text-xs font-semibold mb-1 block">Rate (KES)</Label>
+        <Label className="text-xs font-semibold mb-1 block">Rate ({currency})</Label>
         <Input
           type="number"
           min="0"
@@ -111,9 +112,9 @@ export default function InvoiceItem({
         />
       </div>
       <div className="col-span-6 sm:col-span-3 md:col-span-2">
-        <Label className="text-xs font-semibold mb-1 block">Amount</Label>
+        <Label className="text-xs font-semibold mb-1 block">Amount ({currency})</Label>
         <div className="h-9 px-3 py-2 bg-muted/40 border rounded-md flex items-center text-xs font-semibold truncate">
-          KES {typeof item.amount === "number" ? item.amount.toFixed(2) : "0.00"}
+          {currency} {typeof item.amount === "number" ? item.amount.toFixed(2) : "0.00"}
         </div>
       </div>
       <div className="col-span-12 md:col-span-1 flex items-end justify-end">

@@ -119,6 +119,7 @@ export interface NormalizedDocument {
   taxAmount?: string | number;
   discountAmount?: string | number;
   total: string | number;
+  currency?: string;
   paidAmount?: string | number;
   balanceDue?: string | number;
   terms?: string;

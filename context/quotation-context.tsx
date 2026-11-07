@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState } from "react";
 import { QuotationData, QuotationItem } from "@/types/quotation";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { formatDateDDMMYY } from "@/utils/document-number";
 
 interface QuotationContextProps {
   quotation: QuotationData;
@@ -36,9 +37,7 @@ const defaultQuotation = (): QuotationData => {
   const today = new Date().toISOString().split("T")[0];
 
   return {
-    quotationNumber: `QTN-${Math.floor(
-      100000 + Math.random() * 900000
-    )}`,
+    quotationNumber: `QTN-1-${formatDateDDMMYY()}`,
     date: today,
     fromName: "Ubuntu Logistics",
     fromEmail: "info@ubuntulogistics.co.ke",
@@ -46,6 +45,7 @@ const defaultQuotation = (): QuotationData => {
     toEmail: "",
     items: [defaultItem()],
     total: 0,
+    currency: "KES",
     notes: "",
     status: "draft",
     numberOfDays: 0,
@@ -80,6 +80,7 @@ export function QuotationProvider({
   );
   
   const createQuotation = useMutation(api.quotations.createQuotation);
+  const updateQuotationMutation = useMutation(api.quotations.updateQuotation);
 
   const updateQuotation = (
     updatedFields: Partial<QuotationData>
@@ -158,14 +159,23 @@ export function QuotationProvider({
       toEmail: quotation.toEmail,
       items: itemsForConvex,
       total: quotation.total,
+      currency: quotation.currency || "KES",
       notes: quotation.notes || undefined,
       status: (quotation.status || "draft") as any,
       numberOfDays: quotation.numberOfDays,
     };
 
     try {
-      await createQuotation(quotationData);
-      console.log("Quotation saved to Convex:", quotationData);
+      if (quotation._id) {
+        await updateQuotationMutation({
+          id: quotation._id as any,
+          ...quotationData,
+        });
+        console.log("Quotation updated in Convex:", quotationData);
+      } else {
+        await createQuotation(quotationData);
+        console.log("Quotation saved to Convex:", quotationData);
+      }
     } catch (error) {
       console.error("Failed to save quotation to Convex:", error);
       // Fallback to localStorage

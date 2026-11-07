@@ -21,6 +21,7 @@ export interface InvoiceData {
   taxAmount: number;
   subtotal: number;
   total: number;
+  currency?: string;
   notes?: string;
   status?: string;
   numberOfDays?: number;

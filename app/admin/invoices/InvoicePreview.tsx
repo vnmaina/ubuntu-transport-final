@@ -87,6 +87,7 @@ export function InvoicePreview({
     taxAmount: invoice.taxAmount,
     discountAmount: invoice.discountAmount,
     total: invoice.total || "0.00",
+    currency: invoice.currency || "KES",
     paidAmount: invoice.paidAmount,
     balanceDue: invoice.balanceDue,
     terms: invoice.terms,

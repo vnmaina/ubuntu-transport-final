@@ -14,6 +14,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { formatCurrency } from "@/utils/currency";
 
 export type QuotationRow = {
     _id: string;
@@ -28,6 +29,7 @@ export type QuotationRow = {
     taxAmount?: string;
     discountAmount?: string;
     total: string;
+    currency?: string;
     notes?: string;
     terms?: string;
     convertedToInvoiceId?: string;
@@ -141,7 +143,7 @@ export function getColumns({
                 </Button>
             ),
             cell: ({ row }: { row: any }) => (
-                <span className="font-medium">Ksh {row.getValue("total")}</span>
+                <span className="font-medium">{formatCurrency(row.getValue("total"), row.original.currency)}</span>
             ),
         },
         // Status

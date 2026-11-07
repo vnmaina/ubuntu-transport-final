@@ -14,6 +14,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { formatCurrency } from "@/utils/currency";
 
 export type InvoiceRow = {
     _id: string;
@@ -29,6 +30,7 @@ export type InvoiceRow = {
     taxAmount?: string;
     discountAmount?: string;
     total: string;
+    currency?: string;
     paidAmount?: string;
     balanceDue?: string;
     paymentType?: "MPESA" | "BANK" | "CASH" | "OTHER";
@@ -149,7 +151,7 @@ export function getColumns({
                 </Button>
             ),
             cell: ({ row }: { row: any }) => (
-                <span className="font-medium">Ksh {row.getValue("total")}</span>
+                <span className="font-medium">{formatCurrency(row.getValue("total"), row.original.currency)}</span>
             ),
         },
         // Balance Due
@@ -162,7 +164,7 @@ export function getColumns({
                 const balanceNum = balance ? parseFloat(balance) : total;
                 return (
                     <span className={balanceNum > 0 ? "text-red-600 font-medium" : "text-green-600 font-medium"}>
-                        Ksh {balance || row.getValue("total")}
+                        {formatCurrency(balance || row.getValue("total"), row.original.currency)}
                     </span>
                 );
             },

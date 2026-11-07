@@ -71,6 +71,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { formatCurrency } from "@/utils/currency";
+import { getNextDocumentNumber } from "@/utils/document-number";
 
 interface InvoicesClientProps {
   initialInvoices?: InvoiceData[];
@@ -119,10 +121,11 @@ function InvoicesClientInner({ initialInvoices }: InvoicesClientProps) {
 
   const handleCreateNew = () => {
     const today = new Date().toISOString().split("T")[0];
+    const newInvoiceNumber = getNextDocumentNumber("INV", invoices.map((i) => i.invoiceNumber));
 
     updateInvoice({
       _id: undefined,
-      invoiceNumber: `INV-${Math.floor(100000 + Math.random() * 900000)}`,
+      invoiceNumber: newInvoiceNumber,
       date: today,
       dueDate: "",
       fromName: "Ubuntu Logistics & Transport",
@@ -143,6 +146,7 @@ function InvoicesClientInner({ initialInvoices }: InvoicesClientProps) {
       taxAmount: 0,
       subtotal: 0,
       total: 0,
+      currency: "KES",
       notes: "",
       status: "draft",
       numberOfDays: 1,
@@ -368,7 +372,7 @@ function InvoicesClientInner({ initialInvoices }: InvoicesClientProps) {
         ),
         cell: ({ row }) => (
           <div className="text-right font-semibold text-sm">
-            KES {Number(row.original.total || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {formatCurrency(row.original.total || 0, row.original.currency)}
           </div>
         ),
       },
@@ -595,13 +599,24 @@ function InvoicesClientInner({ initialInvoices }: InvoicesClientProps) {
                   {/* Filter Toolbar */}
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-muted/20 p-3 rounded-xl border">
                     <div className="flex flex-1 items-center gap-2 flex-wrap">
-                      <div className="relative flex-1 min-w-[200px] max-w-xs">
+                      <div className="relative flex-1 min-w-[100px] max-w-xs">
                         <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                         <Input
                           placeholder="Search client name..."
                           value={(table.getColumn("toName")?.getFilterValue() as string) ?? ""}
                           onChange={(event) =>
                             table.getColumn("toName")?.setFilterValue(event.target.value)
+                          }
+                          className="pl-8 h-8 text-xs bg-background"
+                        />
+                      </div>
+                       <div className="relative flex-1 min-w-[100px] max-w-xs">
+                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Search invoice number..."
+                          value={(table.getColumn("invoiceNumber")?.getFilterValue() as string) ?? ""}
+                          onChange={(event) =>
+                            table.getColumn("invoiceNumber")?.setFilterValue(event.target.value)
                           }
                           className="pl-8 h-8 text-xs bg-background"
                         />

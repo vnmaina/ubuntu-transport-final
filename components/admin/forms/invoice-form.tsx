@@ -25,6 +25,11 @@ export default function InvoiceForm() {
         onDateChange={(val) => updateInvoice({ date: val })}
         dueDate={invoice.dueDate || ""}
         onDueDateChange={(val) => updateInvoice({ dueDate: val })}
+        currency={invoice.currency || "KES"}
+        onCurrencyChange={(val) => updateInvoice({ currency: val })}
+        status={invoice.status}
+        onStatusChange={(val) => updateInvoice({ status: val })}
+        statusOptions={INVOICE_STATUS_OPTIONS}
       />
       <ContactDetails
         fromName={invoice.fromName}

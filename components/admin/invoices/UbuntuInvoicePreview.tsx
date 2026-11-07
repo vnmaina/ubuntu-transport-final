@@ -56,6 +56,7 @@ export function UbuntuInvoicePreview({
   const orgName = organization?.name || "Ubuntu Logistics";
   const orgEmail = organization?.email || "info@ubuntulogistics.co.ke";
   const client = invoice.client || {};
+  const currency = invoice.currency || "KES";
 
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-6 sm:px-6 lg:px-12">
@@ -211,10 +212,10 @@ export function UbuntuInvoicePreview({
                       <td className="py-2 px-3">{item.description}</td>
                       <td className="py-2 px-3 text-center">{item.quantity}</td>
                       <td className="py-2 px-3 text-right">
-                        KES {Number(item.unitPrice).toFixed(2)}
+                        {currency} {Number(item.unitPrice).toFixed(2)}
                       </td>
                       <td className="py-2 px-3 text-right font-semibold">
-                        KES {Number(item.total).toFixed(2)}
+                        {currency} {Number(item.total).toFixed(2)}
                       </td>
                     </tr>
                   ))}
@@ -227,25 +228,25 @@ export function UbuntuInvoicePreview({
               <div className="w-full sm:w-72 bg-gray-50 border rounded-xl p-3">
                 <div className="flex justify-between text-[10px] sm:text-xs mb-1.5">
                   <span className="text-gray-500">Subtotal</span>
-                  <span>KES {Number(invoice.subtotal).toFixed(2)}</span>
+                  <span>{currency} {Number(invoice.subtotal).toFixed(2)}</span>
                 </div>
                 {invoice.taxAmount && Number(invoice.taxAmount) > 0 && (
                   <div className="flex justify-between text-[10px] sm:text-xs mb-1.5">
                     <span className="text-gray-500">
                       Tax ({invoice.taxRate || 0}%)
                     </span>
-                    <span>KES {Number(invoice.taxAmount).toFixed(2)}</span>
+                    <span>{currency} {Number(invoice.taxAmount).toFixed(2)}</span>
                   </div>
                 )}
                 {invoice.discountAmount && Number(invoice.discountAmount) > 0 && (
                   <div className="flex justify-between text-[10px] sm:text-xs mb-1.5">
                     <span className="text-gray-500">Discount</span>
-                    <span className="text-emerald-600">-KES {Number(invoice.discountAmount).toFixed(2)}</span>
+                    <span className="text-emerald-600">-{currency} {Number(invoice.discountAmount).toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between font-bold text-xs sm:text-sm border-t pt-1.5">
                   <span>Total</span>
-                  <span>KES {Number(invoice.total).toFixed(2)}</span>
+                  <span>{currency} {Number(invoice.total).toFixed(2)}</span>
                 </div>
               </div>
             </div>

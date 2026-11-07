@@ -11,7 +11,8 @@ interface QuotationItemProps {
 }
 
 export default function QuotationItem({ item, index, canRemove }: QuotationItemProps) {
-  const { updateItem, removeItem } = useQuotation();
+  const { updateItem, removeItem, quotation } = useQuotation();
+  const currency = quotation.currency || "KES";
 
   const handleDaysChange = (value: string) => {
     if (value === "") {
@@ -69,7 +70,7 @@ export default function QuotationItem({ item, index, canRemove }: QuotationItemP
         />
       </div>
       <div className="w-full md:w-36">
-        <label className="text-xs font-semibold mb-1 block">Amount (KES)</label>
+        <label className="text-xs font-semibold mb-1 block">Amount ({currency})</label>
         <Input
           type="number"
           min="0"

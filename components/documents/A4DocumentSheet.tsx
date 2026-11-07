@@ -9,6 +9,7 @@ import {
 import { DocumentStamp } from "./DocumentStamp";
 import { DocumentSignature } from "./DocumentSignature";
 import { DocumentQrCode } from "./DocumentQrCode";
+import { formatCurrency as formatCurrencyUtil } from "@/utils/currency";
 import {
   Building2,
   Mail,
@@ -78,10 +79,7 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
 
     // Format currency amount safely
     const formatCurrency = (val: string | number | undefined) => {
-      if (val === undefined || val === null || val === "") return "Ksh 0.00";
-      const num = typeof val === "number" ? val : parseFloat(String(val).replace(/[^0-9.-]+/g, ""));
-      const formatted = isNaN(num) ? String(val) : num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      return `Ksh ${formatted}`;
+      return formatCurrencyUtil(val, document.currency);
     };
 
     // Document Title

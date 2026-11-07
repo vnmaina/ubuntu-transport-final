@@ -23,6 +23,7 @@ export function InvoiceDocument({
   invoice,
   id = "invoice-document",
 }: InvoiceDocumentProps) {
+  const currency = invoice.currency || "KES";
   return (
     <div
       id={id}
@@ -160,13 +161,13 @@ export function InvoiceDocument({
                   Qty
                 </th>
                 <th className="text-right py-2.5 px-3 font-semibold text-[11px] sm:text-xs tracking-wider uppercase w-24 sm:w-28">
-                  Rate (KES)
+                  Rate ({currency})
                 </th>
                 <th className="text-center py-2.5 px-2 font-semibold text-[11px] sm:text-xs tracking-wider uppercase w-16 sm:w-20">
                   Days
                 </th>
                 <th className="text-right py-2.5 px-3.5 font-semibold text-[11px] sm:text-xs tracking-wider uppercase w-28 sm:w-32">
-                  Amount (KES)
+                  Amount ({currency})
                 </th>
               </tr>
             </thead>
@@ -251,7 +252,7 @@ export function InvoiceDocument({
               <div className="flex justify-between text-slate-600">
                 <span>Subtotal</span>
                 <span className="font-mono font-medium text-slate-800">
-                  KES{" "}
+                  {currency}{" "}
                   {Number(invoice.subtotal).toLocaleString(undefined, {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
@@ -261,7 +262,7 @@ export function InvoiceDocument({
               <div className="flex justify-between text-slate-600">
                 <span>Tax ({invoice.taxRate || 0}%)</span>
                 <span className="font-mono font-medium text-slate-800">
-                  KES{" "}
+                  {currency}{" "}
                   {Number(invoice.taxAmount).toLocaleString(undefined, {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
@@ -271,7 +272,7 @@ export function InvoiceDocument({
               <div className="flex justify-between font-black text-sm sm:text-base border-t-2 border-slate-300 pt-2 text-[#262559]">
                 <span>Total Due</span>
                 <span className="font-mono">
-                  KES{" "}
+                  {currency}{" "}
                   {Number(invoice.total).toLocaleString(undefined, {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,

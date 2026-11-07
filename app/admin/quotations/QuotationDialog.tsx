@@ -29,6 +29,7 @@ import {
     updateQuotationAction,
 } from "@/app/actions/documents";
 import { toast } from "sonner";
+import { CURRENCY_OPTIONS, formatCurrency } from "@/utils/currency";
 
 interface QuotationDialogProps {
     quotation?: QuotationRow | null;
@@ -57,6 +58,7 @@ export function QuotationDialog({ quotation, clients, services, open, onClose, i
         quotationDate: new Date().toISOString().split('T')[0],
         validUntil: "",
         status: "draft" as "draft" | "sent" | "accepted" | "rejected" | "expired",
+        currency: "KES" as string,
         items: [] as LineItem[],
         notes: "",
         terms: "",
@@ -70,6 +72,7 @@ export function QuotationDialog({ quotation, clients, services, open, onClose, i
                 quotationDate: new Date(quotation.quotationDate).toISOString().split('T')[0],
                 validUntil: quotation.validUntil ? new Date(quotation.validUntil).toISOString().split('T')[0] : "",
                 status: quotation.status as "draft" | "sent" | "accepted" | "rejected" | "expired",
+                currency: (quotation as any).currency || "KES",
                 items: (quotation.items as LineItem[]).map(item => ({
                     ...item,
                     itemDate: item.itemDate ? new Date(item.itemDate).toISOString().split('T')[0] : undefined,
@@ -84,10 +87,19 @@ export function QuotationDialog({ quotation, clients, services, open, onClose, i
                 quotationDate: new Date().toISOString().split('T')[0],
                 validUntil: "",
                 status: "draft",
+                currency: "KES",
                 items: [],
                 notes: "",
                 terms: "",
             });
+
+            if (open && isCreating) {
+                generateQuotationNumberAction().then((result) => {
+                    if (result.success && result.number) {
+                        setFormData((prev) => ({ ...prev, quotationNumber: result.number! }));
+                    }
+                });
+            }
         }
     }, [quotation, isCreating, open]);
 
@@ -262,6 +274,26 @@ export function QuotationDialog({ quotation, clients, services, open, onClose, i
                                 </Select>
                             </div>
                             <div className="space-y-2">
+                                <Label htmlFor="currency" className="text-[10px]">Currency</Label>
+                                <Select
+                                    value={formData.currency || "KES"}
+                                    onValueChange={(value: any) =>
+                                        setFormData({ ...formData, currency: value })
+                                    }
+                                >
+                                    <SelectTrigger className="h-7 text-xs">
+                                        <SelectValue placeholder="Select Currency" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {CURRENCY_OPTIONS.map((opt) => (
+                                            <SelectItem key={opt.code} value={opt.code}>
+                                                {opt.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
                                 <Label htmlFor="status" className="text-[10px]">Status</Label>
                                 <Select
                                     value={formData.status}
@@ -395,11 +427,11 @@ export function QuotationDialog({ quotation, clients, services, open, onClose, i
                         <div className="grid grid-cols-2 gap-4 p-4 bg-muted rounded-lg">
                             <div>
                                 <Label className="text-[10px]">Subtotal</Label>
-                                <p className="text-lg font-bold">Ksh {totals.subtotal}</p>
+                                <p className="text-lg font-bold">{formatCurrency(totals.subtotal, formData.currency)}</p>
                             </div>
                             <div>
                                 <Label className="text-[10px]">Total</Label>
-                                <p className="text-lg font-bold">Ksh {totals.total}</p>
+                                <p className="text-lg font-bold">{formatCurrency(totals.total, formData.currency)}</p>
                             </div>
                         </div>
 
