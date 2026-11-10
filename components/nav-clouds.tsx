@@ -34,7 +34,11 @@ export function NavClouds({
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Documents</SidebarGroupLabel>
+      <SidebarGroupLabel className="font-bold text-md" >
+        
+        Documents
+        
+        </SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
           const isOpen = openItems[item.title] ?? item.isActive
@@ -42,7 +46,7 @@ export function NavClouds({
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
                 onClick={() => setOpenItems((prev) => ({ ...prev, [item.title]: !isOpen }))}
-                className="flex items-center gap-2 cursor-pointer"
+                className="flex items-center gap-2 cursor-pointer bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
               >
                 {item.icon}
                 <span>{item.title}</span>
