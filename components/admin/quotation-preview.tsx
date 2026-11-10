@@ -210,7 +210,7 @@ export function QuotationDocument({
                 <strong className="font-mono text-slate-900">1350132330</strong>
               </p>
               <p className="text-[10px] text-slate-500">
-                Acc Name: Ubuntu Logistics &amp; Transport
+                Acc Name: TAI UBUNTU LOGISTICS LTD
               </p>
               <div className="pt-1.5 border-t border-slate-200/80">
                 <p>
