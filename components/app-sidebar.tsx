@@ -143,14 +143,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               render={<a href="#" />}
             >
               <CommandIcon className="size-5! text-secondary" />
-              <span className="text-base font-black text-primary">Ubuntu Admin</span>
+              <span className="text-base font-black text-primary dark:text-white">Ubuntu Admin</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent className="flex flex-col flex-1 overflow-y-auto">
+        
+           <NavClouds items={data.navClouds} />
         <NavMain items={data.navMain} />
-        <NavClouds items={data.navClouds} />
+     
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
