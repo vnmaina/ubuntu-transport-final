@@ -12,7 +12,8 @@
       "Exec(Get-Content)",
       "Exec(cp)",
       "Exec(node)",
-      "Exec(npx eslint)"
+      "Exec(npx eslint)",
+      "Exec(sed)"
     ]
   }
 }

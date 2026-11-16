@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { SectionHeader } from "./SectionHeader";
+import { MediaJsonLd } from "./media-seo";
 import type { Doc } from "@/convex/_generated/dataModel";
 
 export interface BlogCardsBlockProps {
@@ -115,6 +116,18 @@ export function BlogCardsBlock({
 
   return (
     <section className="bg-background px-4 py-16 md:px-8 lg:py-24">
+      <MediaJsonLd
+        items={visiblePosts
+          .filter((p) => p.featuredImage)
+          .map((p) => ({
+            url: p.featuredImage as string,
+            title: p.title,
+            alt: p.title,
+            link: `/blogs/${p.slug}`,
+          }))}
+        name={title}
+        description={subtitle}
+      />
       <div className="mx-auto max-w-7xl space-y-12">
         {/* Heading */}
         <SectionHeader eyebrow={eyebrow} title={title} subtitle={subtitle} className="max-w-2xl" />

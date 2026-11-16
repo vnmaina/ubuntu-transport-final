@@ -4,6 +4,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { MediaJsonLd } from "./media-seo";
 import {
   ArrowRight,
   Check,
@@ -27,6 +28,10 @@ export interface ImageTextProps {
   highlights?: string[];
   statValue?: string;
   statLabel?: string;
+  imageAlt?: string;
+  imageTitle?: string;
+  imageCredit?: string;
+  imageLink?: string;
 }
 
 export function ImageText({
@@ -44,9 +49,14 @@ export function ImageText({
   highlights = [],
   statValue,
   statLabel,
+  imageAlt,
+  imageTitle,
+  imageCredit,
+  imageLink,
 }: ImageTextProps) {
   const safeTitle = title || "";
   const safeContent = typeof content === "string" ? content : "";
+  const resolvedAlt = imageAlt || imageTitle || safeTitle || "Featured image";
 
   const isImageLeft =
     (imagePosition || (variant === "right" ? "right" : "left")) === "left";
@@ -66,8 +76,42 @@ export function ImageText({
   const hasPrimaryCta = Boolean(ctaText && ctaLink);
   const hasSecondaryCta = Boolean(secondaryCtaText && secondaryCtaLink);
 
+  const imageFrame = (
+    <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted shadow-2xl shadow-primary/10 ring-1 ring-border sm:rounded-[2rem]">
+      {imageUrl ? (
+        <Image
+          src={imageUrl}
+          alt={resolvedAlt}
+          title={imageTitle || resolvedAlt}
+          fill
+          sizes="(max-width: 1024px) 100vw, 58vw"
+          className="object-cover transition-transform duration-700 hover:scale-[1.04]"
+        />
+      ) : (
+        <div className="flex size-full items-center justify-center bg-gradient-to-br from-primary/10 via-muted to-accent/10">
+          <Compass className="size-16 text-primary/30" />
+        </div>
+      )}
+
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+    </div>
+  );
+
   return (
     <section className="relative isolate overflow-hidden bg-background py-16 sm:py-20 lg:py-28">
+      {imageUrl && (
+        <MediaJsonLd
+          items={[{
+            url: imageUrl,
+            title: imageTitle || safeTitle || undefined,
+            alt: imageAlt || undefined,
+            credit: imageCredit || undefined,
+            link: imageLink || undefined,
+          }]}
+          name={safeTitle || "Featured image"}
+          description={safeContent.slice(0, 160) || undefined}
+        />
+      )}
       {/* Background accents */}
       <div className="pointer-events-none absolute -left-40 top-0 -z-10 size-[420px] rounded-full bg-primary/[0.06] blur-[100px]" />
       <div className="pointer-events-none absolute -right-40 bottom-0 -z-10 size-[420px] rounded-full bg-accent/[0.07] blur-[100px]" />
@@ -82,23 +126,19 @@ export function ImageText({
             }`}
           >
             <div className="relative">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted shadow-2xl shadow-primary/10 ring-1 ring-border sm:rounded-[2rem]">
-                {imageUrl ? (
-                  <Image
-                    src={imageUrl}
-                    alt={safeTitle || "Featured image"}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 58vw"
-                    className="object-cover transition-transform duration-700 hover:scale-[1.04]"
-                  />
-                ) : (
-                  <div className="flex size-full items-center justify-center bg-gradient-to-br from-primary/10 via-muted to-accent/10">
-                    <Compass className="size-16 text-primary/30" />
-                  </div>
-                )}
-
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
-              </div>
+              {imageLink ? (
+                <a
+                  href={imageLink}
+                  target={imageLink.startsWith("http") ? "_blank" : undefined}
+                  rel={imageLink.startsWith("http") ? "noopener noreferrer" : undefined}
+                  aria-label={imageTitle || resolvedAlt}
+                  className="block"
+                >
+                  {imageFrame}
+                </a>
+              ) : (
+                imageFrame
+              )}
 
               {/* Floating badge */}
               {badge && (
@@ -129,6 +169,10 @@ export function ImageText({
 
               {/* Decorative outline */}
               <div className="pointer-events-none absolute -bottom-4 -left-4 -z-10 hidden size-full rounded-[2rem] border border-primary/20 sm:block" />
+
+              {imageCredit && (
+                <p className="mt-3 text-xs text-muted-foreground">{imageCredit}</p>
+              )}
             </div>
           </div>
 

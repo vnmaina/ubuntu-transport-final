@@ -6,12 +6,12 @@ import { api } from "@/convex/_generated/api";
 import { CollectionCard } from "@/components/collection-card";
 import { Button } from "@/components/ui/button";
 import {
-  ArrowRight,
   ArrowUpRight,
   FolderOpen,
   Layers3,
 } from "lucide-react";
 import Link from "next/link";
+import { MediaJsonLd } from "./media-seo";
 
 export interface CollectionCardsBlockProps {
   title?: string;
@@ -128,6 +128,18 @@ export function CollectionCardsBlock({
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -right-40 -top-40 size-96 rounded-full bg-primary/[0.035] blur-3xl"
+      />
+      <MediaJsonLd
+        items={filteredItems
+          .filter((item) => item.imageUrl)
+          .map((item) => ({
+            url: item.imageUrl as string,
+            title: item.title,
+            alt: item.title,
+            link: item.slug ? `/collections/${collectionSlug}/${item.slug}` : undefined,
+          }))}
+        name={displayTitle}
+        description={displaySubtitle}
       />
 
       <div className="relative mx-auto max-w-7xl space-y-12 lg:space-y-14">

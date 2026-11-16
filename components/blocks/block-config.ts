@@ -158,6 +158,36 @@ export const BLOCK_CONFIG: BlockType[] = [
         type: 'array',
         label: 'Tags',
         placeholder: 'Enter tags (one per line)'
+      },
+      imageAlt: {
+        type: 'text',
+        label: 'Image Alt Text (SEO)',
+        placeholder: 'Descriptive alt text for hero images'
+      },
+      imageTitle: {
+        type: 'text',
+        label: 'Image Title',
+        placeholder: 'e.g. Safari vehicle in the Mara'
+      },
+      imageCredit: {
+        type: 'text',
+        label: 'Image Credit',
+        placeholder: 'e.g. Photo: Jane Doe / KWS'
+      },
+      imageLink: {
+        type: 'text',
+        label: 'Image Link',
+        placeholder: 'https://… (optional)'
+      },
+      videoTitle: {
+        type: 'text',
+        label: 'Video Title',
+        placeholder: 'e.g. Kenya safari film'
+      },
+      videoDescription: {
+        type: 'textarea',
+        label: 'Video Description',
+        placeholder: 'Short description of the video for SEO'
       }
     }
   },
@@ -1366,14 +1396,14 @@ export const BLOCK_CONFIG: BlockType[] = [
         name: 'Image Left',
         description: 'Image on left, text on right',
         component: './ImageText',
-        props: ['title', 'subtitle', 'content', 'imageUrl', 'badge', 'highlights', 'ctaText', 'ctaLink', 'secondaryCtaText', 'secondaryCtaLink', 'statValue', 'statLabel']
+        props: ['title', 'subtitle', 'content', 'imageUrl', 'badge', 'highlights', 'ctaText', 'ctaLink', 'secondaryCtaText', 'secondaryCtaLink', 'statValue', 'statLabel', 'imageAlt', 'imageTitle', 'imageCredit', 'imageLink']
       },
       {
         id: 'right',
         name: 'Image Right',
         description: 'Text on left, image on right',
         component: './ImageText',
-        props: ['title', 'subtitle', 'content', 'imageUrl', 'badge', 'highlights', 'ctaText', 'ctaLink', 'secondaryCtaText', 'secondaryCtaLink', 'statValue', 'statLabel']
+        props: ['title', 'subtitle', 'content', 'imageUrl', 'badge', 'highlights', 'ctaText', 'ctaLink', 'secondaryCtaText', 'secondaryCtaLink', 'statValue', 'statLabel', 'imageAlt', 'imageTitle', 'imageCredit', 'imageLink']
       }
     ],
     props: {
@@ -1442,6 +1472,26 @@ export const BLOCK_CONFIG: BlockType[] = [
         type: 'text',
         label: 'Stat Label',
         placeholder: 'e.g. Destinations Covered'
+      },
+      imageAlt: {
+        type: 'text',
+        label: 'Image Alt Text (SEO)',
+        placeholder: 'Descriptive alt text for the image'
+      },
+      imageTitle: {
+        type: 'text',
+        label: 'Image Title',
+        placeholder: 'e.g. Safari 4x4 in the Maasai Mara'
+      },
+      imageCredit: {
+        type: 'text',
+        label: 'Image Credit',
+        placeholder: 'e.g. Photo: Jane Doe / KWS'
+      },
+      imageLink: {
+        type: 'text',
+        label: 'Image Link',
+        placeholder: 'https://… (optional)'
       }
     }
   },

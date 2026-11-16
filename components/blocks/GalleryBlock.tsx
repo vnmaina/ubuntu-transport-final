@@ -8,17 +8,10 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Camera } from "lucide-react";
-import { JsonLd } from "@/components/JsonLd";
 import { SectionHeader } from "./SectionHeader";
+import { MediaJsonLd, normalizeMediaItems, mediaAlt, type MediaSeoItem } from "./media-seo";
 
-export interface GalleryImage {
-  url: string;
-  type?: "image" | "video";
-  title?: string;
-  alt?: string;
-  credit?: string;
-  link?: string;
-}
+export type GalleryImage = MediaSeoItem;
 
 export interface GalleryBlockProps {
   variant?: "grid" | "carousel";
@@ -26,28 +19,6 @@ export interface GalleryBlockProps {
   subtitle?: string;
   text?: string;
   images?: (GalleryImage | string)[];
-}
-
-function normalizeImages(images?: (GalleryImage | string)[]): GalleryImage[] {
-  if (!Array.isArray(images)) return [];
-  return images
-    .map((img): GalleryImage | null => {
-      if (typeof img === "string") return img.trim() ? { url: img.trim() } : null;
-      if (img && typeof img.url === "string" && img.url.trim()) {
-        const ext = img.url.split("?")[0].split(".").pop()?.toLowerCase() || "";
-        const isVideo = img.type === "video" || ["mp4", "webm", "mov", "m4v", "ogg"].includes(ext);
-        return {
-          url: img.url.trim(),
-          type: isVideo ? "video" : "image",
-          title: img.title?.trim() || undefined,
-          alt: img.alt?.trim() || undefined,
-          credit: img.credit?.trim() || undefined,
-          link: img.link?.trim() || undefined,
-        };
-      }
-      return null;
-    })
-    .filter((i): i is GalleryImage => i !== null);
 }
 
 function GalleryFigure({
@@ -59,7 +30,7 @@ function GalleryFigure({
   fallbackTitle: string;
   className?: string;
 }) {
-  const alt = image.alt || image.title || fallbackTitle || "Gallery image";
+  const alt = mediaAlt(image, fallbackTitle || "Gallery image");
   const isVideo = image.type === "video";
   const media = (
     <figure className={`group relative overflow-hidden rounded-2xl bg-muted ring-1 ring-border/60 ${className}`}>
@@ -126,40 +97,15 @@ function GalleryFigure({
 }
 
 export function GalleryBlock({ variant = "grid", title, subtitle, text, images }: GalleryBlockProps) {
-  const items = normalizeImages(images);
+  const items = normalizeMediaItems(images);
   if (items.length === 0) return null;
 
   const heading = title || "Gallery";
   const isCarousel = variant === "carousel";
 
-  // Media SEO: ImageGallery + ItemList of ImageObject
-  const galleryLd = {
-    "@context": "https://schema.org",
-    "@type": "ImageGallery",
-    name: heading,
-    description: text || subtitle || undefined,
-    image: items.map((i) =>
-      i.type === "video"
-        ? {
-            "@type": "VideoObject",
-            contentUrl: i.url,
-            name: i.title || i.alt || heading,
-            description: i.alt || i.title || undefined,
-          }
-        : {
-            "@type": "ImageObject",
-            url: i.url,
-            name: i.title || i.alt || heading,
-            description: i.alt || i.title || undefined,
-            creditText: i.credit || undefined,
-            ...(i.link ? { contentUrl: i.link } : {}),
-          }
-    ),
-  };
-
   return (
     <section className="bg-background px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
-      <JsonLd data={galleryLd} />
+      <MediaJsonLd items={items} name={heading} description={text || subtitle} />
       <div className="mx-auto max-w-7xl">
         {/* Header — shared section header for site-wide title uniformity */}
         <SectionHeader
