@@ -5,12 +5,9 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { CollectionCard } from "@/components/collection-card";
 import { Button } from "@/components/ui/button";
-import {
-  ArrowUpRight,
-  Layers3,
-  Truck,
-} from "lucide-react";
+import { Truck } from "lucide-react";
 import Link from "next/link";
+import { SectionHeader } from "./SectionHeader";
 
 export interface FleetBlockProps {
   title?: string;
@@ -138,33 +135,7 @@ export function FleetBlock({
 
       <div className="mx-auto max-w-7xl space-y-12 lg:space-y-14">
         {/* Section Header */}
-        {(displayTitle || displaySubtitle) && (
-          <div className="mx-auto max-w-3xl space-y-5 text-center">
-            <div className="flex items-center justify-center gap-2">
-              <span className="h-1 w-7 rounded-full bg-secondary" />
-
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
-                Our Fleet
-              </span>
-
-              <span className="h-1 w-7 rounded-full bg-secondary" />
-            </div>
-
-            {displayTitle && (
-              <h2 className="text-3xl font-extrabold leading-tight tracking-tight text-primary sm:text-4xl lg:text-5xl">
-                {displayTitle}
-              </h2>
-            )}
-
-            {displaySubtitle && (
-              <p className="mx-auto max-w-4xl text-base leading-8 text-muted-foreground sm:text-lg">
-                {displaySubtitle}
-              </p>
-            )}
-
-            <div className="mx-auto h-1 w-16 rounded-full bg-secondary" />
-          </div>
-        )}
+        <SectionHeader eyebrow="Our Fleet" title={displayTitle} subtitle={displaySubtitle} />
 
         {/* Fleet Items */}
         {filteredItems.length === 0 ? (

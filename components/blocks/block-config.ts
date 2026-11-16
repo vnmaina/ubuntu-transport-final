@@ -323,21 +323,21 @@ export const BLOCK_CONFIG: BlockType[] = [
         name: 'Grid Layout',
         description: 'Responsive grid of blog post cards',
         component: './BlogCardsBlock',
-        props: ['title', 'subtitle', 'categorySlug', 'limit', 'columns']
+        props: ['eyebrow', 'title', 'subtitle', 'categorySlug', 'limit', 'columns']
       },
       {
         id: 'list',
         name: 'List Layout',
         description: 'Horizontal list of blog post cards',
         component: './BlogCardsBlock',
-        props: ['title', 'subtitle', 'categorySlug', 'limit']
+        props: ['eyebrow', 'title', 'subtitle', 'categorySlug', 'limit']
       },
       {
         id: 'masonry',
         name: 'Masonry Layout',
         description: 'Pinterest-style masonry grid of blog posts',
         component: './BlogCardsBlock',
-        props: ['title', 'subtitle', 'categorySlug', 'limit', 'columns']
+        props: ['eyebrow', 'title', 'subtitle', 'categorySlug', 'limit', 'columns']
       }
     ],
     props: {
@@ -346,6 +346,11 @@ export const BLOCK_CONFIG: BlockType[] = [
         label: 'Variant',
         required: true,
         options: ['grid', 'list', 'masonry']
+      },
+      eyebrow: {
+        type: 'text',
+        label: 'Eyebrow Label',
+        placeholder: 'From the Blog'
       },
       title: {
         type: 'text',

@@ -9,14 +9,15 @@ import {
   Calendar,
   Clock,
   FileText,
-  Newspaper,
   Tag,
 } from "lucide-react";
 import Link from "next/link";
+import { SectionHeader } from "./SectionHeader";
 import type { Doc } from "@/convex/_generated/dataModel";
 
 export interface BlogCardsBlockProps {
   variant?: "grid" | "list" | "masonry";
+  eyebrow?: string;
   title?: string;
   subtitle?: string;
   categorySlug?: string;
@@ -65,6 +66,7 @@ function BlogCardsSkeleton({ columns = 3 }: { columns?: 2 | 3 | 4 }) {
 
 export function BlogCardsBlock({
   variant = "grid",
+  eyebrow = "From the Blog",
   title = "Latest Articles",
   subtitle,
   categorySlug,
@@ -115,15 +117,7 @@ export function BlogCardsBlock({
     <section className="bg-background px-4 py-16 md:px-8 lg:py-24">
       <div className="mx-auto max-w-7xl space-y-12">
         {/* Heading */}
-        <div className="mx-auto max-w-2xl space-y-12 text-center">
-         
-          <h2 className="text-3xl font-extrabold text-primary sm:text-4xl lg:text-5xl ">
-            {title}
-          </h2>
-          {subtitle && (
-            <p className="text-lg text-muted-foreground">{subtitle}</p>
-          )}
-        </div>
+        <SectionHeader eyebrow={eyebrow} title={title} subtitle={subtitle} className="max-w-2xl" />
 
         {/* Cards */}
         <div

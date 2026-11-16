@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, Image as ImageIcon, Video, ExternalLink, Images } from "lucide-react";
 import { ComponentFormProps } from "./form-registry";
 import { GalleryImage } from "@/components/blocks/GalleryBlock";
+import { MediaUpload } from "@/components/ui/media-upload";
 
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = React.useState<T>(value);
@@ -133,7 +134,18 @@ export function GalleryBlockForm({ props, onChange, mode = "edit" }: ComponentFo
                     )
                   ) : null}
                   <Badge variant="secondary" className="text-xs">Item {i + 1}</Badge>
-                  {img.type === "video" && <Badge className="bg-primary/10 text-primary text-xs">Video</Badge>}
+                  <button
+                    type="button"
+                    onClick={() => updateImage(i, "type", img.type === "video" ? "image" : "video")}
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide transition-colors ${
+                      img.type === "video"
+                        ? "bg-primary/10 text-primary"
+                        : "bg-muted text-muted-foreground hover:text-foreground"
+                    }`}
+                    title="Toggle media type"
+                  >
+                    {img.type === "video" ? "Video" : "Image"}
+                  </button>
                 </div>
                 <Button
                   type="button"
@@ -146,34 +158,33 @@ export function GalleryBlockForm({ props, onChange, mode = "edit" }: ComponentFo
                 </Button>
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-xs font-medium text-muted-foreground">Media URL *</Label>
-                <Input
-                  value={img.url || ""}
-                  onChange={(e) => updateImage(i, "url", e.target.value)}
-                  placeholder="https://…/photo.jpg or video.mp4"
-                  className="h-9 font-mono text-xs"
-                />
-                {img.url && (
-                  <div className="flex gap-3 text-xs">
-                    <button
-                      type="button"
-                      onClick={() => updateImage(i, "type", img.type === "video" ? "image" : "video")}
-                      className="text-primary hover:underline"
-                    >
-                      Mark as {img.type === "video" ? "image" : "video"}
-                    </button>
-                    <a
-                      href={img.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
-                    >
-                      Open <ExternalLink className="h-3 w-3" />
-                    </a>
-                  </div>
-                )}
-              </div>
+              <MediaUpload
+                value={img.url || ""}
+                onChange={(url) => {
+                  const ext = url.split("?")[0].split(".").pop()?.toLowerCase() || "";
+                  const detected = ["mp4", "webm", "mov", "m4v", "ogg"].includes(ext) ? "video" : "image";
+                  const next = images.map((item, j) =>
+                    j === i ? { ...item, url: url || undefined, type: detected } : item
+                  );
+                  updateProp("images", next);
+                }}
+                label={img.type === "video" ? "Video" : "Image"}
+                placeholder="Upload or paste a media URL"
+                aspectRatio="video"
+                maxSizeMB={50}
+              />
+              {img.url && (
+                <div className="flex gap-3 text-xs">
+                  <a
+                    href={img.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
+                  >
+                    Open media <ExternalLink className="h-3 w-3" />
+                  </a>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">

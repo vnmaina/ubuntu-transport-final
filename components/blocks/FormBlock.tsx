@@ -15,7 +15,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { FormRenderer } from "@/components/form-renderer";
 import { BookingForm } from "@/components/booking-form";
 import {
@@ -773,14 +772,25 @@ export function FormBlock({
   if (layout === "minimal") {
     return (
       <section className="py-12 px-4 max-w-xl mx-auto w-full">
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 space-y-4">
           {headerBadge && (
-            <Badge variant="secondary" className="mb-2">
-              {headerBadge}
-            </Badge>
+            <div className="flex items-center justify-center gap-2">
+              <span className="h-1 w-7 rounded-full bg-secondary" />
+              <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+                {headerBadge}
+              </span>
+              <span className="h-1 w-7 rounded-full bg-secondary" />
+            </div>
           )}
-          <h2 className="text-2xl font-bold tracking-tight text-foreground">{headerTitle}</h2>
-          {headerSubtitle && <p className="text-sm text-muted-foreground mt-1">{headerSubtitle}</p>}
+          <h2 className="text-3xl font-extrabold leading-tight tracking-tight text-primary sm:text-4xl">
+            {headerTitle}
+          </h2>
+          {headerSubtitle && (
+            <p className="mx-auto max-w-4xl text-base leading-8 text-muted-foreground sm:text-lg">
+              {headerSubtitle}
+            </p>
+          )}
+          <div className="mx-auto h-1 w-16 rounded-full bg-secondary" />
         </div>
 
         {isSuccess ? renderSuccessState() : <div className="p-2">{renderFormFields()}</div>}
@@ -796,22 +806,25 @@ export function FormBlock({
           renderSuccessState()
         ) : (
           <Card className="border shadow-xl rounded-2xl overflow-hidden bg-card/95 backdrop-blur">
-            <CardHeader className="text-center pb-6 border-b bg-muted/30">
+            <CardHeader className="text-center pb-6 border-b bg-muted/30 space-y-4">
               {headerBadge && (
-                <div className="flex justify-center mb-2">
-                  <Badge variant="secondary" className="font-semibold">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="h-1 w-7 rounded-full bg-secondary" />
+                  <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
                     {headerBadge}
-                  </Badge>
+                  </span>
+                  <span className="h-1 w-7 rounded-full bg-secondary" />
                 </div>
               )}
-              <CardTitle className="text-2xl md:text-3xl font-extrabold tracking-tight">
+              <CardTitle className="text-3xl font-extrabold leading-tight tracking-tight text-primary sm:text-4xl">
                 {headerTitle}
               </CardTitle>
               {headerSubtitle && (
-                <CardDescription className="text-sm md:text-base max-w-md mx-auto">
+                <CardDescription className="text-base leading-8 max-w-4xl mx-auto sm:text-lg">
                   {headerSubtitle}
                 </CardDescription>
               )}
+              <div className="mx-auto h-1 w-16 rounded-full bg-secondary" />
             </CardHeader>
             <CardContent className="p-6 md:p-8">{renderFormFields()}</CardContent>
           </Card>
@@ -823,20 +836,25 @@ export function FormBlock({
   // 4. SPLIT LAYOUT (Default: side info + form card)
   return (
     <section className="py-16 px-4 md:px-8 max-w-6xl mx-auto w-full">
-      <div className="text-center max-w-2xl mx-auto mb-12">
+      <div className="text-center max-w-3xl mx-auto mb-12 space-y-5">
         {headerBadge && (
-          <Badge variant="secondary" className="mb-3 px-3 py-1 font-semibold uppercase tracking-wider text-xs">
-            {headerBadge}
-          </Badge>
+          <div className="flex items-center justify-center gap-2">
+            <span className="h-1 w-7 rounded-full bg-secondary" />
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+              {headerBadge}
+            </span>
+            <span className="h-1 w-7 rounded-full bg-secondary" />
+          </div>
         )}
-        <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-primary">
+        <h2 className="text-3xl font-extrabold leading-tight tracking-tight text-primary sm:text-4xl lg:text-5xl">
           {headerTitle}
         </h2>
         {headerSubtitle && (
-          <p className="text-muted-foreground mt-3 text-base md:text-lg">
+          <p className="mx-auto max-w-4xl text-base leading-8 text-muted-foreground sm:text-lg">
             {headerSubtitle}
           </p>
         )}
+        <div className="mx-auto h-1 w-16 rounded-full bg-secondary" />
       </div>
 
       {isSuccess ? (

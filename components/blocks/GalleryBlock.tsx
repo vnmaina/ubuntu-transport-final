@@ -1,6 +1,5 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import {
   Carousel,
   CarouselContent,
@@ -10,6 +9,7 @@ import {
 } from "@/components/ui/carousel";
 import { Camera } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
+import { SectionHeader } from "./SectionHeader";
 
 export interface GalleryImage {
   url: string;
@@ -161,25 +161,13 @@ export function GalleryBlock({ variant = "grid", title, subtitle, text, images }
     <section className="bg-background px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
       <JsonLd data={galleryLd} />
       <div className="mx-auto max-w-7xl">
-        {/* Header */}
-        {(title || subtitle || text) && (
-          <div className="mx-auto mb-12 max-w-2xl text-center">
-            {subtitle && (
-              <Badge variant="secondary" className="mb-4 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider">
-                {subtitle}
-              </Badge>
-            )}
-            {title && (
-              <h2 className="text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
-                {title}
-              </h2>
-            )}
-            <div className="mx-auto mt-4 h-1 w-16 rounded-full bg-gradient-to-r from-primary to-secondary" />
-            {text && (
-              <p className="mt-5 text-lg leading-relaxed text-muted-foreground">{text}</p>
-            )}
-          </div>
-        )}
+        {/* Header — shared section header for site-wide title uniformity */}
+        <SectionHeader
+          eyebrow={subtitle}
+          title={title}
+          subtitle={text}
+          className="mb-12"
+        />
 
         {/* Grid variant */}
         {!isCarousel && (
