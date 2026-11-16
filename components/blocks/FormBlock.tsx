@@ -17,12 +17,12 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { FormRenderer } from "@/components/form-renderer";
+import { BookingForm } from "@/components/booking-form";
 import {
   Mail,
   Phone,
   MapPin,
   Clock,
-  Calendar,
   Send,
   CheckCircle2,
   Loader2,
@@ -30,7 +30,6 @@ import {
   Star,
   ShieldCheck,
   BellRing,
-  HelpCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -69,17 +68,18 @@ export function FormBlock({
   successMessage,
   customFormSlug,
   contactInfo = {
-    email: "support@example.com",
-    phone: "+1 (555) 234-5678",
-    address: "100 Innovation Way, Suite 400, San Francisco, CA",
-    workingHours: "Mon - Fri, 9:00 AM - 6:00 PM EST",
-    responseTime: "Usually responds within 2 hours",
+    email: "ben@ubuntulogistics.co.ke",
+    phone: "+254 728 798589",
+    address: "North Airport Road, Embakasi, Nairobi, Kenya",
+    workingHours: "Mon - Sat, 6:00 AM - 10:00 PM",
+    responseTime: "Usually responds within 1 hour",
   },
   bookingServices = [
-    "General Consultation (30 min)",
-    "Strategy & Architecture Review (60 min)",
-    "Product Demo & Onboarding (45 min)",
-    "Custom Engineering Support (60 min)",
+    "Safari 4x4 Land Cruiser",
+    "Airport Transfer Sedan",
+    "Corporate Staff Shuttle",
+    "Minibus / Coaster",
+    "Wheelchair-Accessible Van",
   ],
   feedbackCategories = [
     "General Experience",
@@ -109,18 +109,6 @@ export function FormBlock({
     subject: "",
     message: "",
     preferredContact: "email",
-  });
-
-  // Booking form state
-  const [bookingData, setBookingData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    service: bookingServices[0] || "Consultation",
-    date: "",
-    time: "10:00 AM",
-    attendees: "1",
-    notes: "",
   });
 
   // Subscribe form state
@@ -168,39 +156,8 @@ export function FormBlock({
           window.location.href = redirectUrl;
         }, 1500);
       }
-    } catch (err: any) {
-      toast.error(err?.message || "Failed to submit form");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleBookingSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!bookingData.name.trim() || !bookingData.email.trim() || !bookingData.date) {
-      toast.error("Please provide Name, Email, and Preferred Date");
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      await submitForm({
-        formId: getFormIdentifier(),
-        formData: {
-          ...bookingData,
-          formType: "booking",
-          submittedAtReadable: new Date().toISOString(),
-        },
-      });
-      setIsSuccess(true);
-      toast.success(successMessage || "Booking request received! We'll confirm your slot soon.");
-      if (redirectUrl) {
-        setTimeout(() => {
-          window.location.href = redirectUrl;
-        }, 1500);
-      }
-    } catch (err: any) {
-      toast.error(err?.message || "Failed to book appointment");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to submit form");
     } finally {
       setIsSubmitting(false);
     }
@@ -231,8 +188,8 @@ export function FormBlock({
           window.location.href = redirectUrl;
         }, 1500);
       }
-    } catch (err: any) {
-      toast.error(err?.message || "Subscription failed");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Subscription failed");
     } finally {
       setIsSubmitting(false);
     }
@@ -262,8 +219,8 @@ export function FormBlock({
           window.location.href = redirectUrl;
         }, 1500);
       }
-    } catch (err: any) {
-      toast.error(err?.message || "Failed to submit feedback");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to submit feedback");
     } finally {
       setIsSubmitting(false);
     }
@@ -278,16 +235,6 @@ export function FormBlock({
       subject: "",
       message: "",
       preferredContact: "email",
-    });
-    setBookingData({
-      name: "",
-      email: "",
-      phone: "",
-      service: bookingServices[0] || "Consultation",
-      date: "",
-      time: "10:00 AM",
-      attendees: "1",
-      notes: "",
     });
     setSubscribeData({ email: "", name: "" });
     setFeedbackData({
@@ -320,7 +267,7 @@ export function FormBlock({
       <p className="text-muted-foreground max-w-md mx-auto mb-6">
         {successMessage || (
           formType === "booking"
-            ? "We've received your appointment request. Our team will review the availability and reach out with details."
+            ? "We've received your booking request. Our team will confirm vehicle availability and reach out with a quote shortly."
             : formType === "subscribe"
             ? "You are now on the insider list. Expect thoughtful updates, exclusive insights, and zero spam."
             : formType === "feedback"
@@ -409,14 +356,14 @@ export function FormBlock({
         )}
         <h3 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">
           {formType === "booking"
-            ? "Book Your Session"
+            ? "Book Your Transport"
             : formType === "feedback"
             ? "Your Voice Shapes Us"
             : "Let's Start a Conversation"}
         </h3>
         <p className="text-slate-300 text-sm leading-relaxed mb-8">
           {formType === "booking"
-            ? "Select your preferred slot and service. Our specialists will synchronize and confirm your schedule swiftly."
+            ? "Choose your vehicle, destination and travel dates. Our team will confirm availability and send you a quote swiftly."
             : formType === "feedback"
             ? "We read every single comment. Tell us what went well, what we can improve, or feature requests."
             : "Have questions about our solutions, bespoke projects, or custom pricing? Our team is standing by to help."}
@@ -530,7 +477,7 @@ export function FormBlock({
               <Input
                 id="contact-phone"
                 type="tel"
-                placeholder="+1 (555) 000-0000"
+                placeholder="+254 7XX XXX XXX"
                 value={contactData.phone}
                 onChange={(e) => setContactData((p) => ({ ...p, phone: e.target.value }))}
                 className="rounded-xl"
@@ -568,7 +515,7 @@ export function FormBlock({
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-md transition"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 rounded-xl shadow-md transition"
           >
             {isSubmitting ? (
               <>
@@ -586,147 +533,27 @@ export function FormBlock({
       );
     }
 
-    // 2. BOOKING FORM
+    // 2. BOOKING FORM (shared Ubuntu booking form → formSubmissions)
     if (formType === "booking") {
       return (
-        <form onSubmit={handleBookingSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="booking-name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Full Name <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="booking-name"
-                placeholder="Alex Morgan"
-                value={bookingData.name}
-                onChange={(e) => setBookingData((p) => ({ ...p, name: e.target.value }))}
-                required
-                className="rounded-xl"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="booking-email" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Email Address <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="booking-email"
-                type="email"
-                placeholder="alex@example.com"
-                value={bookingData.email}
-                onChange={(e) => setBookingData((p) => ({ ...p, email: e.target.value }))}
-                required
-                className="rounded-xl"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="booking-phone" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Phone Number
-              </Label>
-              <Input
-                id="booking-phone"
-                type="tel"
-                placeholder="+1 (555) 123-4567"
-                value={bookingData.phone}
-                onChange={(e) => setBookingData((p) => ({ ...p, phone: e.target.value }))}
-                className="rounded-xl"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="booking-service" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Service / Session Type
-              </Label>
-              <Select
-                value={bookingData.service}
-                onValueChange={(val) => setBookingData((p) => ({ ...p, service: val || "" }))}
-              >
-                <SelectTrigger id="booking-service" className="rounded-xl">
-                  <SelectValue placeholder="Select a service" />
-                </SelectTrigger>
-                <SelectContent>
-                  {bookingServices.map((srv) => (
-                    <SelectItem key={srv} value={srv}>
-                      {srv}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="booking-date" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Preferred Date <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="booking-date"
-                type="date"
-                value={bookingData.date}
-                onChange={(e) => setBookingData((p) => ({ ...p, date: e.target.value }))}
-                required
-                className="rounded-xl"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="booking-time" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Preferred Time Slot
-              </Label>
-              <Select
-                value={bookingData.time}
-                onValueChange={(val) => setBookingData((p) => ({ ...p, time: val || "" }))}
-              >
-                <SelectTrigger id="booking-time" className="rounded-xl">
-                  <SelectValue placeholder="Select time" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="09:00 AM">09:00 AM (Morning)</SelectItem>
-                  <SelectItem value="10:00 AM">10:00 AM (Morning)</SelectItem>
-                  <SelectItem value="11:30 AM">11:30 AM (Late Morning)</SelectItem>
-                  <SelectItem value="01:30 PM">01:30 PM (Afternoon)</SelectItem>
-                  <SelectItem value="03:00 PM">03:00 PM (Afternoon)</SelectItem>
-                  <SelectItem value="04:30 PM">04:30 PM (Late Afternoon)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="booking-notes" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Specific Objectives or Notes
-            </Label>
-            <Textarea
-              id="booking-notes"
-              placeholder="Share topics you'd like to cover or any preparation required..."
-              rows={3}
-              value={bookingData.notes}
-              onChange={(e) => setBookingData((p) => ({ ...p, notes: e.target.value }))}
-              className="rounded-xl resize-y"
-            />
-          </div>
-
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-md transition"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Submitting Booking...
-              </>
-            ) : (
-              <>
-                <Calendar className="mr-2 h-4 w-4" />
-                {submitText || "Confirm Booking Request"}
-              </>
-            )}
-          </Button>
-        </form>
+        <BookingForm
+          formId="booking"
+          source="page-builder"
+          fleetOptions={bookingServices}
+          submitText={submitText || "Confirm Booking Request"}
+          successMessage={successMessage || "Booking request received! We will confirm your details shortly."}
+          onSubmitted={() => {
+            setIsSuccess(true);
+            if (redirectUrl) {
+              setTimeout(() => {
+                window.location.href = redirectUrl;
+              }, 1500);
+            }
+          }}
+        />
       );
     }
+
 
     // 3. SUBSCRIBE (CARD / MINIMAL)
     if (formType === "subscribe") {
@@ -762,7 +589,7 @@ export function FormBlock({
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-md transition"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 rounded-xl shadow-md transition"
           >
             {isSubmitting ? (
               <>
@@ -862,7 +689,7 @@ export function FormBlock({
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-md transition"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 rounded-xl shadow-md transition"
           >
             {isSubmitting ? (
               <>
@@ -917,9 +744,9 @@ export function FormBlock({
       badge: "Contact Us",
     },
     booking: {
-      title: "Schedule an Appointment",
-      subtitle: "Select a convenient date and session type. We'll synchronize our calendar and confirm your booking.",
-      badge: "Easy Scheduling",
+      title: "Book Your Transport",
+      subtitle: "Choose your vehicle, destination, travel dates and group size — we'll confirm availability and pricing.",
+      badge: "Quick Booking",
     },
     subscribe: {
       title: "Subscribe to Our Newsletter",

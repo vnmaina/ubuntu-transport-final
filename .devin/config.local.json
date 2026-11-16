@@ -10,7 +10,9 @@
       "Exec(ls components)",
       "Exec(ls)",
       "Exec(Get-Content)",
-      "Exec(cp)"
+      "Exec(cp)",
+      "Exec(node)",
+      "Exec(npx eslint)"
     ]
   }
 }

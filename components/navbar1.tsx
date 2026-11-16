@@ -90,6 +90,7 @@ const DEFAULT_MENU: MenuItem[] = [
   { title: "Services", url: "/services" },
   { title: "Fleet", url: "/fleet" },
   { title: "Destinations", url: "/destinations" },
+  {title:"Blog", url: "/blog"}
 ];
 
 interface OrganizationSettings {

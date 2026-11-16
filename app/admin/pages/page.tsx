@@ -607,12 +607,7 @@ function AdminPagesContent() {
               <TableHead className="font-semibold text-xs uppercase tracking-wider py-3.5">
                 Status
               </TableHead>
-              <TableHead className="font-semibold text-xs uppercase tracking-wider py-3.5">
-                Composition
-              </TableHead>
-              <TableHead className="font-semibold text-xs uppercase tracking-wider py-3.5">
-                Created
-              </TableHead>
+           
               <TableHead className="font-semibold text-xs uppercase tracking-wider py-3.5 text-right pr-6">
                 Actions
               </TableHead>
@@ -765,38 +760,7 @@ function AdminPagesContent() {
                       </div>
                     </TableCell>
 
-                    {/* Column 4: Composition / Blocks */}
-                    <TableCell className="py-4">
-                      <div className="flex flex-wrap items-center gap-1 max-w-xs">
-                        {blockNames.length === 0 ? (
-                          <span className="text-xs text-muted-foreground italic">No blocks</span>
-                        ) : (
-                          <>
-                            {blockNames.slice(0, 3).map((name) => (
-                              <span
-                                key={name}
-                                className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-secondary text-secondary-foreground"
-                              >
-                                {name}
-                              </span>
-                            ))}
-                            {blockNames.length > 3 && (
-                              <span className="text-[11px] text-muted-foreground font-medium">
-                                +{blockNames.length - 3} more
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    </TableCell>
-
-                    {/* Column 5: Created Date */}
-                    <TableCell className="py-4 text-xs text-muted-foreground">
-                      <div className="flex items-center gap-1.5">
-                        <Calendar className="h-3.5 w-3.5 opacity-60" />
-                        <span>{formatDate(page._creationTime)}</span>
-                      </div>
-                    </TableCell>
+                 
 
                     {/* Column 6: Actionable Buttons */}
                     <TableCell className="py-4 text-right pr-6">

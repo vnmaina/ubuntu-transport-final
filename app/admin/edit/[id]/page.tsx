@@ -311,10 +311,202 @@ export default function AdminEditor({ params }: { params: Promise<{ id: Id<"page
     toast.success("Block deleted successfully");
   };
 
+  const renderSeoPanel = () => (
+    <>
+              {/* Search engine metadata */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-bold text-slate-700">Search Engine Optimization</h3>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-slate-600">Meta Title</label>
+                  <Input
+                    value={seoData.metaTitle}
+                    onChange={(e) => setSeoData({ ...seoData, metaTitle: e.target.value })}
+                    placeholder="Page title for search engines"
+                    className="h-9 text-sm"
+                  />
+                  <p className={`text-[11px] ${seoData.metaTitle.length > 60 ? "text-red-500" : "text-slate-400"}`}>
+                    {seoData.metaTitle.length}/60 characters
+                  </p>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-slate-600">Meta Description</label>
+                  <textarea
+                    className="w-full border border-slate-200 rounded-lg p-2.5 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all h-20 resize-none"
+                    value={seoData.metaDescription}
+                    onChange={(e) => setSeoData({ ...seoData, metaDescription: e.target.value })}
+                    placeholder="Brief description for search results"
+                  />
+                  <p className={`text-[11px] ${seoData.metaDescription.length > 160 ? "text-red-500" : "text-slate-400"}`}>
+                    {seoData.metaDescription.length}/160 characters
+                  </p>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-slate-600">Keywords</label>
+                  <Input
+                    value={seoData.keywords}
+                    onChange={(e) => setSeoData({ ...seoData, keywords: e.target.value })}
+                    placeholder="tours, travel, kenya safari, transport"
+                    className="h-9 text-sm"
+                  />
+                  <p className="text-[11px] text-slate-400">
+                    Comma-separated. Rendered as a keywords meta tag and included in structured data.
+                  </p>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-slate-600">Robots Meta</label>
+                  <Input
+                    value={seoData.robots}
+                    onChange={(e) => setSeoData({ ...seoData, robots: e.target.value })}
+                    placeholder="index, follow"
+                    className="h-9 text-sm"
+                  />
+                  <p className="text-[11px] text-slate-400">Search engine crawling instructions</p>
+                </div>
+              </div>
+
+              {/* Open Graph */}
+              <div className="space-y-3 border-t border-slate-100 pt-4">
+                <h3 className="text-sm font-bold text-slate-700">Open Graph (Social Sharing)</h3>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-slate-600">OG Image URL</label>
+                  <Input
+                    type="url"
+                    value={seoData.ogImage}
+                    onChange={(e) => setSeoData({ ...seoData, ogImage: e.target.value })}
+                    placeholder="https://example.com/og-image.jpg"
+                    className="h-9 text-sm"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-slate-600">OG Title</label>
+                  <Input
+                    value={seoData.ogTitle}
+                    onChange={(e) => setSeoData({ ...seoData, ogTitle: e.target.value })}
+                    placeholder="Defaults to meta title"
+                    className="h-9 text-sm"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-slate-600">OG Description</label>
+                  <textarea
+                    className="w-full border border-slate-200 rounded-lg p-2.5 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all h-16 resize-none"
+                    value={seoData.ogDescription}
+                    onChange={(e) => setSeoData({ ...seoData, ogDescription: e.target.value })}
+                    placeholder="Defaults to meta description"
+                  />
+                </div>
+              </div>
+
+              {/* Twitter / X */}
+              <div className="space-y-3 border-t border-slate-100 pt-4">
+                <h3 className="text-sm font-bold text-slate-700">Twitter / X Card</h3>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-slate-600">Card Type</label>
+                  <select
+                    className="w-full border border-slate-200 rounded-lg p-2 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all h-9 bg-white"
+                    value={seoData.twitterCard}
+                    onChange={(e) => setSeoData({ ...seoData, twitterCard: e.target.value })}
+                  >
+                    <option value="">Default (summary_large_image)</option>
+                    <option value="summary">Summary</option>
+                    <option value="summary_large_image">Summary with Large Image</option>
+                    <option value="player">Player</option>
+                    <option value="app">App</option>
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-slate-600">Twitter Title</label>
+                  <Input
+                    value={seoData.twitterTitle}
+                    onChange={(e) => setSeoData({ ...seoData, twitterTitle: e.target.value })}
+                    placeholder="Defaults to meta title"
+                    className="h-9 text-sm"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-slate-600">Twitter Description</label>
+                  <Input
+                    value={seoData.twitterDescription}
+                    onChange={(e) => setSeoData({ ...seoData, twitterDescription: e.target.value })}
+                    placeholder="Defaults to meta description"
+                    className="h-9 text-sm"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-slate-600">Twitter Image URL</label>
+                  <Input
+                    type="url"
+                    value={seoData.twitterImage}
+                    onChange={(e) => setSeoData({ ...seoData, twitterImage: e.target.value })}
+                    placeholder="https://example.com/twitter-image.jpg"
+                    className="h-9 text-sm"
+                  />
+                </div>
+              </div>
+
+              {/* Canonical */}
+              <div className="space-y-1.5 border-t border-slate-100 pt-4">
+                <label className="text-xs font-medium text-slate-600">Canonical URL</label>
+                <Input
+                  type="url"
+                  value={seoData.canonicalUrl}
+                  onChange={(e) => setSeoData({ ...seoData, canonicalUrl: e.target.value })}
+                  placeholder="https://example.com/page (auto-generated if empty)"
+                  className="h-9 text-sm"
+                />
+                <p className="text-[11px] text-slate-400">Preferred URL for search engines</p>
+              </div>
+
+              {/* Structured data */}
+              <div className="space-y-3 border-t border-slate-100 pt-4">
+                <h3 className="text-sm font-bold text-slate-700">Structured Data (JSON-LD)</h3>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Auto-generated on every page: <strong>Organization</strong> + <strong>WebSite</strong> (site-wide
+                  in the layout), <strong>WebPage</strong> + <strong>BreadcrumbList</strong> (per page). Use the
+                  field below for any additional schema (FAQ, Product, Event, etc.).
+                </p>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-slate-600">Manual JSON-LD (optional)</label>
+                  <textarea
+                    className="w-full border border-slate-200 rounded-lg p-2.5 font-mono text-xs focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all h-28 resize-none"
+                    value={seoData.manualStructuredData}
+                    onChange={(e) => setSeoData({ ...seoData, manualStructuredData: e.target.value })}
+                    placeholder='{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[...]}'
+                  />
+                  {seoData.manualStructuredData.trim() !== "" && (
+                    <p className={`text-[11px] ${manualJsonLdInvalid ? "text-red-500" : "text-emerald-600"}`}>
+                      {manualJsonLdInvalid
+                        ? "Invalid JSON — must be a valid JSON object or array of objects."
+                        : `Valid JSON-LD — ${manualJsonLd?.length ?? 0} block(s) will be rendered.`}
+                    </p>
+                  )}
+                </div>
+
+                <details className="rounded-lg border border-slate-200 bg-slate-50">
+                  <summary className="cursor-pointer px-3 py-2 text-xs font-medium text-slate-600">
+                    Preview auto-generated JSON-LD for this page
+                  </summary>
+                  <pre className="max-h-64 overflow-auto border-t border-slate-200 p-3 text-[10px] leading-relaxed text-slate-600 whitespace-pre-wrap break-all">
+                    {seoPreviewJsonLd.length > 0
+                      ? JSON.stringify(seoPreviewJsonLd, null, 2)
+                      : "Loading preview…"}
+                  </pre>
+                </details>
+              </div>
+    </>
+  );
+
   return (
     <div className="flex h-[calc(100vh-3rem)] overflow-hidden bg-slate-50 font-sans text-slate-900">
       {/* Left Pane - Management & Configurations Tools */}
-      <aside className="hidden lg:block w-80 border-r border-slate-200 bg-white p-6 flex flex-col justify-between shadow-sm overflow-y-auto">
+      <aside className="hidden lg:block w-[38rem] border-r border-slate-200 bg-white p-4 flex flex-col justify-between shadow-sm overflow-y-auto">
         <div>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-sm font-bold tracking-tight text-slate-800">Component Studio</h2>
@@ -327,7 +519,7 @@ export default function AdminEditor({ params }: { params: Promise<{ id: Id<"page
             </Button>
           </div>
 
-          <Tabs defaultValue="blocks" className="w-full px-8">
+          <Tabs defaultValue="blocks" className="w-full px-3">
             <TabsList className="grid w-full grid-cols-2 mb-4 h-[36px] bg-card">
               <TabsTrigger value="blocks" className="text-xs cursor-pointer">Block Editor</TabsTrigger>
               <TabsTrigger value="seo" className="text-xs cursor-pointer">SEO</TabsTrigger>
@@ -518,193 +710,7 @@ export default function AdminEditor({ params }: { params: Promise<{ id: Id<"page
             </TabsContent>
 
             <TabsContent value="seo" className="space-y-5">
-              {/* Search engine metadata */}
-              <div className="space-y-3">
-                <h3 className="text-sm font-bold text-slate-700">Search Engine Optimization</h3>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-slate-600">Meta Title</label>
-                  <Input
-                    value={seoData.metaTitle}
-                    onChange={(e) => setSeoData({ ...seoData, metaTitle: e.target.value })}
-                    placeholder="Page title for search engines"
-                    className="h-9 text-sm"
-                  />
-                  <p className={`text-[11px] ${seoData.metaTitle.length > 60 ? "text-red-500" : "text-slate-400"}`}>
-                    {seoData.metaTitle.length}/60 characters
-                  </p>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-slate-600">Meta Description</label>
-                  <textarea
-                    className="w-full border border-slate-200 rounded-lg p-2.5 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all h-20 resize-none"
-                    value={seoData.metaDescription}
-                    onChange={(e) => setSeoData({ ...seoData, metaDescription: e.target.value })}
-                    placeholder="Brief description for search results"
-                  />
-                  <p className={`text-[11px] ${seoData.metaDescription.length > 160 ? "text-red-500" : "text-slate-400"}`}>
-                    {seoData.metaDescription.length}/160 characters
-                  </p>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-slate-600">Keywords</label>
-                  <Input
-                    value={seoData.keywords}
-                    onChange={(e) => setSeoData({ ...seoData, keywords: e.target.value })}
-                    placeholder="tours, travel, kenya safari, transport"
-                    className="h-9 text-sm"
-                  />
-                  <p className="text-[11px] text-slate-400">
-                    Comma-separated. Rendered as a keywords meta tag and included in structured data.
-                  </p>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-slate-600">Robots Meta</label>
-                  <Input
-                    value={seoData.robots}
-                    onChange={(e) => setSeoData({ ...seoData, robots: e.target.value })}
-                    placeholder="index, follow"
-                    className="h-9 text-sm"
-                  />
-                  <p className="text-[11px] text-slate-400">Search engine crawling instructions</p>
-                </div>
-              </div>
-
-              {/* Open Graph */}
-              <div className="space-y-3 border-t border-slate-100 pt-4">
-                <h3 className="text-sm font-bold text-slate-700">Open Graph (Social Sharing)</h3>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-slate-600">OG Image URL</label>
-                  <Input
-                    type="url"
-                    value={seoData.ogImage}
-                    onChange={(e) => setSeoData({ ...seoData, ogImage: e.target.value })}
-                    placeholder="https://example.com/og-image.jpg"
-                    className="h-9 text-sm"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-slate-600">OG Title</label>
-                  <Input
-                    value={seoData.ogTitle}
-                    onChange={(e) => setSeoData({ ...seoData, ogTitle: e.target.value })}
-                    placeholder="Defaults to meta title"
-                    className="h-9 text-sm"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-slate-600">OG Description</label>
-                  <textarea
-                    className="w-full border border-slate-200 rounded-lg p-2.5 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all h-16 resize-none"
-                    value={seoData.ogDescription}
-                    onChange={(e) => setSeoData({ ...seoData, ogDescription: e.target.value })}
-                    placeholder="Defaults to meta description"
-                  />
-                </div>
-              </div>
-
-              {/* Twitter / X */}
-              <div className="space-y-3 border-t border-slate-100 pt-4">
-                <h3 className="text-sm font-bold text-slate-700">Twitter / X Card</h3>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-slate-600">Card Type</label>
-                  <select
-                    className="w-full border border-slate-200 rounded-lg p-2 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all h-9 bg-white"
-                    value={seoData.twitterCard}
-                    onChange={(e) => setSeoData({ ...seoData, twitterCard: e.target.value })}
-                  >
-                    <option value="">Default (summary_large_image)</option>
-                    <option value="summary">Summary</option>
-                    <option value="summary_large_image">Summary with Large Image</option>
-                    <option value="player">Player</option>
-                    <option value="app">App</option>
-                  </select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-slate-600">Twitter Title</label>
-                  <Input
-                    value={seoData.twitterTitle}
-                    onChange={(e) => setSeoData({ ...seoData, twitterTitle: e.target.value })}
-                    placeholder="Defaults to meta title"
-                    className="h-9 text-sm"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-slate-600">Twitter Description</label>
-                  <Input
-                    value={seoData.twitterDescription}
-                    onChange={(e) => setSeoData({ ...seoData, twitterDescription: e.target.value })}
-                    placeholder="Defaults to meta description"
-                    className="h-9 text-sm"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-slate-600">Twitter Image URL</label>
-                  <Input
-                    type="url"
-                    value={seoData.twitterImage}
-                    onChange={(e) => setSeoData({ ...seoData, twitterImage: e.target.value })}
-                    placeholder="https://example.com/twitter-image.jpg"
-                    className="h-9 text-sm"
-                  />
-                </div>
-              </div>
-
-              {/* Canonical */}
-              <div className="space-y-1.5 border-t border-slate-100 pt-4">
-                <label className="text-xs font-medium text-slate-600">Canonical URL</label>
-                <Input
-                  type="url"
-                  value={seoData.canonicalUrl}
-                  onChange={(e) => setSeoData({ ...seoData, canonicalUrl: e.target.value })}
-                  placeholder="https://example.com/page (auto-generated if empty)"
-                  className="h-9 text-sm"
-                />
-                <p className="text-[11px] text-slate-400">Preferred URL for search engines</p>
-              </div>
-
-              {/* Structured data */}
-              <div className="space-y-3 border-t border-slate-100 pt-4">
-                <h3 className="text-sm font-bold text-slate-700">Structured Data (JSON-LD)</h3>
-                <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Auto-generated on every page: <strong>Organization</strong> + <strong>WebSite</strong> (site-wide
-                  in the layout), <strong>WebPage</strong> + <strong>BreadcrumbList</strong> (per page). Use the
-                  field below for any additional schema (FAQ, Product, Event, etc.).
-                </p>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-slate-600">Manual JSON-LD (optional)</label>
-                  <textarea
-                    className="w-full border border-slate-200 rounded-lg p-2.5 font-mono text-xs focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all h-28 resize-none"
-                    value={seoData.manualStructuredData}
-                    onChange={(e) => setSeoData({ ...seoData, manualStructuredData: e.target.value })}
-                    placeholder='{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[...]}'
-                  />
-                  {seoData.manualStructuredData.trim() !== "" && (
-                    <p className={`text-[11px] ${manualJsonLdInvalid ? "text-red-500" : "text-emerald-600"}`}>
-                      {manualJsonLdInvalid
-                        ? "Invalid JSON — must be a valid JSON object or array of objects."
-                        : `Valid JSON-LD — ${manualJsonLd?.length ?? 0} block(s) will be rendered.`}
-                    </p>
-                  )}
-                </div>
-
-                <details className="rounded-lg border border-slate-200 bg-slate-50">
-                  <summary className="cursor-pointer px-3 py-2 text-xs font-medium text-slate-600">
-                    Preview auto-generated JSON-LD for this page
-                  </summary>
-                  <pre className="max-h-64 overflow-auto border-t border-slate-200 p-3 text-[10px] leading-relaxed text-slate-600 whitespace-pre-wrap break-all">
-                    {seoPreviewJsonLd.length > 0
-                      ? JSON.stringify(seoPreviewJsonLd, null, 2)
-                      : "Loading preview…"}
-                  </pre>
-                </details>
-              </div>
+              {renderSeoPanel()}
             </TabsContent>
           </Tabs>
         </div>
@@ -712,7 +718,7 @@ export default function AdminEditor({ params }: { params: Promise<{ id: Id<"page
 
       {/* Right Canvas Dynamic Board Viewport Wrapper */}
       <main className="flex-1 p-4 md:p-6 overflow-hidden w-full h-full bg-slate-100">
-        <div className="max-w-7xl mx-auto h-full flex flex-col">
+        <div className="max-w-5xl mx-auto h-full flex flex-col">
           {/* Header */}
           <div className="mb-4 md:mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-4 rounded-xl shadow-sm shrink-0">
             <div>
@@ -759,12 +765,18 @@ export default function AdminEditor({ params }: { params: Promise<{ id: Id<"page
               </Button>
 
               <Sheet open={isMobileEditorOpen} onOpenChange={setIsMobileEditorOpen}>
-                <SheetContent side="right" className="w-100 overflow-y-auto">
+                <SheetContent side="right" className="w-[94vw] sm:w-[620px] overflow-y-auto">
                   <SheetHeader>
-                    <SheetTitle>Block Editor</SheetTitle>
+                    <SheetTitle>Component Studio</SheetTitle>
                   </SheetHeader>
-                  <TooltipProvider>
-                    <div className="mt-6 space-y-4">
+                  <Tabs defaultValue="blocks" className="mt-6 w-full px-2">
+                    <TabsList className="grid w-full grid-cols-2 mb-4 h-[36px] bg-card">
+                      <TabsTrigger value="blocks" className="text-xs cursor-pointer">Block Editor</TabsTrigger>
+                      <TabsTrigger value="seo" className="text-xs cursor-pointer">SEO</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="blocks">
+                    <TooltipProvider>
+                    <div className="space-y-4">
                       <div className="flex items-center justify-between mb-3">
                         <Tooltip>
                           <TooltipTrigger>
@@ -951,6 +963,11 @@ export default function AdminEditor({ params }: { params: Promise<{ id: Id<"page
                       })()}
                     </div>
                   )}
+                    </TabsContent>
+                    <TabsContent value="seo" className="space-y-5 px-2">
+                      {renderSeoPanel()}
+                    </TabsContent>
+                  </Tabs>
                 </SheetContent>
               </Sheet>
 
@@ -1089,7 +1106,7 @@ export default function AdminEditor({ params }: { params: Promise<{ id: Id<"page
 
       {/* Edit Block Drawer */}
       <Sheet open={isEditDrawerOpen} onOpenChange={setIsEditDrawerOpen}>
-        <SheetContent side="right" className="w-full sm:w-[500px] overflow-y-auto">
+        <SheetContent side="right" className="w-full sm:w-[600px] overflow-y-auto">
           <SheetHeader className="px-8 pt-8 pb-2">
             <SheetTitle className="text-2xl">Edit Block</SheetTitle>
             <p className="text-sm text-slate-500 mt-2">Customize this block&apos;s content and style</p>
@@ -1199,3 +1216,6 @@ export default function AdminEditor({ params }: { params: Promise<{ id: Id<"page
     </div>
   );
 }
+
+
+

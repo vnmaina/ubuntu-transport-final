@@ -1,14 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { BookingForm } from "@/components/booking-form";
 import {
   ArrowLeft,
   ArrowRight,
@@ -23,11 +19,9 @@ import {
   Share2,
   Phone,
   FileText,
-  Send,
   Copy,
   Check,
   MessageCircle,
-  CalendarDays,
   LayoutGrid,
   Star,
   HelpCircle,
@@ -158,45 +152,10 @@ export function ItemView({ collection, item, relatedItems = [], organization }: 
       ? reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length
       : 0;
 
-  // ── Booking / enquiry form ──────────────────────────────────
-  const submitEnquiry = useMutation(api.forms.submitForm);
-  const [enquiry, setEnquiry] = useState({ name: "", phone: "", email: "", date: "", message: "" });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const orgName = organization?.name || "Ubuntu Logistics and Transport";
   const orgPhone = organization?.phone || "+254728798589";
   const orgWhatsapp = (organization?.whatsapp || organization?.phone || "+254728798589").replace(/[^\d]/g, "");
   const orgEmail = organization?.email || "ben@ubuntulogistics.co.ke";
-
-  const handleEnquirySubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!enquiry.name.trim() || !enquiry.message.trim()) {
-      toast.error("Please fill in your name and message");
-      return;
-    }
-    setIsSubmitting(true);
-    try {
-      await submitEnquiry({
-        formId: `item-enquiry-${collection.slug}-${item.slug}`,
-        formData: {
-          name: enquiry.name.trim(),
-          phone: enquiry.phone.trim(),
-          email: enquiry.email.trim(),
-          preferredDate: enquiry.date,
-          message: enquiry.message.trim(),
-          itemTitle: item.title,
-          collectionName: collection.name,
-          pageUrl: typeof window !== "undefined" ? window.location.href : "",
-        },
-      });
-      toast.success("Enquiry sent! We'll get back to you shortly.");
-      setEnquiry({ name: "", phone: "", email: "", date: "", message: "" });
-    } catch {
-      toast.error("Failed to send enquiry. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   // ── Share helpers ───────────────────────────────────────────
   const [copied, setCopied] = useState(false);
@@ -670,71 +629,19 @@ export function ItemView({ collection, item, relatedItems = [], organization }: 
                 <p className="text-sm text-muted-foreground mt-1 mb-5">
                   Interested in {item.title}? Send us your details and we&apos;ll get back to you.
                 </p>
-                <form onSubmit={handleEnquirySubmit} className="space-y-3">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="enq-name" className="text-xs">Full Name *</Label>
-                    <Input
-                      id="enq-name"
-                      value={enquiry.name}
-                      onChange={(e) => setEnquiry((p) => ({ ...p, name: e.target.value }))}
-                      placeholder="Your name"
-                      required
-                      className="rounded-xl"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="enq-phone" className="text-xs">Phone</Label>
-                      <Input
-                        id="enq-phone"
-                        type="tel"
-                        value={enquiry.phone}
-                        onChange={(e) => setEnquiry((p) => ({ ...p, phone: e.target.value }))}
-                        placeholder="+254 ..."
-                        className="rounded-xl"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label htmlFor="enq-email" className="text-xs">Email</Label>
-                      <Input
-                        id="enq-email"
-                        type="email"
-                        value={enquiry.email}
-                        onChange={(e) => setEnquiry((p) => ({ ...p, email: e.target.value }))}
-                        placeholder="you@email.com"
-                        className="rounded-xl"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="enq-date" className="text-xs flex items-center gap-1">
-                      <CalendarDays className="w-3 h-3" /> Preferred Date
-                    </Label>
-                    <Input
-                      id="enq-date"
-                      type="date"
-                      value={enquiry.date}
-                      onChange={(e) => setEnquiry((p) => ({ ...p, date: e.target.value }))}
-                      className="rounded-xl"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="enq-message" className="text-xs">Message *</Label>
-                    <Textarea
-                      id="enq-message"
-                      value={enquiry.message}
-                      onChange={(e) => setEnquiry((p) => ({ ...p, message: e.target.value }))}
-                      placeholder="Tell us about your requirements..."
-                      rows={3}
-                      required
-                      className="rounded-xl resize-none"
-                    />
-                  </div>
-                  <Button type="submit" disabled={isSubmitting} className="w-full rounded-xl gap-2 font-semibold">
-                    <Send className="w-4 h-4" />
-                    {isSubmitting ? "Sending..." : "Send Enquiry"}
-                  </Button>
-                </form>
+                <BookingForm
+                  formId="booking"
+                  source="collection-item"
+                  submitText="Send Booking Request"
+                  successMessage="Booking request sent! We'll get back to you shortly."
+                  defaultDestination={item.title}
+                  context={{
+                    itemTitle: item.title,
+                    itemSlug: item.slug,
+                    collectionName: collection.name,
+                    collectionSlug: collection.slug,
+                  }}
+                />
 
                 {/* Direct contact */}
                 <div className="mt-5 pt-5 border-t border-border/60 space-y-2.5">

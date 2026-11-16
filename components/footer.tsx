@@ -1,9 +1,8 @@
+
 "use client";
 
 import Link from "next/link";
 import Image from "next/image";
-
-// Imported a comprehensive set of social icons from react-icons
 import {
   FaGithub,
   FaXTwitter,
@@ -13,9 +12,10 @@ import {
   FaTiktok,
   FaThreads,
   FaFacebookF,
-  FaDiscord
+  FaDiscord,
 } from "react-icons/fa6";
 import { MdOutlineMail } from "react-icons/md";
+import { ArrowRight, MapPin, Phone, Mail } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
@@ -23,97 +23,150 @@ export function Footer() {
   const pages = useQuery(api.pages.getPublishedPagesForNav);
   const organization = useQuery(api.organization.getOrganization);
 
-  const socialLinks = organization ? {
-    github: organization.github,
-    twitter: organization.twitter,
-    linkedin: organization.linkedin,
-    instagram: organization.instagram,
-  } : {};
+  const servicesCollection = useQuery(
+    api.collections.getCollectionBySlug,
+    { slug: "services" }
+  );
+
+  const destinationsCollection = useQuery(
+    api.collections.getCollectionBySlug,
+    { slug: "destinations" }
+  );
+
+  const serviceItems = useQuery(
+    api.collections.getPublishedItemsByCollection,
+    servicesCollection?._id
+      ? { collectionId: servicesCollection._id }
+      : "skip"
+  );
+
+  const destinationItems = useQuery(
+    api.collections.getPublishedItemsByCollection,
+    destinationsCollection?._id
+      ? { collectionId: destinationsCollection._id }
+      : "skip"
+  );
+
+  const topServices = (serviceItems ?? []).slice(0, 5);
+  const topDestinations = (destinationItems ?? []).slice(0, 5);
+
+  const socialLinks = [
+    { url: organization?.facebook, icon: FaFacebookF, label: "Facebook" },
+    { url: organization?.twitter, icon: FaXTwitter, label: "X" },
+    { url: organization?.linkedin, icon: FaLinkedinIn, label: "LinkedIn" },
+    { url: organization?.instagram, icon: FaInstagram, label: "Instagram" },
+    { url: organization?.github, icon: FaGithub, label: "GitHub" },
+  ].filter((social) => social.url);
+
+  const footerLinkClass =
+    "text-sm text-muted-foreground transition-colors duration-200 hover:text-primary hover:translate-x-0.5 inline-flex";
+
+  const headingClass =
+    "text-sm font-bold tracking-wide text-foreground";
 
   return (
-    <footer className="border-t bg-muted/50">
-      <div className="container mx-auto px-4 py-12 md:px-6 lg:py-16">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-          {/* Brand & Socials */}
-          <div className="space-y-4">
-   {/* Left — Logo */}
-<div className="flex w-fit items-center rounded-full bg-white/80 p-1 backdrop-blur-md">
-  <Link
-    href='/'
-    className="flex items-center gap-3"
-  >
-    <Image
-      src='/ubuntu-logo.webp'
-      alt='Ubuntu Logistics'
-      width={56}
-      height={56}
-      priority
-      className="h-14 w-auto max-w-[180px] object-contain"
-    />
+    <footer className="relative overflow-hidden border-t border-border bg-muted/30">
 
-    <span className="text-xl font-extrabold leading-tight tracking-tight whitespace-nowrap">
-      <span className="text-primary">Ubuntu</span>{" "}
-      <span className="text-secondary">Logistics</span>
-    </span>
-     <span className="mt-0.5 text-xs leading-tight text-muted-foreground">
-     Tours, Safaris & Corporate Transport
-          </span>
-  </Link>
-</div>
-            {/* Social Media Grid Layout */}
-            <div className="grid grid-cols-5 gap-y-4 gap-x-2 max-w-[200px]">
-              {socialLinks.github && (
-                <Link href={socialLinks.github} className="text-muted-foreground hover:text-foreground transition-colors" aria-label="GitHub">
-                  <FaGithub size={20} />
-                </Link>
-              )}
-              {socialLinks.twitter && (
-                <Link href={socialLinks.twitter} className="text-muted-foreground hover:text-foreground transition-colors" aria-label="X (formerly Twitter)">
-                  <FaXTwitter size={20} />
-                </Link>
-              )}
-              {socialLinks.linkedin && (
-                <Link href={socialLinks.linkedin} className="text-muted-foreground hover:text-foreground transition-colors" aria-label="LinkedIn">
-                  <FaLinkedinIn size={20} />
-                </Link>
-              )}
-              {socialLinks.instagram && (
-                <Link href={socialLinks.instagram} className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Instagram">
-                  <FaInstagram size={20} />
-                </Link>
-              )}
-              <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="YouTube">
-                <FaYoutube size={20} />
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="TikTok">
-                <FaTiktok size={18} />
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Threads">
-                <FaThreads size={20} />
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Facebook">
-                <FaFacebookF size={18} />
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Discord">
-                <FaDiscord size={20} />
-              </Link>
+      {/* Main Footer */}
+      <div className="container mx-auto px-5 py-14 md:px-8 md:py-16 lg:py-20">
+
+        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-10">
+
+          {/* Brand Column */}
+          <div className="space-y-6 lg:col-span-4">
+
+            <Link
+              href="/"
+              className="inline-flex items-center gap-3"
+              aria-label="Ubuntu Logistics homepage"
+            >
+              <Image
+                src="/ubuntu-logo.webp"
+                alt="Ubuntu Logistics"
+                width={56}
+                height={56}
+                priority
+                className="h-14 w-auto object-contain"
+              />
+
+              <div className="flex flex-col">
+                <span className="text-xl font-extrabold leading-tight tracking-tight">
+                  <span className="text-primary">Ubuntu</span>{" "}
+                  <span className="text-secondary">Logistics</span>
+                </span>
+
+                <span className="mt-1 text-[11px] font-medium tracking-wide text-muted-foreground">
+                  Tours, Safaris & Corporate Transport
+                </span>
+              </div>
+            </Link>
+
+            <p className="max-w-sm text-sm leading-7 text-muted-foreground">
+              Discover exceptional travel experiences, unforgettable
+              safari adventures and reliable corporate transport
+              solutions with Ubuntu Logistics.
+            </p>
+
+            {/* Contact Details */}
+            <div className="space-y-3">
               {organization?.email && (
-                <Link href={`mailto:${organization.email}`} className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Email">
-                  <MdOutlineMail size={22} />
-                </Link>
+                <a
+                  href={`mailto:${organization.email}`}
+                  className="flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-primary"
+                >
+                  <Mail className="size-4 shrink-0 text-primary" />
+                  <span className="break-all">{organization.email}</span>
+                </a>
+              )}
+
+              {organization?.phone && (
+                <a
+                  href={`tel:${organization.phone}`}
+                  className="flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-primary"
+                >
+                  <Phone className="size-4 shrink-0 text-primary" />
+                  <span>{organization.phone}</span>
+                </a>
+              )}
+
+              {organization?.address && (
+                <div className="flex items-start gap-3 text-sm text-muted-foreground">
+                  <MapPin className="mt-0.5 size-4 shrink-0 text-primary" />
+                  <span>{organization.address}</span>
+                </div>
               )}
             </div>
+
+            {/* Social Links */}
+            {socialLinks.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                {socialLinks.map(({ url, icon: Icon, label }) => (
+                  <a
+                    key={label}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="flex size-9 items-center justify-center rounded-full border border-border bg-background text-muted-foreground transition-all duration-200 hover:border-primary hover:bg-primary hover:text-primary-foreground"
+                  >
+                    <Icon size={15} />
+                  </a>
+                ))}
+              </div>
+            )}
+
           </div>
 
           {/* Quick Links */}
-          <div className="space-y-4">
-            <h4 className="font-semibold">Quick Links</h4>
-            <ul className="space-y-2 text-sm">
-              {pages?.slice(0, 5).map((page) => (
+          <div className="space-y-5 lg:col-span-2">
+            <h4 className={headingClass}>Explore</h4>
+
+            <ul className="space-y-3">
+              {pages?.slice(0, 6).map((page) => (
                 <li key={page._id}>
-                  <Link 
-                    href={`/${page.slug}`} 
-                    className="text-muted-foreground hover:text-foreground"
+                  <Link
+                    href={`/${page.slug}`}
+                    className={footerLinkClass}
                   >
                     {page.title}
                   </Link>
@@ -122,59 +175,158 @@ export function Footer() {
             </ul>
           </div>
 
+          {/* Services */}
+          <div className="space-y-5 lg:col-span-2">
+            <h4 className={headingClass}>Our Services</h4>
+
+            <ul className="space-y-3">
+              {topServices.length > 0 ? (
+                topServices.map((item) => (
+                  <li key={item._id}>
+                    <Link
+                      href={`/collections/services/${item.slug}`}
+                      className={footerLinkClass}
+                    >
+                      {item.title}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <li>
+                  <Link
+                    href="/collections/services"
+                    className={footerLinkClass}
+                  >
+                    All Services
+                  </Link>
+                </li>
+              )}
+            </ul>
+
+            <Link
+              href="/collections/services"
+              className="inline-flex items-center gap-2 pt-1 text-xs font-semibold text-primary transition-colors hover:text-secondary"
+            >
+              View all services
+              <ArrowRight className="size-3.5" />
+            </Link>
+          </div>
+
+          {/* Destinations */}
+          <div className="space-y-5 lg:col-span-2">
+            <h4 className={headingClass}>Destinations</h4>
+
+            <ul className="space-y-3">
+              {topDestinations.length > 0 ? (
+                topDestinations.map((item) => (
+                  <li key={item._id}>
+                    <Link
+                      href={`/collections/destinations/${item.slug}`}
+                      className={footerLinkClass}
+                    >
+                      {item.title}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <li>
+                  <Link
+                    href="/collections/destinations"
+                    className={footerLinkClass}
+                  >
+                    All Destinations
+                  </Link>
+                </li>
+              )}
+            </ul>
+
+            <Link
+              href="/collections/destinations"
+              className="inline-flex items-center gap-2 pt-1 text-xs font-semibold text-primary transition-colors hover:text-secondary"
+            >
+              Explore destinations
+              <ArrowRight className="size-3.5" />
+            </Link>
+          </div>
+
           {/* Resources */}
-          <div className="space-y-4">
-            <h4 className="font-semibold">Resources</h4>
-            <ul className="space-y-2 text-sm">
+          <div className="space-y-5 lg:col-span-2">
+            <h4 className={headingClass}>Resources</h4>
+
+            <ul className="space-y-3">
               <li>
-                <Link href="/blog" className="text-muted-foreground hover:text-foreground">
-                  Blog
+                <Link href="/blogs" className={footerLinkClass}>
+                  Travel Blog
                 </Link>
               </li>
               <li>
-                <Link href="/docs" className="text-muted-foreground hover:text-foreground">
+                <Link href="/docs" className={footerLinkClass}>
                   Documentation
                 </Link>
               </li>
               <li>
-                <Link href="/support" className="text-muted-foreground hover:text-foreground">
+                <Link href="/support" className={footerLinkClass}>
                   Support
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-muted-foreground hover:text-foreground">
-                  Contact
+                <Link href="/contact" className={footerLinkClass}>
+                  Contact Us
                 </Link>
               </li>
             </ul>
+
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-2 pt-1 text-xs font-semibold text-primary transition-colors hover:text-secondary"
+            >
+              Get in touch
+              <ArrowRight className="size-3.5" />
+            </Link>
           </div>
 
-          {/* Legal */}
-          <div className="space-y-4">
-            <h4 className="font-semibold">Legal</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/privacy" className="text-muted-foreground hover:text-foreground">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="text-muted-foreground hover:text-foreground">
-                  Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link href="/cookies" className="text-muted-foreground hover:text-foreground">
-                  Cookie Policy
-                </Link>
-              </li>
-            </ul>
-          </div>
         </div>
 
-        <div className="mt-12 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} {organization?.name || "Your Brand"}. All rights reserved.</p>
+        {/* Bottom Footer */}
+        <div className="mt-14 border-t border-border pt-7 md:mt-16">
+
+          <div className="flex flex-col items-center justify-between gap-5 text-center sm:flex-row sm:text-left">
+
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              © {new Date().getFullYear()}{" "}
+              <span className="font-semibold text-foreground">
+                {organization?.name || "Ubuntu Logistics"}
+              </span>
+              . All rights reserved.
+            </p>
+
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs">
+              <Link
+                href="/privacy-policy"
+                className="text-muted-foreground transition-colors hover:text-primary"
+              >
+                Privacy Policy
+              </Link>
+
+              <Link
+                href="/terms-and-conditions"
+                className="text-muted-foreground transition-colors hover:text-primary"
+              >
+                Terms & Conditions
+              </Link>
+
+              <Link
+                href="/contact"
+                className="text-muted-foreground transition-colors hover:text-primary"
+              >
+                Contact
+              </Link>
+            </div>
+
+          </div>
+
         </div>
+
       </div>
     </footer>
   );
