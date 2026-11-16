@@ -115,12 +115,9 @@ export function BlogCardsBlock({
     <section className="bg-background px-4 py-16 md:px-8 lg:py-24">
       <div className="mx-auto max-w-7xl space-y-12">
         {/* Heading */}
-        <div className="mx-auto max-w-2xl space-y-4 text-center">
-          <Badge variant="secondary" className="rounded-full">
-            <Newspaper className="mr-1.5 h-3.5 w-3.5" />
-            Blog
-          </Badge>
-          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+        <div className="mx-auto max-w-2xl space-y-12 text-center">
+         
+          <h2 className="text-3xl font-extrabold text-primary sm:text-4xl lg:text-5xl ">
             {title}
           </h2>
           {subtitle && (

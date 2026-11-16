@@ -389,6 +389,57 @@ export const BLOCK_CONFIG: BlockType[] = [
     }
   },
   {
+    id: 'GalleryBlock',
+    name: 'Gallery',
+    category: 'Content Sections',
+    description: 'Image & video gallery with grid or carousel layouts and full media metadata',
+    defaultVariant: 'grid',
+    variants: [
+      {
+        id: 'grid',
+        name: 'Grid',
+        description: 'Responsive grid of images and videos',
+        component: './GalleryBlock',
+        props: ['title', 'subtitle', 'text', 'images']
+      },
+      {
+        id: 'carousel',
+        name: 'Carousel',
+        description: 'Swipeable carousel of images and videos',
+        component: './GalleryBlock',
+        props: ['title', 'subtitle', 'text', 'images']
+      }
+    ],
+    props: {
+      variant: {
+        type: 'select',
+        label: 'Layout',
+        required: true,
+        options: ['grid', 'carousel']
+      },
+      title: {
+        type: 'text',
+        label: 'Section Title',
+        placeholder: 'Our Fleet & Destinations'
+      },
+      subtitle: {
+        type: 'text',
+        label: 'Subtitle',
+        placeholder: 'Kenya & beyond'
+      },
+      text: {
+        type: 'textarea',
+        label: 'Description',
+        placeholder: 'A short description shown under the heading...'
+      },
+      images: {
+        type: 'array',
+        label: 'Media Items',
+        placeholder: 'Add images and videos with titles, alt text, credits and links'
+      }
+    }
+  },
+  {
     id: 'CareerBlock',
     name: 'Career Section',
     category: 'Blog & Career',
@@ -1310,14 +1361,14 @@ export const BLOCK_CONFIG: BlockType[] = [
         name: 'Image Left',
         description: 'Image on left, text on right',
         component: './ImageText',
-        props: ['title', 'content', 'imageUrl']
+        props: ['title', 'subtitle', 'content', 'imageUrl', 'badge', 'highlights', 'ctaText', 'ctaLink', 'secondaryCtaText', 'secondaryCtaLink', 'statValue', 'statLabel']
       },
       {
         id: 'right',
         name: 'Image Right',
         description: 'Text on left, image on right',
         component: './ImageText',
-        props: ['title', 'content', 'imageUrl']
+        props: ['title', 'subtitle', 'content', 'imageUrl', 'badge', 'highlights', 'ctaText', 'ctaLink', 'secondaryCtaText', 'secondaryCtaLink', 'statValue', 'statLabel']
       }
     ],
     props: {
@@ -1341,6 +1392,51 @@ export const BLOCK_CONFIG: BlockType[] = [
         type: 'image',
         label: 'Image URL',
         placeholder: 'https://images.unsplash.com/...'
+      },
+      badge: {
+        type: 'text',
+        label: 'Floating Badge',
+        placeholder: 'e.g. 24/7 Airport Transfers'
+      },
+      subtitle: {
+        type: 'text',
+        label: 'Eyebrow Label',
+        placeholder: 'e.g. Safari & Tour Transport'
+      },
+      ctaText: {
+        type: 'text',
+        label: 'Primary Button Text',
+        placeholder: 'Book Your Safari'
+      },
+      ctaLink: {
+        type: 'text',
+        label: 'Primary Button Link',
+        placeholder: '/collections/services'
+      },
+      secondaryCtaText: {
+        type: 'text',
+        label: 'Secondary Button Text',
+        placeholder: 'Explore Destinations'
+      },
+      secondaryCtaLink: {
+        type: 'text',
+        label: 'Secondary Button Link',
+        placeholder: '/collections/destinations'
+      },
+      highlights: {
+        type: 'array',
+        label: 'Highlights (one per line)',
+        placeholder: 'e.g. Pop-up safari roofs, Professional driver-guides'
+      },
+      statValue: {
+        type: 'text',
+        label: 'Stat Value',
+        placeholder: 'e.g. 50+'
+      },
+      statLabel: {
+        type: 'text',
+        label: 'Stat Label',
+        placeholder: 'e.g. Destinations Covered'
       }
     }
   },

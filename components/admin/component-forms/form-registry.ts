@@ -4,9 +4,12 @@
 
 import { ImageCarouselHeroForm } from './ImageCarouselHeroForm';
 import { CardBlockForm } from './CardBlockForm';
+import { GalleryBlockForm } from './GalleryBlockForm';
 
 export interface ComponentFormProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- block props are dynamic per block type
   props: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- block props are dynamic per block type
   onChange: (key: string, value: any) => void;
   mode?: 'form' | 'edit' | 'media' | 'block-editor';
 }
@@ -161,6 +164,11 @@ const COMPONENT_FORM_REGISTRY: Record<string, ComponentFormRegistration> = {
     componentPath: './CardBlock',
     formComponent: CardBlockForm,
     tabs: { form: false, edit: true, media: false, blockEditor: true }
+  },
+  './GalleryBlock': {
+    componentPath: './GalleryBlock',
+    formComponent: GalleryBlockForm,
+    tabs: { form: true, edit: true, media: false, blockEditor: true }
   },
 };
 

@@ -22,6 +22,7 @@ import { TextBlock } from "./blocks/TextBlock";
 import { ImageText } from "./blocks/ImageText";
 import { Pricing } from "./blocks/Pricing";
 import { Testimonials } from "./blocks/Testimonials";
+import { GalleryBlock } from "./blocks/GalleryBlock";
 
 // Dynamic block component mapping based on block-config
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- block props are dynamic per block type
@@ -48,6 +49,7 @@ const BLOCK_COMPONENTS: Record<string, React.ComponentType<any>> = {
   ImageText,
   Pricing,
   Testimonials,
+  GalleryBlock,
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- block props are dynamic per block type

@@ -829,7 +829,7 @@ export function FormBlock({
             {headerBadge}
           </Badge>
         )}
-        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-primary">
           {headerTitle}
         </h2>
         {headerSubtitle && (
