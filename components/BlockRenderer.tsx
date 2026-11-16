@@ -24,7 +24,8 @@ import { Pricing } from "./blocks/Pricing";
 import { Testimonials } from "./blocks/Testimonials";
 
 // Dynamic block component mapping based on block-config
-const BLOCK_COMPONENTS: Record<string, React.ComponentType<Record<string, unknown>>> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- block props are dynamic per block type
+const BLOCK_COMPONENTS: Record<string, React.ComponentType<any>> = {
   HeroBlock,
   FeaturesBlock,
   BlogBlock,
@@ -49,7 +50,8 @@ const BLOCK_COMPONENTS: Record<string, React.ComponentType<Record<string, unknow
   Testimonials,
 };
 
-export function BlockRenderer({ blocks }: { blocks: { id: string; type: string; props: Record<string, unknown> }[] }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- block props are dynamic per block type
+export function BlockRenderer({ blocks }: { blocks: any[] }) {
   if (!blocks || blocks.length === 0) {
     return (
       <div className="py-20 text-center text-gray-400 border border-dashed border-gray-200 m-4 rounded">
