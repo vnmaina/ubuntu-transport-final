@@ -1,15 +1,15 @@
 "use client";
 
-import { Book, Menu, Sunset, Trees, Zap, ChevronDown, Package } from "lucide-react";
+import { Menu, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "@/convex/_generated/api";
-import { useTransition, useMemo, memo, useState, useEffect } from "react";
+import { useTransition, memo, useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
-import { getNavbarPages, getOrganizationSettings } from "@/app/actions/navbar";
+import { getOrganizationSettings } from "@/app/actions/navbar";
 import { TopBar } from "@/components/TopBar";
 
 import {
@@ -21,11 +21,9 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import {
   Sheet,
@@ -44,7 +42,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useStableQuery } from "@/hooks/useStableQuery";
 
 interface MenuItem {
   title: string;
@@ -61,6 +58,7 @@ interface Navbar1Props {
     src: string;
     alt: string;
     title: string;
+    subtitle?: string;
     className?: string;
   };
   menu?: MenuItem[];
@@ -72,6 +70,46 @@ interface Navbar1Props {
 
 // Roles considered as staff/admin
 const ADMIN_ROLES = ["admin", "super_admin", "staff"];
+
+// Default contact details for Ubuntu Logistics & Transport
+const DEFAULT_CONTACT = {
+  email: "ben@ubuntulogistics.co.ke",
+  phone: "+254 728 798589",
+  address: "North Airport Road, Embakasi, Nairobi, Kenya",
+};
+
+const DEFAULT_SOCIALS = {
+  facebook: "https://facebook.com/ubuntulogisticske",
+  twitter: "https://x.com/ubuntulogistics",
+  instagram: "https://instagram.com/ubuntulogisticske",
+  linkedin: "https://linkedin.com/company/ubuntu-logistics-transport",
+};
+
+const DEFAULT_MENU: MenuItem[] = [
+  { title: "Home", url: "/" },
+  { title: "Services", url: "/services" },
+  { title: "Fleet", url: "/fleet" },
+  { title: "Destinations", url: "/destinations" },
+];
+
+interface OrganizationSettings {
+  email?: string;
+  emailEnabled?: boolean;
+  phone?: string;
+  phoneEnabled?: boolean;
+  address?: string;
+  addressEnabled?: boolean;
+  facebook?: string;
+  facebookEnabled?: boolean;
+  twitter?: string;
+  twitterEnabled?: boolean;
+  instagram?: string;
+  instagramEnabled?: boolean;
+  linkedin?: string;
+  linkedinEnabled?: boolean;
+  youtube?: string;
+  youtubeEnabled?: boolean;
+}
 
 // Account menu for authenticated users
 function AccountMenu() {
@@ -112,11 +150,11 @@ function AccountMenu() {
       <DropdownMenuTrigger>
         <div
           role="button"
-          className="bg-primary dark:bg-card text-primary-foreground dark:text-white/80 flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium hover:bg-primary/80 dark:hover:bg-primary/30 cursor-pointer"
+          className="bg-secondary/10 dark:bg-card text-primary dark:text-white/80 flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium hover:bg-primary/80 dark:hover:bg-primary/30 cursor-pointer"
         >
           <Avatar className="size-6">
             <AvatarImage src={user?.image ?? ""} alt={user?.name ?? "User"} />
-            <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+            <AvatarFallback className="text-xs text-secondary dark:text-white/80 font-semibold">{initials}</AvatarFallback>
           </Avatar>
           <span className="hidden md:block">{user?.name ?? "Account"}</span>
           <ChevronDown className="size-3" />
@@ -160,7 +198,7 @@ function AccountMenu() {
         {/* Common links */}
         <DropdownMenuGroup>
           <DropdownMenuItem
-            onClick={() => router.push("/blog")}
+            onClick={() => router.push("/blogs")}
             className="cursor-pointer border-border hover:text-primary hover:bg-primary/20 focus:text-primary focus:bg-primary/10"
           >
             Blog
@@ -271,7 +309,7 @@ function MobileAccountMenu() {
 
       <Button
         variant="outline"
-        onClick={() => router.push("/blog")}
+        onClick={() => router.push("/blogs")}
         className="w-full justify-start"
       >
         Blog
@@ -319,36 +357,20 @@ const Navbar1Component = ({
   logo = {
     url: "/",
     src: "/ubuntu-logo.webp",
-    alt: "logo",
-    title: "",
+    alt: "Ubuntu Logistics",
+    title: "Ubuntu Logistics",
+    subtitle: "Tours, Safaris & Corporate Transport",
   },
-  menu = [],
+  menu = DEFAULT_MENU,
   auth = {
     login: { title: "Login", url: "/login" },
     signup: { title: "Sign up", url: "/signup" },
   },
   className,
 }: Navbar1Props) => {
-  const [pages, setPages] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [orgSettings, setOrgSettings] = useState<any>(null);
+  const [orgSettings, setOrgSettings] = useState<OrganizationSettings | null>(null);
   const pathname = usePathname();
   const user = useQuery(api.users.viewer);
-
-  // Fetch pages from server action on mount
-  useEffect(() => {
-    async function loadPages() {
-      try {
-        const data = await getNavbarPages();
-        setPages(data);
-      } catch (error) {
-        console.error("Failed to load navbar pages:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    loadPages();
-  }, []);
 
   // Fetch organization settings on mount
   useEffect(() => {
@@ -363,31 +385,19 @@ const Navbar1Component = ({
     loadOrgSettings();
   }, []);
 
-  // Use organization settings for contact info
-  const email = orgSettings?.emailEnabled ? orgSettings?.email || "support@example.com" : "support@example.com";
-  const phone = orgSettings?.phoneEnabled ? orgSettings?.phone || "+1 (555) 123-4567" : "+1 (555) 123-4567";
-  const address = orgSettings?.addressEnabled ? orgSettings?.address || "123 Main St, City, State 12345" : "123 Main St, City, State 12345";
-  const socials = {
-    facebook: orgSettings?.facebookEnabled ? orgSettings?.facebook : undefined,
-    twitter: orgSettings?.twitterEnabled ? orgSettings?.twitter : undefined,
-    instagram: orgSettings?.instagramEnabled ? orgSettings?.instagram : undefined,
-    linkedin: orgSettings?.linkedinEnabled ? orgSettings?.linkedin : undefined,
-    youtube: orgSettings?.youtubeEnabled ? orgSettings?.youtube : undefined,
-  };
-
-  // Convert pages to menu format (simplified - no icons for main links)
-  const dynamicMenu = useMemo(() => {
-    return pages?.map((page) => {
-      const menuItem: MenuItem = {
-        title: page.title,
-        url: `/${page.slug}`,
-      };
-
-      // Only add dropdown items if needed (collections or similar)
-      // For now, keeping it simple with flat structure
-      return menuItem;
-    }) || [];
-  }, [pages]);
+  // Use organization settings for contact info, falling back to Ubuntu Logistics defaults
+  const email = orgSettings?.emailEnabled && orgSettings.email ? orgSettings.email : DEFAULT_CONTACT.email;
+  const phone = orgSettings?.phoneEnabled && orgSettings.phone ? orgSettings.phone : DEFAULT_CONTACT.phone;
+  const address = orgSettings?.addressEnabled && orgSettings.address ? orgSettings.address : DEFAULT_CONTACT.address;
+  const socials = orgSettings
+    ? {
+        facebook: orgSettings.facebookEnabled ? orgSettings.facebook : undefined,
+        twitter: orgSettings.twitterEnabled ? orgSettings.twitter : undefined,
+        instagram: orgSettings.instagramEnabled ? orgSettings.instagram : undefined,
+        linkedin: orgSettings.linkedinEnabled ? orgSettings.linkedin : undefined,
+        youtube: orgSettings.youtubeEnabled ? orgSettings.youtube : undefined,
+      }
+    : DEFAULT_SOCIALS;
 
   // Check if a menu item is active
   const isActive = (url: string) => {
@@ -396,75 +406,6 @@ const Navbar1Component = ({
     return false;
   };
 
-  // Render functions that need access to pathname
-  const renderMenuItem = useMemo(() => (item: MenuItem) => {
-    return (
-      <NavigationMenuItem key={item.title}>
-        <NavigationMenuLink
-          href={item.url}
-          className={cn(
-            "text-sm font-medium hover:text-secondary cursor-pointer transition-colors",
-            isActive(item.url)
-              ? "text-primary font-semibold"
-              : "text-foreground hover:text-primary"
-          )}
-        >
-          {item.title}
-        </NavigationMenuLink>
-      </NavigationMenuItem>
-    );
-  }, [pathname]);
-
-  const renderMobileMenuItem = useMemo(() => (item: MenuItem) => {
-    if (item.items) {
-      return (
-        <AccordionItem
-          key={item.title}
-          value={item.title}
-          className="border-b-0"
-        >
-          <AccordionTrigger className="text-md py-0 font-semibold hover:no-underline">
-            {item.title}
-          </AccordionTrigger>
-          <AccordionContent className="mt-2">
-            {item.items.map((subItem) => (
-              <Link
-                key={subItem.title}
-                href={subItem.url}
-                className={cn(
-                  "flex min-w-80 flex-row gap-4 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none hover:bg-muted hover:text-accent-foreground",
-                  isActive(subItem.url) ? "bg-primary/10 text-primary font-semibold" : ""
-                )}
-              >
-                <div className="text-foreground">{subItem.icon}</div>
-                <div>
-                  <div className="text-sm font-semibold">{subItem.title}</div>
-                  {subItem.description && (
-                    <p className="text-sm leading-snug text-muted-foreground">
-                      {subItem.description}
-                    </p>
-                  )}
-                </div>
-              </Link>
-            ))}
-          </AccordionContent>
-        </AccordionItem>
-      );
-    }
-
-    return (
-      <Link
-        key={item.title}
-        href={item.url}
-        className={cn(
-          "text-md font-semibold transition-colors",
-          isActive(item.url) ? "text-primary" : "text-foreground"
-        )}
-      >
-        {item.title}
-      </Link>
-    );
-  }, [pathname]);
   return (
     <>
 
@@ -477,30 +418,45 @@ const Navbar1Component = ({
           {/* Desktop Menu */}
           <nav className="hidden lg:flex lg:items-center lg:justify-between lg:gap-6 w-full">
             {/* Left — Logo */}
-            <div className="flex items-center justify-start p-1 rounded-full bg-white/80 w-fit">
-              <Link
-                href={logo.url}
-                className="flex items-center gap-2"
-              >
-                <img
-                  src={logo.src}
-                  className="max-h-16 w-auto object-contain "
-                  alt={logo.alt}
-                />
+           <div className="flex w-fit items-center rounded-full bg-white/80 p-1 backdrop-blur-md">
+  <Link
+    href={logo.url}
+    className="flex items-center gap-3"
+  >
+    <img
+      src={logo.src}
+      className="h-14 w-auto max-w-45 object-fit"
+      alt={logo.alt}
+    />
 
-                {logo.title && (
-                  <span className="text-lg font-semibold tracking-tight">
-                    {logo.title}
-                  </span>
-                )}
-              </Link>
-            </div>
+    {(logo.title || logo.subtitle) && (
+      <div className="flex flex-col justify-center">
+      {logo.title && (
+  <span className="text-xl font-extrabold leading-tight tracking-tight">
+    <span className="text-primary">
+      {logo.title.split(" ")[0]}
+    </span>{" "}
+    <span className="text-secondary">
+      {logo.title.split(" ").slice(1).join(" ")}
+    </span>
+  </span>
+)}
+
+        {logo.subtitle && (
+          <span className="mt-0.5 text-xs leading-tight text-muted-foreground">
+            {logo.subtitle}
+          </span>
+        )}
+      </div>
+    )}
+  </Link>
+</div>
 
             {/* Center — Navigation */}
             <div className="flex items-center justify-center flex-1">
               <NavigationMenu className="">
                 <NavigationMenuList className="gap-1">
-                  {dynamicMenu.map((item) => (
+                  {menu.map((item) => (
                     <NavigationMenuItem key={item.title}>
                       <NavigationMenuLink
                         href={item.url}
@@ -524,17 +480,27 @@ const Navbar1Component = ({
               {/* Show default auth buttons while loading or when unauthenticated */}
               {user === undefined || user === null ? (
                 <>
-                  <Link href={auth.login.url} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+                  <Link href={auth.login.url} className={cn(buttonVariants({ variant: "outline", className: "px-4 py-1 text-sm font-medium"}), "mt-0")}>
                     {auth.login.title}
                   </Link>
 
-                  <Link href={auth.signup.url} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-                    {auth.signup.title}
-                  </Link>
+                
                 </>
               ) : (
                 <AccountMenu />
               )}
+
+              {/* Contact: Secondary button */}
+
+<Link
+  href="/contact"
+  className={cn(
+    "cursor-pointer ",
+    buttonVariants({ variant: "default", className: "px-4 py-1 text-sm font-medium" }),
+  )}
+>
+  Book Now
+</Link>      
             </div>
           </nav>
 
@@ -570,7 +536,7 @@ const Navbar1Component = ({
                   </SheetHeader>
                   <div className="flex flex-col gap-6 p-4 rounded-xl">
                     <Accordion className="flex w-full flex-col gap-4 rounded-none p-4">
-                      {dynamicMenu.map((item) => {
+                      {menu.map((item) => {
                         if (item.items) {
                           return (
                             <AccordionItem

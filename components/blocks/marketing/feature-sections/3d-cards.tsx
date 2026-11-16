@@ -1,94 +1,105 @@
+
 "use client";
 
-import { useRef, useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import { useRef, useState } from "react";
+import type { MouseEvent } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import {
-  Fingerprint,
-  Gauge,
+  Accessibility,
+  ArrowUpRight,
+  Bus,
+  CalendarCheck,
+  Car,
   Globe,
-  Laptop,
-  Layers,
-  Lock,
-  RefreshCcw,
-  Shield,
-} from 'lucide-react';
+  Plane,
+  ShieldCheck,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
 
 interface Feature {
-  icon: typeof Fingerprint;
+  icon: LucideIcon;
   title: string;
   description: string;
-  gradient: string;
 }
 
 const features: Feature[] = [
   {
-    icon: Fingerprint,
-    title: 'Biometric Authentication',
-    description: 'Secure access with advanced biometric verification systems.',
-    gradient: 'from-blue-500/20 to-purple-500/20',
+    icon: Car,
+    title: "4x4 Safari Land Cruisers",
+    description:
+      "Custom pop-up roofs and game-viewing decks for unforgettable Kenya safaris.",
   },
   {
-    icon: Shield,
-    title: 'Advanced Security',
-    description: 'Enterprise-grade security with end-to-end encryption.',
-    gradient: 'from-green-500/20 to-emerald-500/20',
+    icon: Bus,
+    title: "Corporate Staff Shuttles",
+    description:
+      "Punctual, comfortable employee transport for corporates and institutions across Nairobi.",
+  },
+  {
+    icon: Plane,
+    title: "24/7 Airport Transfers",
+    description:
+      "Round-the-clock JKIA and Wilson Airport pickups with flight tracking and meet-and-greet.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "NTSA-Certified Safety",
+    description:
+      "Regular inspections, speed governors, and vetted professional drivers on every trip.",
+  },
+  {
+    icon: Users,
+    title: "Event & Conference Logistics",
+    description:
+      "Turnkey fleet coordination for conferences, retreats, and team-building excursions.",
+  },
+  {
+    icon: CalendarCheck,
+    title: "Long-Term Fleet Leasing",
+    description:
+      "Flexible vehicle leasing and fleet outsourcing that reduces your transport overheads.",
+  },
+  {
+    icon: Accessibility,
+    title: "Accessible Transport",
+    description:
+      "Wheelchair-friendly vans with hydraulic lifts for dignified, safe, and comfortable travel.",
   },
   {
     icon: Globe,
-    title: 'Global CDN',
-    description: 'Lightning-fast content delivery across all continents.',
-    gradient: 'from-orange-500/20 to-red-500/20',
-  },
-  {
-    icon: Layers,
-    title: 'Microservices',
-    description: 'Scalable architecture with independent service components.',
-    gradient: 'from-pink-500/20 to-rose-500/20',
-  },
-  {
-    icon: RefreshCcw,
-    title: 'Auto Scaling',
-    description: 'Dynamic resource allocation based on demand.',
-    gradient: 'from-violet-500/20 to-purple-500/20',
-  },
-  {
-    icon: Gauge,
-    title: 'Performance',
-    description: 'Optimized for speed with sub-millisecond response times.',
-    gradient: 'from-cyan-500/20 to-blue-500/20',
-  },
-  {
-    icon: Lock,
-    title: 'Data Privacy',
-    description: 'GDPR compliant with advanced privacy controls.',
-    gradient: 'from-amber-500/20 to-orange-500/20',
-  },
-  {
-    icon: Laptop,
-    title: 'Cross Platform',
-    description: 'Seamless experience across all devices and platforms.',
-    gradient: 'from-indigo-500/20 to-blue-500/20',
+    title: "Cross-Border Tours",
+    description:
+      "Inter-county and cross-border group travel across Kenya and East Africa, door to door.",
   },
 ];
 
-function Feature3DCard({ feature }: { feature: Feature }) {
+function Feature3DCard({
+  feature,
+  index,
+}: {
+  feature: Feature;
+  index: number;
+}) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
+  const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
+    if (
+      !cardRef.current ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
 
-    const card = cardRef.current;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const rect = cardRef.current.getBoundingClientRect();
 
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
 
-    const rotateX = (y - centerY) / 10;
-    const rotateY = (centerX - x) / 10;
+    const rotateX = ((y - rect.height / 2) / rect.height) * -8;
+    const rotateY = ((x - rect.width / 2) / rect.width) * 8;
 
     setRotation({ x: rotateX, y: rotateY });
   };
@@ -97,26 +108,70 @@ function Feature3DCard({ feature }: { feature: Feature }) {
     setRotation({ x: 0, y: 0 });
   };
 
+  const Icon = feature.icon;
+
   return (
     <Card
       ref={cardRef}
-      className={cn(
-        'relative overflow-hidden p-0 transition-all duration-200 ease-out',
-        'hover:-translate-y-1 hover:shadow-lg',
-        'bg-gradient-to-br',
-        feature.gradient
-      )}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       style={{
         transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
       }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      className={cn(
+        "group relative isolate h-full overflow-hidden rounded-2xl border border-primary-foreground/10 bg-primary-foreground/[0.06] p-0 text-primary-foreground shadow-lg shadow-black/5",
+        "transition-[transform,box-shadow,border-color,background-color] duration-300 ease-out",
+        "hover:border-secondary/50 hover:bg-primary-foreground/[0.10] hover:shadow-xl hover:shadow-black/10",
+        "motion-reduce:transform-none motion-reduce:transition-none"
+      )}
     >
-      <CardContent className="space-y-4 p-6">
-        <feature.icon className="text-primary h-12 w-12" />
-        <div className="space-y-2">
-          <h3 className="font-bold">{feature.title}</h3>
-          <p className="text-muted-foreground text-sm">{feature.description}</p>
+      {/* Card decorative pattern */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-10 -top-10 -z-10 grid grid-cols-3 gap-2 opacity-[0.08] transition-opacity duration-300 group-hover:opacity-20"
+      >
+        {Array.from({ length: 9 }).map((_, i) => (
+          <div
+            key={i}
+            className="size-10 rounded-md border border-primary-foreground"
+          />
+        ))}
+      </div>
+
+      {/* Accent glow */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-16 -right-16 size-40 rounded-full bg-secondary/10 blur-3xl transition-colors duration-300 group-hover:bg-secondary/20"
+      />
+
+      <CardContent className="relative flex h-full flex-col p-6 lg:p-7">
+        {/* Icon and number */}
+        <div className="mb-8 flex items-center justify-between">
+          <div className="flex size-14 items-center justify-center rounded-2xl border border-secondary/30 bg-secondary/10 text-secondary shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:bg-secondary group-hover:text-secondary-foreground">
+            <Icon className="size-7" strokeWidth={1.7} />
+          </div>
+
+          <span className="text-xs font-bold tabular-nums tracking-widest text-primary-foreground/30">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+        </div>
+
+        {/* Content */}
+        <div className="flex flex-1 flex-col space-y-3">
+          <h3 className="text-lg font-bold leading-snug tracking-tight text-primary-foreground transition-colors group-hover:text-secondary">
+            {feature.title}
+          </h3>
+
+          <p className="text-sm leading-7 text-primary-foreground/65">
+            {feature.description}
+          </p>
+        </div>
+
+        {/* Bottom accent */}
+        <div className="mt-7 flex items-center justify-between">
+          <div className="h-1 w-10 rounded-full bg-secondary/70 transition-all duration-300 group-hover:w-16" />
+
+          <ArrowUpRight className="size-4 text-primary-foreground/30 transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-secondary" />
         </div>
       </CardContent>
     </Card>
@@ -125,21 +180,73 @@ function Feature3DCard({ feature }: { feature: Feature }) {
 
 export default function FeatureSection3D() {
   return (
-    <section className="container mx-auto space-y-8 px-4 py-24 md:px-6 2xl:max-w-[1400px]">
-      <div className="space-y-4 text-center">
-        <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-          Next-generation features
-        </h2>
-        <p className="text-muted-foreground mx-auto max-w-[700px] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-          Experience the future of web development with our cutting-edge
-          features.
-        </p>
+    <section className="relative isolate overflow-hidden bg-primary px-4 py-16 text-primary-foreground md:px-8 lg:py-24">
+      {/* Background box patterns */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+      >
+        {/* Top-right pattern */}
+        <div className="absolute -right-16 -top-16 grid grid-cols-6 gap-3 opacity-[0.10]">
+          {Array.from({ length: 36 }).map((_, i) => (
+            <div
+              key={i}
+              className="size-12 rounded-md border border-primary-foreground/50"
+            />
+          ))}
+        </div>
+
+        {/* Bottom-left pattern */}
+        <div className="absolute -bottom-20 -left-16 grid grid-cols-6 gap-3 opacity-[0.08]">
+          {Array.from({ length: 36 }).map((_, i) => (
+            <div
+              key={i}
+              className="size-12 rounded-md border border-primary-foreground/50"
+            />
+          ))}
+        </div>
+
+        {/* Ambient accent glows */}
+        <div className="absolute -right-40 top-1/3 size-96 rounded-full bg-secondary/10 blur-3xl" />
+        <div className="absolute -left-40 bottom-0 size-80 rounded-full bg-secondary/[0.07] blur-3xl" />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {features.map((feature) => (
-          <Feature3DCard key={feature.title} feature={feature} />
-        ))}
+      <div className="relative mx-auto max-w-7xl space-y-12 lg:space-y-14">
+        {/* Section Header */}
+        <div className="mx-auto max-w-3xl space-y-5 text-center">
+          <div className="flex items-center justify-center gap-3">
+            <span className="h-1 w-8 rounded-full bg-secondary" />
+
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-secondary">
+              Why Choose Us
+            </span>
+
+            <span className="h-1 w-8 rounded-full bg-secondary" />
+          </div>
+
+          <h2 className="text-3xl font-extrabold leading-tight tracking-tight text-primary-foreground sm:text-4xl lg:text-5xl">
+            Why Choose Ubuntu Logistics?
+          </h2>
+
+          <p className="mx-auto max-w-2xl text-base leading-8 text-primary-foreground/70 sm:text-lg">
+            From corporate staff shuttles to once-in-a-lifetime safaris,
+            experience safe, reliable, and punctual transport across Kenya
+            and East Africa.
+          </p>
+
+          <div className="mx-auto h-1 w-16 rounded-full bg-secondary" />
+        </div>
+
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+          {features.map((feature, index) => (
+            <Feature3DCard
+              key={feature.title}
+              feature={feature}
+              index={index}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

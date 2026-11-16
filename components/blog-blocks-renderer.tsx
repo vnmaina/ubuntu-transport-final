@@ -1,13 +1,14 @@
 "use client";
 
-import { Quote, Code, Sparkles, FileText, Image as ImageIcon, Video, Play } from "lucide-react";
+import Image from "next/image";
+import { Quote, Code, Sparkles, Video } from "lucide-react";
 
 interface BlogContentBlock {
   id: string;
   type: "text" | "image" | "video" | "quote" | "code" | "callout" | "divider";
   content?: string;
   caption?: string;
-  data?: any;
+  data?: Record<string, unknown>;
   order: number;
 }
 
@@ -54,36 +55,43 @@ function BlogBlock({ block }: { block: BlogContentBlock }) {
 
 function TextBlock({ block }: { block: BlogContentBlock }) {
   return (
-    <div className="prose prose-slate max-w-none prose-headings:font-bold prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-strong:text-foreground">
-      <div className="whitespace-pre-wrap text-foreground leading-relaxed">{block.content}</div>
+    <div className="blog-article-prose">
+      <div className="whitespace-pre-wrap leading-relaxed text-foreground/90 text-lg">{block.content}</div>
       {block.caption && (
-        <p className="text-sm text-muted-foreground mt-2 italic">{block.caption}</p>
+        <p className="text-sm text-muted-foreground mt-2 italic border-l-2 border-secondary/40 pl-3">{block.caption}</p>
       )}
     </div>
   );
 }
 
 function ImageBlock({ block }: { block: BlogContentBlock }) {
+  if (!block.content) return null;
+
   return (
-    <div className="rounded-2xl overflow-hidden border border-border/80">
-      <img
-        src={block.content}
-        alt={block.caption || "Blog image"}
-        className="w-full h-auto object-cover"
-      />
+    <figure className="rounded-2xl overflow-hidden border border-border/80 shadow-md my-8 bg-muted/20">
+      <div className="relative aspect-[16/10] w-full overflow-hidden">
+        <Image
+          src={block.content}
+          alt={block.caption || "Blog article image"}
+          fill
+          sizes="(max-width: 1024px) 100vw, 850px"
+          className="object-cover"
+        />
+      </div>
       {block.caption && (
-        <div className="p-4 bg-muted/30">
-          <p className="text-sm text-muted-foreground text-center italic">{block.caption}</p>
-        </div>
+        <figcaption className="p-3 bg-muted/30 border-t border-border/60">
+          <p className="text-xs sm:text-sm text-muted-foreground text-center italic">{block.caption}</p>
+        </figcaption>
       )}
-    </div>
+    </figure>
   );
 }
 
 function VideoBlock({ block }: { block: BlogContentBlock }) {
-  const videoId = extractVideoId(block.content || "", block.data?.videoType || "youtube");
-  
-  if (block.data?.videoType === "youtube" && videoId) {
+  const videoType = (block.data?.videoType as string) || "youtube";
+  const videoId = extractVideoId(block.content || "", videoType);
+
+  if (videoType === "youtube" && videoId) {
     return (
       <div className="aspect-video rounded-2xl overflow-hidden border border-border/80">
         <iframe
@@ -143,13 +151,13 @@ function extractVideoId(url: string, type: string): string | null {
 
 function QuoteBlock({ block }: { block: BlogContentBlock }) {
   return (
-    <div className="border-l-4 border-primary pl-6 py-4 bg-primary/5 rounded-r-xl">
-      <Quote className="w-8 h-8 text-primary mb-3" />
-      <blockquote className="text-xl font-medium text-foreground italic leading-relaxed">
-        {block.content}
+    <div className="border-l-4 border-secondary pl-6 pr-4 py-5 bg-gradient-to-r from-primary/5 via-secondary/5 to-transparent rounded-r-2xl shadow-sm my-6">
+      <Quote className="w-8 h-8 text-secondary mb-3 opacity-90" />
+      <blockquote className="text-xl sm:text-2xl font-medium text-foreground italic leading-relaxed">
+        &ldquo;{block.content}&rdquo;
       </blockquote>
       {block.caption && (
-        <cite className="text-sm text-muted-foreground mt-3 block not-italic">— {block.caption}</cite>
+        <cite className="text-sm font-semibold text-muted-foreground mt-3 block not-italic">— {block.caption}</cite>
       )}
     </div>
   );
@@ -180,15 +188,15 @@ function CodeBlock({ block }: { block: BlogContentBlock }) {
 
 function CalloutBlock({ block }: { block: BlogContentBlock }) {
   return (
-    <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-6 border border-primary/20">
-      <div className="flex gap-4">
-        <div className="w-10 h-10 rounded-lg bg-primary/20 text-primary flex items-center justify-center shrink-0">
+    <div className="bg-gradient-to-r from-primary/10 via-secondary/5 to-transparent rounded-2xl p-6 border border-primary/20 shadow-sm my-6">
+      <div className="flex gap-4 items-start">
+        <div className="w-10 h-10 rounded-xl bg-secondary/15 text-secondary flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
           <Sparkles className="w-5 h-5" />
         </div>
         <div className="flex-1">
-          <p className="text-foreground font-medium">{block.content}</p>
+          <p className="text-foreground font-semibold text-lg leading-snug">{block.content}</p>
           {block.caption && (
-            <p className="text-sm text-muted-foreground mt-2">{block.caption}</p>
+            <p className="text-sm text-muted-foreground mt-2 leading-relaxed">{block.caption}</p>
           )}
         </div>
       </div>

@@ -23,6 +23,7 @@ import type * as quotations from "../quotations.js";
 import type * as receipts from "../receipts.js";
 import type * as roles from "../roles.js";
 import type * as routes from "../routes.js";
+import type * as seedBlogPosts from "../seedBlogPosts.js";
 import type * as seedUbuntuData from "../seedUbuntuData.js";
 import type * as services from "../services.js";
 import type * as storage from "../storage.js";
@@ -50,6 +51,7 @@ declare const fullApi: ApiFromModules<{
   receipts: typeof receipts;
   roles: typeof roles;
   routes: typeof routes;
+  seedBlogPosts: typeof seedBlogPosts;
   seedUbuntuData: typeof seedUbuntuData;
   services: typeof services;
   storage: typeof storage;

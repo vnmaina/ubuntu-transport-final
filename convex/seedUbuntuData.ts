@@ -20,6 +20,8 @@ export const seedAllUbuntuData = mutation({
       foundedYear: "2018",
       defaultMetaTitle: "Ubuntu Logistics & Transport | Kenya Tours, Safaris & Corporate Shuttles",
       defaultMetaDescription: "Ubuntu Logistics and Transport provides NTSA-compliant 4x4 Safari Land Cruisers, corporate staff transport, airport transfers (JKIA/Wilson), and bespoke tours across Kenya.",
+      defaultKeywords: ["tours", "travel", "transport", "safari", "Kenya", "Nairobi", "corporate shuttles", "airport transfers", "4x4 land cruiser"],
+      areasOfOperation: ["Nairobi", "Kenya", "East Africa"],
       twitter: "https://x.com/ubuntulogistics",
       twitterEnabled: true,
       facebook: "https://facebook.com/ubuntulogisticske",

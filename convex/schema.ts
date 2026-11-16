@@ -282,6 +282,8 @@ const schema = defineSchema({
         defaultTwitterCard: v.optional(v.string()),
         defaultCanonicalUrl: v.optional(v.string()),
         defaultRobots: v.optional(v.string()),
+        defaultKeywords: v.optional(v.array(v.string())),
+        areasOfOperation: v.optional(v.array(v.string())),
     }),
     // Routes table for navigation structure
     routes: defineTable({
@@ -320,6 +322,8 @@ const schema = defineSchema({
         twitterImage: v.optional(v.string()),
         canonicalUrl: v.optional(v.string()),
         robots: v.optional(v.string()),
+        keywords: v.optional(v.array(v.string())),
+        manualStructuredData: v.optional(v.string()),
         // Publish status
         published: v.boolean(),
         publishedAt: v.optional(v.number()),
@@ -329,6 +333,7 @@ const schema = defineSchema({
         name: v.string(),
         slug: v.string(),
         description: v.optional(v.string()),
+        summary: v.optional(v.string()),
         icon: v.optional(v.string()),
         // Card display settings
         cardLayout: v.optional(v.union(v.literal("grid"), v.literal("list"), v.literal("masonry"))),
@@ -336,11 +341,27 @@ const schema = defineSchema({
         // SEO fields
         metaTitle: v.optional(v.string()),
         metaDescription: v.optional(v.string()),
+        keywords: v.optional(v.array(v.string())),
+        areasServed: v.optional(v.array(v.string())),
         ogImage: v.optional(v.string()),
+        ogTitle: v.optional(v.string()),
+        ogDescription: v.optional(v.string()),
         twitterCard: v.optional(v.string()),
+        twitterTitle: v.optional(v.string()),
+        twitterDescription: v.optional(v.string()),
+        twitterImage: v.optional(v.string()),
         canonicalUrl: v.optional(v.string()),
         robots: v.optional(v.string()),
         jsonLd: v.optional(v.string()),
+        // Useful links
+        internalLinks: v.optional(v.array(v.object({
+            title: v.string(),
+            url: v.string(),
+        }))),
+        externalLinks: v.optional(v.array(v.object({
+            title: v.string(),
+            url: v.string(),
+        }))),
         // Publish status
         published: v.boolean(),
         publishedAt: v.optional(v.number()),
@@ -629,8 +650,17 @@ const schema = defineSchema({
         // SEO fields
         metaTitle: v.optional(v.string()),
         metaDescription: v.optional(v.string()),
+        keywords: v.optional(v.array(v.string())),
         ogImage: v.optional(v.string()),
+        ogTitle: v.optional(v.string()),
+        ogDescription: v.optional(v.string()),
+        twitterCard: v.optional(v.string()),
+        twitterTitle: v.optional(v.string()),
+        twitterDescription: v.optional(v.string()),
+        twitterImage: v.optional(v.string()),
         canonicalUrl: v.optional(v.string()),
+        robots: v.optional(v.string()),
+        jsonLd: v.optional(v.string()),
         // Content blocks for blog
         contentBlocks: v.optional(v.array(v.object({
             id: v.string(),

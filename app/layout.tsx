@@ -13,6 +13,12 @@ import { ChatWidgetWrapper } from "@/components/ChatWidgetWrapper";
 import { ThemeColorsProvider } from "@/components/theme-colors-provider";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
+import {
+  getSiteUrl,
+  buildOrganizationJsonLd,
+  buildWebSiteJsonLd,
+  serializeJsonLd,
+} from "@/lib/seo";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
@@ -49,6 +55,7 @@ export async function generateMetadata(): Promise<Metadata> {
           images: organization.defaultOgImage ? [organization.defaultOgImage] : [],
         },
         robots: organization.defaultRobots || "index, follow",
+        keywords: organization.defaultKeywords,
       };
     }
   } catch (error) {
@@ -63,19 +70,35 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export const revalidate = 3600; // Revalidate every hour
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ConvexAuthNextjsServerProvider>
-        <html
-          lang="en"
-          className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, jetbrainsMono.variable, "font-sans", inter.variable)}
-          suppressHydrationWarning
-        >
-          <head>
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const organization = await fetchQuery(api.organization.getOrganization).catch(() => null);
+  const siteUrl = getSiteUrl(organization);
 
-          </head>
-          <body className="min-h-full flex flex-col">
+  const siteGraph = [
+    buildOrganizationJsonLd(organization, siteUrl),
+    buildWebSiteJsonLd(organization, siteUrl),
+  ].filter(Boolean);
+
+  return (
+    <html
+      lang="en"
+      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, jetbrainsMono.variable, "font-sans", inter.variable)}
+      suppressHydrationWarning
+    >
+      <body className="min-h-full flex flex-col">
+        {siteGraph.length > 0 && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: serializeJsonLd({
+                "@context": "https://schema.org",
+                "@graph": siteGraph,
+              }),
+            }}
+          />
+        )}
+        <Suspense fallback={null}>
+          <ConvexAuthNextjsServerProvider>
             <ConvexClientProvider>
               <ThemeProvider defaultTheme="light" storageKey="nextjs-convex-auth-theme">
                 <ThemeColorsProvider />
@@ -91,9 +114,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
               </ThemeProvider>
             </ConvexClientProvider>
-          </body>
-        </html>
-      </ConvexAuthNextjsServerProvider>
-    </Suspense>
+          </ConvexAuthNextjsServerProvider>
+        </Suspense>
+      </body>
+    </html>
   );
 }

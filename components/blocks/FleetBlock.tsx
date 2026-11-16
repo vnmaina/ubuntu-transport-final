@@ -1,10 +1,15 @@
+
 "use client";
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { CollectionCard } from "@/components/collection-card";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight } from "lucide-react";
+import {
+  ArrowUpRight,
+  Layers3,
+  Truck,
+} from "lucide-react";
 import Link from "next/link";
 
 export interface FleetBlockProps {
@@ -18,6 +23,50 @@ export interface FleetBlockProps {
   variant?: "grid" | "list" | "masonry";
 }
 
+function FleetSkeleton({
+  columns = 3,
+}: {
+  columns?: 2 | 3 | 4;
+}) {
+  const gridCols =
+    columns === 2
+      ? "md:grid-cols-2"
+      : columns === 4
+        ? "sm:grid-cols-2 lg:grid-cols-4"
+        : "md:grid-cols-2 lg:grid-cols-3";
+
+  return (
+    <section className="bg-background px-4 py-16 md:px-8 lg:py-24">
+      <div className="mx-auto max-w-7xl space-y-12">
+        <div className="mx-auto max-w-2xl space-y-4 text-center">
+          <div className="mx-auto h-3 w-24 animate-pulse rounded-full bg-secondary/20" />
+          <div className="mx-auto h-10 w-3/4 animate-pulse rounded-lg bg-muted" />
+          <div className="mx-auto h-4 w-full max-w-lg animate-pulse rounded bg-muted" />
+        </div>
+
+        <div className={`grid grid-cols-1 gap-6 ${gridCols}`}>
+          {Array.from({
+            length: columns === 4 ? 4 : 3,
+          }).map((_, index) => (
+            <div
+              key={index}
+              className="overflow-hidden rounded-2xl border border-border bg-card"
+            >
+              <div className="aspect-[4/3] animate-pulse bg-muted" />
+
+              <div className="space-y-3 p-5">
+                <div className="h-5 w-3/4 animate-pulse rounded bg-muted" />
+                <div className="h-3 w-full animate-pulse rounded bg-muted" />
+                <div className="h-3 w-2/3 animate-pulse rounded bg-muted" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function FleetBlock({
   title = "Our Fleet",
   subtitle,
@@ -28,32 +77,39 @@ export function FleetBlock({
   viewAllText = "View All Fleet",
   variant = "grid",
 }: FleetBlockProps) {
-  const collection = useQuery(api.collections.getCollectionBySlug, { slug: "fleet" });
-  const items = useQuery(
-    api.collections.getPublishedItemsByCollection,
-    collection?._id ? { collectionId: collection._id } : "skip"
+  const collection = useQuery(
+    api.collections.getCollectionBySlug,
+    { slug: "fleet" }
   );
 
+  const items = useQuery(
+    api.collections.getPublishedItemsByCollection,
+    collection?._id
+      ? { collectionId: collection._id }
+      : "skip"
+  );
+
+  // Loading state
+  if (collection === undefined || items === undefined) {
+    return <FleetSkeleton columns={columns} />;
+  }
+
+  // Collection unavailable
   if (!collection || !items) {
-    return (
-      <div className="py-16 px-4">
-        <div className="max-w-7xl mx-auto flex justify-center">
-          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-        </div>
-      </div>
-    );
+    return null;
   }
 
-  let filteredItems = items;
-  if (tagFilter && tagFilter.trim() !== "") {
-    filteredItems = items.filter((item) =>
-      item.tags?.some((t) => t.toLowerCase() === tagFilter.toLowerCase())
-    );
-  }
+  // Filter fleet items by tag
+  const filteredItems = items
+    .filter((item) => {
+      if (!tagFilter?.trim()) return true;
 
-  if (limit && limit > 0) {
-    filteredItems = filteredItems.slice(0, limit);
-  }
+      return item.tags?.some(
+        (tag) =>
+          tag.toLowerCase() === tagFilter.trim().toLowerCase()
+      );
+    })
+    .slice(0, limit > 0 ? limit : undefined);
 
   const displayTitle = title || collection.name;
   const displaySubtitle = subtitle || collection.description;
@@ -62,56 +118,97 @@ export function FleetBlock({
     columns === 2
       ? "grid-cols-1 md:grid-cols-2"
       : columns === 4
-      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-      : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
+        ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+        : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
 
   const layoutClass =
     variant === "list"
-      ? "space-y-4 max-w-5xl mx-auto"
+      ? "mx-auto flex max-w-5xl flex-col gap-5"
       : variant === "masonry"
-      ? "columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6"
-      : `grid ${gridColsClass} gap-6`;
+        ? "columns-1 gap-6 sm:columns-2 lg:columns-3 [&>*]:mb-6 [&>*]:break-inside-avoid"
+        : `grid ${gridColsClass} gap-6 lg:gap-8`;
 
   return (
-    <section className="py-16 px-4 md:px-8 bg-background">
-      <div className="max-w-7xl mx-auto space-y-12">
+    <section className="relative isolate overflow-hidden border bg-background px-4 py-16 md:px-8 lg:py-24">
+      {/* Decorative brand accent */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-40 -top-40 -z-10 size-96 rounded-full bg-primary/[0.035] blur-3xl"
+      />
+
+      <div className="mx-auto max-w-7xl space-y-12 lg:space-y-14">
+        {/* Section Header */}
         {(displayTitle || displaySubtitle) && (
-          <div className="text-center space-y-4 max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground">
-              {displayTitle}
-            </h2>
+          <div className="mx-auto max-w-3xl space-y-5 text-center">
+            <div className="flex items-center justify-center gap-2">
+              <span className="h-1 w-7 rounded-full bg-secondary" />
+
+              <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+                Our Fleet
+              </span>
+
+              <span className="h-1 w-7 rounded-full bg-secondary" />
+            </div>
+
+            {displayTitle && (
+              <h2 className="text-3xl font-extrabold leading-tight tracking-tight text-primary sm:text-4xl lg:text-5xl">
+                {displayTitle}
+              </h2>
+            )}
+
             {displaySubtitle && (
-              <p className="text-lg text-muted-foreground leading-relaxed">
+              <p className="mx-auto max-w-4xl text-base leading-8 text-muted-foreground sm:text-lg">
                 {displaySubtitle}
               </p>
             )}
+
+            <div className="mx-auto h-1 w-16 rounded-full bg-secondary" />
           </div>
         )}
 
+        {/* Fleet Items */}
         {filteredItems.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No fleet items found.</p>
+          <div className="-mt-4 mx-auto flex max-w-lg flex-col items-center rounded-2xl border border-dashed border-border bg-card/50 px-6 py-16 text-center">
+            <div className="mb-5 flex size-16 items-center justify-center rounded-2xl bg-primary/5 text-primary">
+              <Truck
+                className="size-8"
+                strokeWidth={1.5}
+              />
+            </div>
+
+            <h3 className="text-xl font-bold text-primary">
+              No Fleet Available
+            </h3>
+
+            <p className="mt-2 max-w-sm text-sm leading-7 text-muted-foreground">
+              Our fleet is currently being updated. Please check back soon for available vehicles.
+            </p>
           </div>
         ) : (
           <div className={layoutClass}>
             {filteredItems.map((item) => (
-              <CollectionCard key={item._id} item={item} collectionSlug="fleet" />
+              <CollectionCard
+                key={item._id}
+                item={item}
+                collectionSlug="fleet"
+              />
             ))}
           </div>
         )}
 
+        {/* View All CTA */}
         {showViewAll && filteredItems.length > 0 && (
-          <div className="text-center pt-8">
-            <Link href="/collections/fleet">
-              <Button
-                size="lg"
-                variant="outline"
-                className="rounded-full px-8 py-6 font-semibold group border-primary/30 hover:bg-primary hover:text-primary-foreground shadow-sm hover:shadow-md transition-all gap-2"
-              >
-                <span>{viewAllText}</span>
-                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </Button>
-            </Link>
+          <div className="flex justify-center pt-4">
+            <Button
+              
+              size="lg"
+              className="group h-12 rounded-full bg-primary px-7 font-semibold text-primary-foreground shadow-md shadow-primary/10 transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20"
+            >
+              <Link href="/collections/fleet">
+                {viewAllText}
+
+                 </Link>
+            </Button>
           </div>
         )}
       </div>

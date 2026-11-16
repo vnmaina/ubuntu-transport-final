@@ -7,16 +7,26 @@ export const createCollection = mutation({
     name: v.string(),
     slug: v.string(),
     description: v.optional(v.string()),
+    summary: v.optional(v.string()),
     icon: v.optional(v.string()),
     cardLayout: v.optional(v.union(v.literal("grid"), v.literal("list"), v.literal("masonry"))),
     cardColumns: v.optional(v.number()),
     metaTitle: v.optional(v.string()),
     metaDescription: v.optional(v.string()),
+    keywords: v.optional(v.array(v.string())),
+    areasServed: v.optional(v.array(v.string())),
     ogImage: v.optional(v.string()),
+    ogTitle: v.optional(v.string()),
+    ogDescription: v.optional(v.string()),
     twitterCard: v.optional(v.string()),
+    twitterTitle: v.optional(v.string()),
+    twitterDescription: v.optional(v.string()),
+    twitterImage: v.optional(v.string()),
     canonicalUrl: v.optional(v.string()),
     robots: v.optional(v.string()),
     jsonLd: v.optional(v.string()),
+    internalLinks: v.optional(v.array(v.object({ title: v.string(), url: v.string() }))),
+    externalLinks: v.optional(v.array(v.object({ title: v.string(), url: v.string() }))),
     published: v.boolean(),
   },
   handler: async (ctx, args) => {
@@ -66,16 +76,26 @@ export const updateCollection = mutation({
     name: v.optional(v.string()),
     slug: v.optional(v.string()),
     description: v.optional(v.string()),
+    summary: v.optional(v.string()),
     icon: v.optional(v.string()),
     cardLayout: v.optional(v.union(v.literal("grid"), v.literal("list"), v.literal("masonry"))),
     cardColumns: v.optional(v.number()),
     metaTitle: v.optional(v.string()),
     metaDescription: v.optional(v.string()),
+    keywords: v.optional(v.array(v.string())),
+    areasServed: v.optional(v.array(v.string())),
     ogImage: v.optional(v.string()),
+    ogTitle: v.optional(v.string()),
+    ogDescription: v.optional(v.string()),
     twitterCard: v.optional(v.string()),
+    twitterTitle: v.optional(v.string()),
+    twitterDescription: v.optional(v.string()),
+    twitterImage: v.optional(v.string()),
     canonicalUrl: v.optional(v.string()),
     robots: v.optional(v.string()),
     jsonLd: v.optional(v.string()),
+    internalLinks: v.optional(v.array(v.object({ title: v.string(), url: v.string() }))),
+    externalLinks: v.optional(v.array(v.object({ title: v.string(), url: v.string() }))),
     published: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
@@ -85,12 +105,12 @@ export const updateCollection = mutation({
       throw new Error("Collection not found");
     }
 
-    const updatedData: any = { ...updates };
-    if (updates.published !== undefined && updates.published !== collection.published) {
-      updatedData.publishedAt = updates.published ? Date.now() : undefined;
-    }
-
-    await ctx.db.patch(id, updatedData);
+    await ctx.db.patch(id, {
+      ...updates,
+      ...(updates.published !== undefined && updates.published !== collection.published
+        ? { publishedAt: updates.published ? Date.now() : undefined }
+        : {}),
+    });
     return id;
   },
 });
@@ -337,12 +357,12 @@ export const updateCollectionItem = mutation({
       throw new Error("Collection item not found");
     }
 
-    const updatedData: any = { ...updates };
-    if (updates.published !== undefined && updates.published !== item.published) {
-      updatedData.publishedAt = updates.published ? Date.now() : undefined;
-    }
-
-    await ctx.db.patch(id, updatedData);
+    await ctx.db.patch(id, {
+      ...updates,
+      ...(updates.published !== undefined && updates.published !== item.published
+        ? { publishedAt: updates.published ? Date.now() : undefined }
+        : {}),
+    });
     return id;
   },
 });

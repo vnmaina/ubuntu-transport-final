@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, Suspense, useEffect } from "react";
+import { useState, Suspense } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -179,7 +180,7 @@ function AdminOrganizationContent() {
     cardOpacity: 1,
     buttonOpacity: 1,
     badgeOpacity: 1,
-    globalCollectionId: undefined as any,
+    globalCollectionId: undefined as Id<"collections"> | undefined,
     // Social media with enable/disable
     twitter: "",
     twitterEnabled: false,
@@ -240,6 +241,8 @@ function AdminOrganizationContent() {
     defaultTwitterCard: "",
     defaultCanonicalUrl: "",
     defaultRobots: "",
+    defaultKeywords: "",
+    areasOfOperation: "",
     // Bank details
     bankName: "",
     accountNumber: "",
@@ -282,13 +285,16 @@ function AdminOrganizationContent() {
     focusRingShadow: "",
   });
 
-  // Initialize form data when organization is loaded
-  useEffect(() => {
+  // Initialize form data when organization is loaded (render-phase adjustment)
+  const [prevOrganization, setPrevOrganization] = useState(organization);
+  if (organization !== prevOrganization) {
+    setPrevOrganization(organization);
     if (organization) {
       setFormData(prev => ({
         ...prev,
         name: organization.name,
         logo: organization.logo || "",
+        globalCollectionId: organization.globalCollectionId,
 
         // Social media
         twitter: organization.twitter || "",
@@ -350,6 +356,8 @@ function AdminOrganizationContent() {
         defaultTwitterCard: organization.defaultTwitterCard || "",
         defaultCanonicalUrl: organization.defaultCanonicalUrl || "",
         defaultRobots: organization.defaultRobots || "",
+        defaultKeywords: (organization.defaultKeywords || []).join(", "),
+        areasOfOperation: (organization.areasOfOperation || []).join(", "),
         // Bank details
         bankName: organization.bankName || "",
         accountNumber: organization.accountNumber || "",
@@ -371,7 +379,7 @@ function AdminOrganizationContent() {
         signatoryTitle: organization.signatoryTitle || "",
       }));
     }
-  }, [organization]);
+  }
 
   const handleInitializeDefaults = async () => {
     try {
@@ -385,7 +393,13 @@ function AdminOrganizationContent() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await upsertOrganization(formData);
+      const toList = (value: string) =>
+        value.split(",").map((s) => s.trim()).filter(Boolean);
+      await upsertOrganization({
+        ...formData,
+        defaultKeywords: toList(formData.defaultKeywords),
+        areasOfOperation: toList(formData.areasOfOperation),
+      });
       toast.success("Organization settings saved successfully");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to save organization settings");
@@ -401,7 +415,7 @@ function AdminOrganizationContent() {
           <div className="mb-8 flex flex-col gap-5 sm:mb-10 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl lg:text-4xl">Organization Settings</h1>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">Configure your organization's global settings and branding</p>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">Configure your organization&apos;s global settings and branding</p>
             </div>
 
             <Button
@@ -440,7 +454,7 @@ function AdminOrganizationContent() {
         <div className="mb-8 flex flex-col gap-5 sm:mb-10 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl lg:text-4xl">Organization Settings</h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">Configure your organization's global settings and branding</p>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">Configure your organization&apos;s global settings and branding</p>
           </div>
 
           <Button
@@ -492,7 +506,7 @@ function AdminOrganizationContent() {
                     placeholder="https://example.com/logo.png"
                     aspectRatio="square"
                   />
-                  <p className="text-xs text-muted-foreground mt-2">URL to your organization's logo image</p>
+                  <p className="text-xs text-muted-foreground mt-2">URL to your organization&apos;s logo image</p>
                 </div>
                 <div>
                   <Label htmlFor="description" className="mb-2 text-sm font-medium">Description</Label>
@@ -544,7 +558,7 @@ function AdminOrganizationContent() {
                     id="globalCollectionId"
                     className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/10"
                     value={formData.globalCollectionId || ""}
-                    onChange={(e) => setFormData({ ...formData, globalCollectionId: e.target.value || undefined })}
+                    onChange={(e) => setFormData({ ...formData, globalCollectionId: (e.target.value || undefined) as Id<"collections"> | undefined })}
                   >
                     <option value="">None</option>
                     {collections?.map((collection) => (
@@ -566,7 +580,7 @@ function AdminOrganizationContent() {
                   <Settings className="w-5 h-5" />
                   Theme & Colors
                 </CardTitle>
-                <CardDescription>Customize your organization's appearance and color scheme</CardDescription>
+                <CardDescription>Customize your organization&apos;s appearance and color scheme</CardDescription>
               </CardHeader>
               <CardContent className="space-y-7 px-5 py-6 sm:space-y-8 sm:px-7 sm:py-8 lg:px-8">
                 {/* Mode Toggle */}
@@ -3626,6 +3640,28 @@ function AdminOrganizationContent() {
                     className="h-11 rounded-xl text-sm"
                   />
                   <p className="text-xs text-muted-foreground mt-2">Default robots meta tag for search engines</p>
+                </div>
+                <div>
+                  <Label htmlFor="defaultKeywords" className="mb-2 text-sm font-medium">Default Keywords</Label>
+                  <Input
+                    id="defaultKeywords"
+                    placeholder="tours, travel, kenya, safari, transport"
+                    value={formData.defaultKeywords}
+                    onChange={(e) => setFormData({ ...formData, defaultKeywords: e.target.value })}
+                    className="h-11 rounded-xl text-sm"
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">Comma-separated keywords used as fallback for pages without custom keywords</p>
+                </div>
+                <div>
+                  <Label htmlFor="areasOfOperation" className="mb-2 text-sm font-medium">Areas of Operation</Label>
+                  <Input
+                    id="areasOfOperation"
+                    placeholder="Nairobi, Kenya, East Africa"
+                    value={formData.areasOfOperation}
+                    onChange={(e) => setFormData({ ...formData, areasOfOperation: e.target.value })}
+                    className="h-11 rounded-xl text-sm"
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">Comma-separated regions/cities emitted as areaServed in Organization structured data</p>
                 </div>
               </CardContent>
             </Card>

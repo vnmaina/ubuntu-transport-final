@@ -159,6 +159,8 @@ export const updateSEO = mutation({
     twitterImage: v.optional(v.string()),
     canonicalUrl: v.optional(v.string()),
     robots: v.optional(v.string()),
+    keywords: v.optional(v.array(v.string())),
+    manualStructuredData: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const { id, ...seoFields } = args;
@@ -193,7 +195,6 @@ export const duplicatePage = mutation({
     if (!page) throw new Error("Page not found");
 
     const baseSlug = page.slug === "" ? "home-copy" : `${page.slug}-copy`;
-    // eslint-disable-next-line prefer-const
     let newSlug = baseSlug;
     let counter = 1;
     while (
@@ -206,7 +207,7 @@ export const duplicatePage = mutation({
       counter++;
     }
 
-    const newBlocks = page.blocks.map((b: any) => ({
+    const newBlocks = page.blocks.map((b) => ({
       ...b,
       id: crypto.randomUUID(),
     }));
@@ -227,6 +228,8 @@ export const duplicatePage = mutation({
       twitterImage: page.twitterImage,
       canonicalUrl: page.canonicalUrl,
       robots: page.robots,
+      keywords: page.keywords,
+      manualStructuredData: page.manualStructuredData,
     });
   },
 });

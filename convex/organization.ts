@@ -246,6 +246,8 @@ export const upsertOrganization = mutation({
     defaultTwitterCard: v.optional(v.string()),
     defaultCanonicalUrl: v.optional(v.string()),
     defaultRobots: v.optional(v.string()),
+    defaultKeywords: v.optional(v.array(v.string())),
+    areasOfOperation: v.optional(v.array(v.string())),
     // Bank details
     bankName: v.optional(v.string()),
     accountNumber: v.optional(v.string()),

@@ -1,6 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import {
+  suggestBlogSeo,
+  buildBlogJsonLd,
+  getSiteUrl,
+  stripHtml,
+  serializeJsonLd,
+  parseManualStructuredData,
+} from "@/lib/seo";
 import {
   Sheet,
   SheetContent,
@@ -8,14 +18,12 @@ import {
   SheetTitle,
   SheetDescription,
   SheetFooter,
-  SheetClose,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RichTextEditor } from "@/components/rich-text-editor";
@@ -23,23 +31,22 @@ import { BlogPreview } from "@/components/blog-preview";
 import { ImageUpload } from "@/components/ui/image-upload";
 import {
   Plus,
-  Trash2,
   Image as ImageIcon,
-  Check,
-  Globe,
-  Tag,
-  Clock,
-  User,
   FileText,
   Video,
   Quote,
   Code,
   Sparkles,
-  Play,
-  Eye,
-  EyeOff,
   X,
   Monitor,
+  ClipboardList,
+  PenLine,
+  LayoutGrid,
+  Clapperboard,
+  Search,
+  Braces,
+  Wand2,
+  AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -69,13 +76,22 @@ export interface BlogFormData {
     type: "text" | "image" | "video" | "quote" | "code" | "callout" | "divider";
     content?: string;
     caption?: string;
-    data?: any;
+    data?: Record<string, unknown>;
     order: number;
   }>;
   metaTitle: string;
   metaDescription: string;
+  keywords: string[];
   ogImage: string;
+  ogTitle: string;
+  ogDescription: string;
+  twitterCard: string;
+  twitterTitle: string;
+  twitterDescription: string;
+  twitterImage: string;
   canonicalUrl: string;
+  robots: string;
+  jsonLd: string;
   status: "draft" | "published" | "archived";
 }
 
@@ -112,8 +128,17 @@ const initialFormData: BlogFormData = {
   contentBlocks: [],
   metaTitle: "",
   metaDescription: "",
+  keywords: [],
   ogImage: "",
+  ogTitle: "",
+  ogDescription: "",
+  twitterCard: "summary_large_image",
+  twitterTitle: "",
+  twitterDescription: "",
+  twitterImage: "",
   canonicalUrl: "",
+  robots: "index, follow",
+  jsonLd: "",
   status: "draft",
 };
 
@@ -128,19 +153,27 @@ export function BlogFormSheet({
   const [formData, setFormData] = useState<BlogFormData>(initialFormData);
   const [activeTab, setActiveTab] = useState("basic");
   const [tagInput, setTagInput] = useState("");
+  const [keywordsInput, setKeywordsInput] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
 
-  useEffect(() => {
+  const organization = useQuery(api.organization.getOrganization);
+
+  const [prevInit, setPrevInit] = useState<{ data?: Partial<BlogFormData>; open: boolean } | null>(null);
+  if (open !== prevInit?.open || initialData !== prevInit?.data) {
+    setPrevInit({ data: initialData, open });
     if (initialData) {
-      setFormData({ 
-        ...initialFormData, 
+      setFormData({
+        ...initialFormData,
         ...initialData,
+        keywords: initialData.keywords || [],
         contentBlocks: initialData.contentBlocks || []
       });
+      setKeywordsInput((initialData.keywords || []).join(", "));
     } else {
       setFormData(initialFormData);
+      setKeywordsInput("");
     }
-  }, [initialData, open]);
+  }
 
   const generateSlug = (title: string) => {
     return title
@@ -211,9 +244,68 @@ export function BlogFormSheet({
     await onSubmit(formData);
   };
 
+  // ── SEO helpers ──────────────────────────────────────────────
+  const handleKeywordsChange = (value: string) => {
+    setKeywordsInput(value);
+    setFormData((prev) => ({
+      ...prev,
+      keywords: value.split(",").map((k) => k.trim()).filter(Boolean),
+    }));
+  };
+
+  const previewTitle = formData.metaTitle || formData.title || "Post title";
+  const previewDescription =
+    formData.metaDescription ||
+    (formData.excerpt || "").trim() ||
+    stripHtml(formData.content).slice(0, 160) ||
+    "Post description will appear here…";
+  const siteUrl = getSiteUrl(organization ?? undefined);
+
+  const handleAutoGenerateSeo = () => {
+    const suggestion = suggestBlogSeo({
+      title: formData.title,
+      excerpt: formData.excerpt,
+      content: formData.content,
+      keywords: formData.keywords,
+      tags: formData.tags,
+      category: formData.category,
+      orgName: organization?.name,
+    });
+    setFormData((prev) => ({
+      ...prev,
+      metaTitle: suggestion.metaTitle,
+      metaDescription: suggestion.metaDescription,
+      keywords: suggestion.keywords
+        .split(",")
+        .map((k) => k.trim())
+        .filter(Boolean),
+      ogTitle: suggestion.metaTitle,
+      ogDescription: suggestion.metaDescription,
+      twitterTitle: suggestion.metaTitle,
+      twitterDescription: suggestion.metaDescription,
+    }));
+    setKeywordsInput(suggestion.keywords);
+    toast.success("SEO fields auto-generated from basic info");
+  };
+
+  const buildPreviewJsonLd = () =>
+    buildBlogJsonLd(
+      {
+        ...formData,
+        slug: formData.slug || "post-slug",
+        publishedAt: undefined,
+      },
+      organization ?? undefined,
+      siteUrl || "https://example.com"
+    );
+
+  const jsonLdPreview = serializeJsonLd(buildPreviewJsonLd());
+  const manualJsonLdValid =
+    !formData.jsonLd.trim() || parseManualStructuredData(formData.jsonLd) !== null;
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="flex flex-col">
+      <SheetContent className="w-full sm:max-w-none lg:w-3/4 flex flex-col">
         <SheetHeader className="pb-4 border-b">
           <SheetTitle className="text-2xl font-bold">
             {mode === "create" ? "Create Blog Post" : "Edit Blog Post"}
@@ -228,21 +320,24 @@ export function BlogFormSheet({
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
           <div className="border-b bg-muted/30 px-6 py-2 shrink-0">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-5 h-10 bg-muted/80 p-1 rounded-xl border border-border/50">
+              <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 h-10 bg-muted/80 p-1 rounded-xl border border-border/50">
                 <TabsTrigger value="basic" className="text-xs sm:text-sm font-medium gap-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm cursor-pointer">
-                  <span>📋</span> Basic
+                  <ClipboardList className="w-4 h-4" /> Basic
                 </TabsTrigger>
                 <TabsTrigger value="content" className="text-xs sm:text-sm font-medium gap-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm cursor-pointer">
-                  <span>📝</span> Content
+                  <PenLine className="w-4 h-4" /> Content
                 </TabsTrigger>
                 <TabsTrigger value="blocks" className="text-xs sm:text-sm font-medium gap-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm cursor-pointer">
-                  <span>🧱</span> Blocks
+                  <LayoutGrid className="w-4 h-4" /> Blocks
                 </TabsTrigger>
                 <TabsTrigger value="media" className="text-xs sm:text-sm font-medium gap-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm cursor-pointer">
-                  <span>🎬</span> Media
+                  <Clapperboard className="w-4 h-4" /> Media
                 </TabsTrigger>
                 <TabsTrigger value="seo" className="text-xs sm:text-sm font-medium gap-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm cursor-pointer">
-                  <span>🔍</span> SEO
+                  <Search className="w-4 h-4" /> SEO
+                </TabsTrigger>
+                <TabsTrigger value="jsonld" className="text-xs sm:text-sm font-medium gap-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm cursor-pointer">
+                  <Braces className="w-4 h-4" /> JSON-LD
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -273,14 +368,17 @@ export function BlogFormSheet({
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-bold text-foreground">Excerpt</Label>
+                  <Label className="text-sm font-bold text-foreground">Excerpt / Summary</Label>
                   <Textarea
-                    placeholder="Brief summary of the blog post"
+                    placeholder="Short summary used for cards and meta description"
                     value={formData.excerpt}
                     onChange={(e) => setFormData((prev) => ({ ...prev, excerpt: e.target.value }))}
                     rows={3}
                     className="rounded-xl resize-none"
                   />
+                  <p className="text-xs text-muted-foreground">
+                    {formData.excerpt.length}/160 recommended — used on blog cards and as the meta description fallback.
+                  </p>
                 </div>
 
                 <div className="space-y-2">
@@ -325,6 +423,28 @@ export function BlogFormSheet({
                 </div>
 
                 <div className="space-y-2">
+                  <Label className="text-sm font-bold text-foreground">Keywords</Label>
+                  <Input
+                    placeholder="safari, kenya, transport, 4x4..."
+                    value={keywordsInput}
+                    onChange={(e) => handleKeywordsChange(e.target.value)}
+                    className="h-10 rounded-xl"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Comma-separated. The first keyword is treated as the primary keyword for SEO title generation.
+                  </p>
+                  {formData.keywords.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {formData.keywords.map((kw) => (
+                        <Badge key={kw} variant="outline" className="text-xs">
+                          {kw}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
                   <Label className="text-sm font-bold text-foreground">Read Time</Label>
                   <Input
                     placeholder="5 min read"
@@ -338,7 +458,7 @@ export function BlogFormSheet({
                   <Label className="text-sm font-bold text-foreground">Status</Label>
                   <Select
                     value={formData.status}
-                    onValueChange={(value: any) => setFormData((prev) => ({ ...prev, status: value }))}
+                    onValueChange={(value) => value && setFormData((prev) => ({ ...prev, status: value as BlogFormData["status"] }))}
                   >
                     <SelectTrigger className="h-10 rounded-xl">
                       <SelectValue />
@@ -608,7 +728,7 @@ export function BlogFormSheet({
                           <div className="space-y-2">
                             <Label className="text-xs font-semibold">Video Type</Label>
                             <Select
-                              value={block.data?.videoType || "youtube"}
+                              value={(block.data?.videoType as string) || "youtube"}
                               onValueChange={(value) => updateContentBlock(block.id, { 
                                 data: { ...block.data, videoType: value }
                               })}
@@ -681,7 +801,7 @@ export function BlogFormSheet({
                   <Label className="text-sm font-bold text-foreground">Video Type</Label>
                   <Select
                     value={formData.videoType}
-                    onValueChange={(value: any) => setFormData((prev) => ({ ...prev, videoType: value }))}
+                    onValueChange={(value) => value && setFormData((prev) => ({ ...prev, videoType: value as BlogFormData["videoType"] }))}
                   >
                     <SelectTrigger className="h-10 rounded-xl">
                       <SelectValue />
@@ -696,13 +816,40 @@ export function BlogFormSheet({
               </div>
             )}
 
-            {/* TAB 5: SEO */}
+            {/* TAB 5: SEO & SOCIAL */}
             {activeTab === "seo" && (
               <div className="space-y-6">
+                {/* SERP preview */}
+                <div className="border border-border/80 rounded-xl p-4 bg-muted/30 space-y-1">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Search Preview</p>
+                  <p className="text-lg text-[#1a0dab] dark:text-[#8ab4f8] font-medium leading-snug line-clamp-1">
+                    {previewTitle}
+                  </p>
+                  <p className="text-xs text-emerald-700 dark:text-emerald-500 truncate">
+                    {siteUrl ? `${siteUrl}/blog/${formData.slug || "post-slug"}` : "/blog/post-slug"}
+                  </p>
+                  <p className="text-sm text-muted-foreground line-clamp-2">{previewDescription}</p>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Leave fields empty to auto-generate from basic info, or fill manually.
+                  </p>
+                  <Button type="button" variant="outline" size="sm" onClick={handleAutoGenerateSeo} className="rounded-xl gap-2 shrink-0">
+                    <Wand2 className="w-4 h-4" /> Auto-Generate
+                  </Button>
+                </div>
+
+                {/* Meta */}
                 <div className="space-y-2">
-                  <Label className="text-sm font-bold text-foreground">Meta Title</Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-bold text-foreground">Meta Title</Label>
+                    <span className={`text-xs ${formData.metaTitle.length > 60 ? "text-destructive font-semibold" : "text-muted-foreground"}`}>
+                      {formData.metaTitle.length}/60
+                    </span>
+                  </div>
                   <Input
-                    placeholder="SEO title"
+                    placeholder={formData.title || "SEO title"}
                     value={formData.metaTitle}
                     onChange={(e) => setFormData((prev) => ({ ...prev, metaTitle: e.target.value }))}
                     className="h-10 rounded-xl"
@@ -710,7 +857,12 @@ export function BlogFormSheet({
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-bold text-foreground">Meta Description</Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-bold text-foreground">Meta Description</Label>
+                    <span className={`text-xs ${formData.metaDescription.length > 160 ? "text-destructive font-semibold" : "text-muted-foreground"}`}>
+                      {formData.metaDescription.length}/160
+                    </span>
+                  </div>
                   <Textarea
                     placeholder="SEO description"
                     value={formData.metaDescription}
@@ -721,23 +873,198 @@ export function BlogFormSheet({
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-bold text-foreground">OG Image</Label>
-                  <Input
-                    placeholder="https://example.com/og-image.jpg"
-                    value={formData.ogImage}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, ogImage: e.target.value }))}
-                    className="h-10 rounded-xl font-mono"
-                  />
+                  <Label className="text-sm font-bold text-foreground">Keywords</Label>
+                  <div className="flex flex-wrap gap-1.5 p-3 border border-border/80 rounded-xl bg-muted/30 min-h-[42px]">
+                    {formData.keywords.length === 0 && (
+                      <span className="text-xs text-muted-foreground">No keywords — add them in Basic Info or use Auto-Generate</span>
+                    )}
+                    {formData.keywords.map((kw) => (
+                      <Badge key={kw} variant="secondary" className="text-xs">{kw}</Badge>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground">Edit keywords in the Basic Info tab.</p>
+                </div>
+
+                {/* Open Graph */}
+                <div className="border-t border-border/60 pt-5 space-y-4">
+                  <p className="text-sm font-bold text-foreground">Open Graph</p>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold text-muted-foreground">OG Image</Label>
+                    <ImageUpload
+                      value={formData.ogImage}
+                      onChange={(value) => setFormData((prev) => ({ ...prev, ogImage: value }))}
+                      label=""
+                      placeholder="https://example.com/og-image.jpg"
+                      aspectRatio="video"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold text-muted-foreground">OG Title</Label>
+                    <Input
+                      placeholder={previewTitle}
+                      value={formData.ogTitle}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, ogTitle: e.target.value }))}
+                      className="h-10 rounded-xl"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold text-muted-foreground">OG Description</Label>
+                    <Textarea
+                      placeholder={previewDescription}
+                      value={formData.ogDescription}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, ogDescription: e.target.value }))}
+                      rows={2}
+                      className="rounded-xl resize-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Twitter / X */}
+                <div className="border-t border-border/60 pt-5 space-y-4">
+                  <p className="text-sm font-bold text-foreground">Twitter / X</p>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold text-muted-foreground">Card Type</Label>
+                    <Select
+                      value={formData.twitterCard}
+                      onValueChange={(value) => value && setFormData((prev) => ({ ...prev, twitterCard: value }))}
+                    >
+                      <SelectTrigger className="h-10 rounded-xl">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="summary">Summary</SelectItem>
+                        <SelectItem value="summary_large_image">Summary Large Image</SelectItem>
+                        <SelectItem value="player">Player</SelectItem>
+                        <SelectItem value="app">App</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold text-muted-foreground">Twitter Title</Label>
+                    <Input
+                      placeholder={previewTitle}
+                      value={formData.twitterTitle}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, twitterTitle: e.target.value }))}
+                      className="h-10 rounded-xl"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold text-muted-foreground">Twitter Description</Label>
+                    <Textarea
+                      placeholder={previewDescription}
+                      value={formData.twitterDescription}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, twitterDescription: e.target.value }))}
+                      rows={2}
+                      className="rounded-xl resize-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold text-muted-foreground">Twitter Image</Label>
+                    <Input
+                      placeholder="Defaults to OG image / featured image"
+                      value={formData.twitterImage}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, twitterImage: e.target.value }))}
+                      className="h-10 rounded-xl font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* Technical */}
+                <div className="border-t border-border/60 pt-5 space-y-4">
+                  <p className="text-sm font-bold text-foreground">Technical</p>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold text-muted-foreground">Canonical URL</Label>
+                    <Input
+                      placeholder={`${siteUrl || "https://example.com"}/blog/${formData.slug || "post-slug"}`}
+                      value={formData.canonicalUrl}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, canonicalUrl: e.target.value }))}
+                      className="h-10 rounded-xl font-mono"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs font-semibold text-muted-foreground">Robots</Label>
+                    <Select
+                      value={formData.robots}
+                      onValueChange={(value) => value && setFormData((prev) => ({ ...prev, robots: value }))}
+                    >
+                      <SelectTrigger className="h-10 rounded-xl">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="index, follow">Index, Follow</SelectItem>
+                        <SelectItem value="noindex, follow">Noindex, Follow</SelectItem>
+                        <SelectItem value="index, nofollow">Index, Nofollow</SelectItem>
+                        <SelectItem value="noindex, nofollow">Noindex, Nofollow</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 6: JSON-LD / STRUCTURED DATA */}
+            {activeTab === "jsonld" && (
+              <div className="space-y-6">
+                <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+                  <p className="text-sm font-semibold text-foreground mb-1">Automatic Structured Data</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Every published post automatically renders <code className="text-[11px] bg-muted px-1 rounded">Article</code>,{" "}
+                    <code className="text-[11px] bg-muted px-1 rounded">WebPage</code>, and{" "}
+                    <code className="text-[11px] bg-muted px-1 rounded">BreadcrumbList</code> JSON-LD — plus a{" "}
+                    <code className="text-[11px] bg-muted px-1 rounded">VideoObject</code> when a video URL is set in the Media tab.
+                    Keywords, author, dates, image, and category are pulled from your basic info.
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    Preview of the auto-generated schema based on current form values.
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setFormData((prev) => ({ ...prev, jsonLd: jsonLdPreview }));
+                      toast.success("JSON-LD generated — review and edit below, then save");
+                    }}
+                    className="rounded-xl gap-2 shrink-0"
+                  >
+                    <Wand2 className="w-4 h-4" /> Generate from Basic Info
+                  </Button>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-bold text-foreground">Canonical URL</Label>
-                  <Input
-                    placeholder="https://example.com/blog/post"
-                    value={formData.canonicalUrl}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, canonicalUrl: e.target.value }))}
-                    className="h-10 rounded-xl font-mono"
+                  <Label className="text-sm font-bold text-foreground">Auto-Generated JSON-LD Preview</Label>
+                  <pre className="text-[11px] leading-relaxed bg-muted/60 border border-border/60 rounded-xl p-4 overflow-auto max-h-72 font-mono text-muted-foreground whitespace-pre-wrap">
+                    {jsonLdPreview}
+                  </pre>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-bold text-foreground">Manual JSON-LD</Label>
+                    {!manualJsonLdValid && (
+                      <span className="text-xs text-destructive font-semibold flex items-center gap-1">
+                        <AlertTriangle className="w-3 h-3" /> Invalid JSON — will be ignored
+                      </span>
+                    )}
+                    {manualJsonLdValid && formData.jsonLd.trim() && (
+                      <span className="text-xs text-emerald-600 font-semibold">
+                        Valid — {parseManualStructuredData(formData.jsonLd)?.length} block(s)
+                      </span>
+                    )}
+                  </div>
+                  <Textarea
+                    placeholder='{"@context":"https://schema.org","@type":"FAQPage",...}'
+                    value={formData.jsonLd}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, jsonLd: e.target.value }))}
+                    rows={10}
+                    className="rounded-xl font-mono text-xs resize-y"
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Optional. Paste a JSON object or array of schema.org objects — rendered in addition to the automatic schema. Use &quot;Generate from Basic Info&quot; to start from the auto-generated output.
+                  </p>
                 </div>
               </div>
             )}
