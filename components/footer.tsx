@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
+
 // Imported a comprehensive set of social icons from react-icons
 import {
   FaGithub,
@@ -34,10 +36,30 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Brand & Socials */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">{organization?.name || "Your Brand"}</h3>
-            <p className="text-sm text-muted-foreground">
-              Building amazing experiences with modern technology.
-            </p>
+   {/* Left — Logo */}
+<div className="flex w-fit items-center rounded-full bg-white/80 p-1 backdrop-blur-md">
+  <Link
+    href='/'
+    className="flex items-center gap-3"
+  >
+    <Image
+      src='/ubuntu-logo.webp'
+      alt='Ubuntu Logistics'
+      width={56}
+      height={56}
+      priority
+      className="h-14 w-auto max-w-[180px] object-contain"
+    />
+
+    <span className="text-xl font-extrabold leading-tight tracking-tight whitespace-nowrap">
+      <span className="text-primary">Ubuntu</span>{" "}
+      <span className="text-secondary">Logistics</span>
+    </span>
+     <span className="mt-0.5 text-xs leading-tight text-muted-foreground">
+     Tours, Safaris & Corporate Transport
+          </span>
+  </Link>
+</div>
             {/* Social Media Grid Layout */}
             <div className="grid grid-cols-5 gap-y-4 gap-x-2 max-w-[200px]">
               {socialLinks.github && (
