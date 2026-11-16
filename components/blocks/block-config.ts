@@ -312,6 +312,83 @@ export const BLOCK_CONFIG: BlockType[] = [
     }
   },
   {
+    id: 'BlogCardsBlock',
+    name: 'Blog Cards',
+    category: 'Blog & Career',
+    description: 'Display real published blog posts from your CMS as cards',
+    defaultVariant: 'grid',
+    variants: [
+      {
+        id: 'grid',
+        name: 'Grid Layout',
+        description: 'Responsive grid of blog post cards',
+        component: './BlogCardsBlock',
+        props: ['title', 'subtitle', 'categorySlug', 'limit', 'columns']
+      },
+      {
+        id: 'list',
+        name: 'List Layout',
+        description: 'Horizontal list of blog post cards',
+        component: './BlogCardsBlock',
+        props: ['title', 'subtitle', 'categorySlug', 'limit']
+      },
+      {
+        id: 'masonry',
+        name: 'Masonry Layout',
+        description: 'Pinterest-style masonry grid of blog posts',
+        component: './BlogCardsBlock',
+        props: ['title', 'subtitle', 'categorySlug', 'limit', 'columns']
+      }
+    ],
+    props: {
+      variant: {
+        type: 'select',
+        label: 'Variant',
+        required: true,
+        options: ['grid', 'list', 'masonry']
+      },
+      title: {
+        type: 'text',
+        label: 'Section Title',
+        placeholder: 'Latest Articles'
+      },
+      subtitle: {
+        type: 'textarea',
+        label: 'Subtitle',
+        placeholder: 'Stay updated with our latest insights and news'
+      },
+      categorySlug: {
+        type: 'text',
+        label: 'Category Slug (optional)',
+        placeholder: 'e.g., safari-guides — leave empty for all'
+      },
+      limit: {
+        type: 'number',
+        label: 'Posts to Display',
+        placeholder: '6'
+      },
+      columns: {
+        type: 'select',
+        label: 'Columns',
+        options: ['2', '3', '4']
+      },
+      tagFilter: {
+        type: 'text',
+        label: 'Tag Filter (optional)',
+        placeholder: 'e.g., safari'
+      },
+      showViewAll: {
+        type: 'boolean',
+        label: 'Show View All Button'
+      },
+      viewAllText: {
+        type: 'text',
+        label: 'View All Button Text',
+        placeholder: 'View all articles'
+      }
+    }
+  },
+  {
     id: 'CareerBlock',
     name: 'Career Section',
     category: 'Blog & Career',
@@ -1362,11 +1439,11 @@ export function getBlockVariants(blockId: string): BlockVariant[] {
   return config?.variants || [];
 }
 
-export function getDefaultProps(blockId: string): any {
+export function getDefaultProps(blockId: string): Record<string, unknown> {
   const config = getBlockConfig(blockId);
   if (!config) return {};
 
-  const defaultProps: any = {
+  const defaultProps: Record<string, unknown> = {
     variant: config.defaultVariant
   };
 

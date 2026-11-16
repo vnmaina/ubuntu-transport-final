@@ -1,9 +1,9 @@
 "use client";
 
-import { BLOCK_CONFIG, getBlockConfig } from "./blocks/block-config";
 import { HeroBlock } from "./blocks/HeroBlock";
 import { FeaturesBlock } from "./blocks/FeaturesBlock";
 import { BlogBlock } from "./blocks/BlogBlock";
+import { BlogCardsBlock } from "./blocks/BlogCardsBlock";
 import { CareerBlock } from "./blocks/CareerBlock";
 import { CardBlock } from "./blocks/CardBlock";
 import { CollectionCardsBlockWrapper } from "./blocks/CollectionCardsBlockWrapper";
@@ -24,10 +24,11 @@ import { Pricing } from "./blocks/Pricing";
 import { Testimonials } from "./blocks/Testimonials";
 
 // Dynamic block component mapping based on block-config
-const BLOCK_COMPONENTS: Record<string, React.ComponentType<any>> = {
+const BLOCK_COMPONENTS: Record<string, React.ComponentType<Record<string, unknown>>> = {
   HeroBlock,
   FeaturesBlock,
   BlogBlock,
+  BlogCardsBlock,
   CareerBlock,
   CardBlock,
   CollectionCardsBlock: CollectionCardsBlockWrapper,
@@ -48,7 +49,7 @@ const BLOCK_COMPONENTS: Record<string, React.ComponentType<any>> = {
   Testimonials,
 };
 
-export function BlockRenderer({ blocks }: { blocks: any[] }) {
+export function BlockRenderer({ blocks }: { blocks: { id: string; type: string; props: Record<string, unknown> }[] }) {
   if (!blocks || blocks.length === 0) {
     return (
       <div className="py-20 text-center text-gray-400 border border-dashed border-gray-200 m-4 rounded">
