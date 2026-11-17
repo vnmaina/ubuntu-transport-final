@@ -475,6 +475,69 @@ export const BLOCK_CONFIG: BlockType[] = [
     }
   },
   {
+    id: 'ResourcesBlock',
+    name: 'Resources / Useful Links',
+    category: 'Content Sections',
+    description: 'Table-of-contents style link directory to services, destinations, fleet, pages and external resources',
+    defaultVariant: 'list',
+    variants: [
+      {
+        id: 'list',
+        name: 'List',
+        description: 'Numbered table-of-contents rows — best for page indexes and resource directories',
+        component: './ResourcesBlock',
+        props: ['eyebrow', 'title', 'subtitle', 'items']
+      },
+      {
+        id: 'grid',
+        name: 'Grid Cards',
+        description: 'Card grid of resource links with descriptions',
+        component: './ResourcesBlock',
+        props: ['eyebrow', 'title', 'subtitle', 'items', 'columns']
+      },
+      {
+        id: 'columns',
+        name: 'Grouped Columns',
+        description: 'Links grouped into labeled columns (uses the Group field)',
+        component: './ResourcesBlock',
+        props: ['eyebrow', 'title', 'subtitle', 'items']
+      }
+    ],
+    props: {
+      variant: {
+        type: 'select',
+        label: 'Layout',
+        required: true,
+        options: ['list', 'grid', 'columns']
+      },
+      eyebrow: {
+        type: 'text',
+        label: 'Eyebrow Label',
+        placeholder: 'Useful Links'
+      },
+      title: {
+        type: 'text',
+        label: 'Section Title',
+        placeholder: 'Explore Our Resources'
+      },
+      subtitle: {
+        type: 'textarea',
+        label: 'Subtitle',
+        placeholder: 'Quick links to services, destinations, fleet and more...'
+      },
+      columns: {
+        type: 'select',
+        label: 'Grid Columns',
+        options: ['2', '3', '4']
+      },
+      items: {
+        type: 'array',
+        label: 'Resource Links',
+        placeholder: 'Add links with title, URL, description and optional group'
+      }
+    }
+  },
+  {
     id: 'CareerBlock',
     name: 'Career Section',
     category: 'Blog & Career',

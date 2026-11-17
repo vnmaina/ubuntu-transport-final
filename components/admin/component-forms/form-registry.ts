@@ -5,6 +5,7 @@
 import { ImageCarouselHeroForm } from './ImageCarouselHeroForm';
 import { CardBlockForm } from './CardBlockForm';
 import { GalleryBlockForm } from './GalleryBlockForm';
+import { ResourcesBlockForm } from './ResourcesBlockForm';
 
 export interface ComponentFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- block props are dynamic per block type
@@ -168,6 +169,11 @@ const COMPONENT_FORM_REGISTRY: Record<string, ComponentFormRegistration> = {
   './GalleryBlock': {
     componentPath: './GalleryBlock',
     formComponent: GalleryBlockForm,
+    tabs: { form: true, edit: true, media: false, blockEditor: true }
+  },
+  './ResourcesBlock': {
+    componentPath: './ResourcesBlock',
+    formComponent: ResourcesBlockForm,
     tabs: { form: true, edit: true, media: false, blockEditor: true }
   },
 };
