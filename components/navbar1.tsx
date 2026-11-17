@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, ChevronDown } from "lucide-react";
+import { Menu, ChevronDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { getOrganizationSettings } from "@/app/actions/navbar";
 import { TopBar } from "@/components/TopBar";
+import { NavbarSearch } from "@/components/navbar-search";
 
 import {
   Accordion,
@@ -491,6 +492,9 @@ const Navbar1Component = ({
                 <AccountMenu />
               )}
 
+              {/* Search */}
+              <NavbarSearch />
+
               {/* Contact: Secondary button */}
 
 <Link
@@ -588,6 +592,15 @@ const Navbar1Component = ({
                         );
                       })}
                     </Accordion>
+
+                    {/* Mobile Search */}
+                    <Link
+                      href="/search"
+                      className="flex items-center gap-2 rounded-lg border border-border px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
+                    >
+                      <Search className="size-4" />
+                      Search services, fleet, destinations & guides
+                    </Link>
 
                     {/* Mobile Auth */}
                     {user === undefined || user === null ? (

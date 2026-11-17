@@ -188,6 +188,7 @@ export const updateFormDefinition = mutation({
         const isAdmin = currentUser.role === "admin" || currentUser.role === "superadmin";
         if (!isAdmin) throw new Error("Not authorized");
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic partial update payload
         const updateData: any = {};
         if (args.name !== undefined) updateData.name = args.name;
         if (args.slug !== undefined) updateData.slug = args.slug;
@@ -245,6 +246,17 @@ export const getAllFormDefinitions = query({
             .collect();
 
         return forms;
+    },
+});
+
+// List published form slugs (public — for sitemap/search indexing)
+export const listPublishedFormDefinitions = query({
+    args: {},
+    handler: async (ctx) => {
+        const forms = await ctx.db.query("formDefinitions").collect();
+        return forms
+            .filter((f) => f.published)
+            .map((f) => ({ slug: f.slug, name: f.name, publishedAt: f.publishedAt }));
     },
 });
 
