@@ -18,6 +18,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Save, RefreshCw, Settings, Share2, Phone, Globe, Building2, Mail, MapPin, Calendar, Users, Briefcase, Link2, Landmark, CreditCard, Sun, Moon, ChevronDown } from "lucide-react";
 import { FaTwitter, FaLinkedin, FaGithub, FaInstagram, FaFacebook, FaYoutube, FaTiktok, FaPinterest, FaSnapchat, FaWhatsapp, FaDiscord, FaReddit, FaMedium, FaDribbble, FaBehance, FaVimeo, FaTwitch, FaTelegram } from "react-icons/fa";
 import { ImageUpload } from "@/components/ui/image-upload";
+import Image from "next/image";
 
 function AdminOrganizationContent() {
   const organization = useQuery(api.organization.getOrganization);
@@ -3461,9 +3462,11 @@ function AdminOrganizationContent() {
                     </div>
                     {formData.stampUrl && (
                       <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border">
-                        <img
+                        <Image
                           src={formData.stampUrl}
                           alt="Stamp preview"
+                          width={64}
+                          height={64}
                           className="h-16 w-16 object-contain rounded border"
                         />
                         <Button
@@ -3513,9 +3516,11 @@ function AdminOrganizationContent() {
                     </div>
                     {formData.signatureUrl && (
                       <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border">
-                        <img
+                        <Image
                           src={formData.signatureUrl}
                           alt="Signature preview"
+                          width={128}
+                          height={48}
                           className="h-12 w-32 object-contain rounded border"
                         />
                         <Button

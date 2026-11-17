@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Separator } from "./ui/separator";
+import Link from "next/link";
 
 // Zod schema
 const loginSchema = z.object({
@@ -147,12 +148,12 @@ export function LoginForm({
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
+                  <Link
                     href="/forgot-password"
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
                     Forgot your password?
-                  </a>
+                  </Link>
                 </div>
                 <Input
                   id="password"
@@ -182,9 +183,9 @@ export function LoginForm({
                 </Button> */}
                 <FieldDescription className="text-center">
                   Don&apos;t have an account?{" "}
-                  <a href="/signup" className="underline underline-offset-4">
+                  <Link href="/signup" className="underline underline-offset-4">
                     Sign up
-                  </a>
+                  </Link>
                 </FieldDescription>
               </Field>
 

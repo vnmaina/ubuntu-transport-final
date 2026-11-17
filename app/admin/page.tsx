@@ -2,6 +2,7 @@
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -205,41 +206,41 @@ export default function AdminPage() {
 
         {/* Quick Actions */}
         <div className="flex flex-wrap gap-3">
-          <a
+          <Link
             href="/admin/quotations"
             className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-md shadow-blue-500/20 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-500/25"
           >
             <FileText className="h-4 w-4" />
             View Quotations
             <ArrowUpRight className="h-3.5 w-3.5 opacity-70 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/admin/invoices"
             className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-4 py-2.5 text-sm font-medium text-white shadow-md shadow-violet-500/20 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-violet-500/25"
           >
             <Receipt className="h-4 w-4" />
             View Invoices
             <ArrowUpRight className="h-3.5 w-3.5 opacity-70 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/admin/clients"
             className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-2.5 text-sm font-medium text-white shadow-md shadow-orange-500/20 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-orange-500/25"
           >
             <Users className="h-4 w-4" />
             View Clients
             <ArrowUpRight className="h-3.5 w-3.5 opacity-70 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/admin/services"
             className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-600 to-teal-600 px-4 py-2.5 text-sm font-medium text-white shadow-md shadow-cyan-500/20 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-cyan-500/25"
           >
             <Package className="h-4 w-4" />
             View Services
             <ArrowUpRight className="h-3.5 w-3.5 opacity-70 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </a>
+          </Link>
         </div>
 
         {/* Analytics Cards */}

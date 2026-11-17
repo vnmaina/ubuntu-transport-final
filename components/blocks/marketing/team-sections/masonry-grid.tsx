@@ -3,6 +3,7 @@
 import { Twitter, Github, Linkedin } from '@/components/ui/brand-icons';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import Image from "next/image";
 
 const team = [
   {
@@ -79,12 +80,14 @@ export default function MasonryGrid() {
             <CardContent className="p-0">
               <div className="relative">
                 <div className={`relative ${member.height}`}>
-                  <img
+                  <Image
                     className="object-cover"
                     src={member.image}
                     alt={member.name}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
+                  
+              fill
+            />
                 </div>
                 <div className="from-background/90 to-background/0 absolute inset-0 bg-gradient-to-t opacity-0 transition-opacity group-hover:opacity-100" />
                 <div className="absolute right-0 bottom-0 left-0 translate-y-4 p-6 opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100">

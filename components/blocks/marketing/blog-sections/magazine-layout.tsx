@@ -10,6 +10,8 @@ import {
   BookmarkIcon,
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import Image from "next/image";
+import Link from "next/link";
 
 // Define blog post types
 interface Author {
@@ -158,11 +160,14 @@ export default function BlogSectionMagazineLayout({
         {featuredPost && (
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
-              <img
+              <Image
                 src={featuredPost.imageUrl}
                 alt={featuredPost.title}
                 className="object-cover"
-              />
+              
+              fill
+              sizes="100vw"
+            />
               <div className="absolute top-4 left-4 z-10">
                 <Badge className="bg-primary text-primary-foreground hover:bg-primary/90">
                   Featured
@@ -186,11 +191,14 @@ export default function BlogSectionMagazineLayout({
 
               <div className="flex items-center gap-4">
                 <div className="relative h-10 w-10 overflow-hidden rounded-full">
-                  <img
+                  <Image
                     src={featuredPost.author.avatar}
                     alt={featuredPost.author.name}
                     className="object-cover"
-                  />
+                  
+              fill
+              sizes="100vw"
+            />
                 </div>
                 <div>
                   <p className="font-medium">{featuredPost.author.name}</p>
@@ -205,7 +213,7 @@ export default function BlogSectionMagazineLayout({
               </div>
 
               <Button size="lg" >
-                <a href="#">Read Full Article</a>
+                <Link href="#">Read Full Article</Link>
               </Button>
             </div>
           </div>
@@ -226,11 +234,14 @@ export default function BlogSectionMagazineLayout({
                   className="overflow-hidden border-none shadow-lg"
                 >
                   <div className="relative aspect-[16/9]">
-                    <img
+                    <Image
                       src={post.imageUrl}
                       alt={post.title}
                       className="object-cover"
-                    />
+                    
+              fill
+              sizes="100vw"
+            />
                     <div className="absolute top-4 left-4">
                       <Badge>{post.category}</Badge>
                     </div>
@@ -248,18 +259,21 @@ export default function BlogSectionMagazineLayout({
                   <CardFooter className="flex items-center justify-between pt-0">
                     <div className="flex items-center gap-2">
                       <div className="relative h-8 w-8 overflow-hidden rounded-full">
-                        <img
+                        <Image
                           src={post.author.avatar}
                           alt={post.author.name}
                           className="object-cover"
-                        />
+                        
+              fill
+              sizes="100vw"
+            />
                       </div>
                       <span className="text-sm font-medium">
                         {post.author.name}
                       </span>
                     </div>
                     <Button variant="ghost" size="sm" className="gap-1" >
-                      <a href="#"><span>Read</span><ArrowRightIcon className="h-4 w-4" /></a>
+                      <Link href="#"><span>Read</span><ArrowRightIcon className="h-4 w-4" /></Link>
                     </Button>
                   </CardFooter>
                 </Card>
@@ -280,11 +294,14 @@ export default function BlogSectionMagazineLayout({
               {trendingPosts.map((post) => (
                 <Card key={post.id} className="flex h-full flex-col">
                   <div className="relative aspect-video">
-                    <img
+                    <Image
                       src={post.imageUrl}
                       alt={post.title}
                       className="object-cover transition-transform duration-300 hover:scale-105"
-                    />
+                    
+              fill
+              sizes="100vw"
+            />
                     <div className="from-background/80 absolute inset-0 bg-gradient-to-t to-transparent opacity-0 transition-opacity duration-300 hover:opacity-100"></div>
                     <Button
                       variant="ghost"
@@ -317,7 +334,7 @@ export default function BlogSectionMagazineLayout({
 
                   <CardFooter className="pt-0">
                     <Button variant="link" className="px-0" >
-                      <a href="#">Read Article <ArrowRightIcon className="ml-1 h-4 w-4" /></a>
+                      <Link href="#">Read Article <ArrowRightIcon className="ml-1 h-4 w-4" /></Link>
                     </Button>
                   </CardFooter>
                 </Card>
@@ -329,9 +346,9 @@ export default function BlogSectionMagazineLayout({
 
       <div className="mt-16 flex justify-center">
         <Button variant="outline" size="lg" className="gap-2" >
-          <a href="#">View All Articles
+          <Link href="#">View All Articles
             <ArrowRightIcon className="ml-2 h-4 w-4" />
-          </a>
+          </Link>
         </Button>
       </div>
     </section>

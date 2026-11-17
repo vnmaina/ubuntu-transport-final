@@ -3,6 +3,7 @@
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { BlockRenderer } from "@/components/BlockRenderer";
+import Link from "next/link";
 
 export default function PortfolioLayout() {
   // Try to get the published home page from the page builder
@@ -43,7 +44,7 @@ export default function PortfolioLayout() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {collections.map((collection) => (
-                <a 
+                <Link 
                   key={collection._id} 
                   href={`/collections/${collection.slug}`}
                   className="block group"
@@ -61,7 +62,7 @@ export default function PortfolioLayout() {
                       </p>
                     </div>
                   </div>
-                </a>
+                </Link>
               ))}
             </div>
           )}
@@ -77,12 +78,12 @@ export default function PortfolioLayout() {
           <p className="text-lg mb-8 opacity-90">
             Get in touch with us to discuss your next big idea.
           </p>
-          <a 
+          <Link 
             href="/collections" 
             className="inline-block bg-primary-foreground text-primary px-8 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity"
           >
             View All Work
-          </a>
+          </Link>
         </div>
       </section>
     </div>

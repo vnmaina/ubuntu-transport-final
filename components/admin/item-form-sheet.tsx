@@ -42,6 +42,7 @@ import {
   Share2,
   Sliders,
 } from "lucide-react";
+import Image from "next/image";
 
 export interface ItemFormData {
   title: string;
@@ -824,7 +825,7 @@ export function ItemFormSheet({
                           />
                           {block.content && (
                             <div className="aspect-video rounded-lg overflow-hidden border border-border mt-2 relative">
-                              <img 
+                              <Image 
                                 src={block.content} 
                                 alt="Block preview" 
                                 className="w-full h-full object-cover"
@@ -834,7 +835,10 @@ export function ItemFormSheet({
                                 onLoad={(e) => {
                                   e.currentTarget.style.display = 'block';
                                 }}
-                              />
+                              
+              fill
+              sizes="100vw"
+            />
                             </div>
                           )}
                         </div>

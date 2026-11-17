@@ -1,4 +1,6 @@
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import Link from "next/link";
 
 export default function AboutSectionWithImage() {
   return (
@@ -27,19 +29,20 @@ export default function AboutSectionWithImage() {
           </div>
           <div className="flex flex-wrap gap-4">
             <Button >
-              <a href="#">Learn our history</a>
+              <Link href="#">Learn our history</Link>
             </Button>
             <Button variant="outline" >
-              <a href="#">Meet our team</a>
+              <Link href="#">Meet our team</Link>
             </Button>
           </div>
         </div>
         <div className="relative aspect-video overflow-hidden rounded-lg lg:aspect-square">
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=2000"
             alt="Our team collaboration"
-            className="object-cover"
+            fill
             sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
           />
         </div>
       </div>

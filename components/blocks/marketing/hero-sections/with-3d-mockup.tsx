@@ -1,5 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import Image from "next/image";
+import Link from "next/link";
 
 interface HeroSectionWith3DMockupProps {
   title?: string;
@@ -35,7 +37,7 @@ export default function HeroSectionWith3DMockup({ title, subtitle, ctaText, ctaL
               </p>
               <div className="mb-8 flex flex-col gap-3 sm:flex-row">
                 <Button size="lg" >
-                  <a href={ctaLink || "#"} className="flex items-center gap-2">
+                  <Link href={ctaLink || "#"} className="flex items-center gap-2">
                     {ctaText || "Start Building"}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -52,7 +54,7 @@ export default function HeroSectionWith3DMockup({ title, subtitle, ctaText, ctaL
                       <path d="M5 12h14" />
                       <path d="m12 5 7 7-7 7" />
                     </svg>
-                  </a>
+                  </Link>
                 </Button>
                 <Button size="lg" variant="outline">
                   Watch Demo
@@ -81,7 +83,7 @@ export default function HeroSectionWith3DMockup({ title, subtitle, ctaText, ctaL
               {/* Main Device */}
               <div className="perspective-1200 relative z-10 translate-z-8 rotate-x-[5deg] rotate-y-[-5deg] transform rounded-xl shadow-2xl">
                 <div className="bg-card aspect-[1440/900] overflow-hidden rounded-xl border">
-                  <img
+                  <Image
                     src={imageUrl || "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1440&auto=format&fit=crop"}
                     alt="Dashboard Preview"
                     width={1440}

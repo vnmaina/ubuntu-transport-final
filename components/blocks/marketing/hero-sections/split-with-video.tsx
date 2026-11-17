@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 
 interface HeroSectionSplitWithVideoProps {
   title?: string;
@@ -31,7 +32,7 @@ export default function HeroSectionSplitWithVideo({ title, subtitle, ctaText, ct
             </p>
             <div className="mb-8 flex flex-col gap-3 sm:flex-row">
               <Button size="lg" >
-                <a href={ctaLink || "#"}>
+                <Link href={ctaLink || "#"}>
                   {ctaText || "Get started"}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +49,7 @@ export default function HeroSectionSplitWithVideo({ title, subtitle, ctaText, ct
                     <path d="M5 12h14" />
                     <path d="m12 5 7 7-7 7" />
                   </svg>
-                </a>
+                </Link>
               </Button>
               <Button size="lg" variant="outline">
                 View documentation

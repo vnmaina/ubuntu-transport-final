@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { QuoteIcon } from 'lucide-react';
+import Link from "next/link";
 
 // Define types for culture aspects
 type CultureAspect = {
@@ -166,9 +168,11 @@ export default function AboutSectionCompanyCulture() {
                     </p>
                     <div className="flex items-center gap-3 pt-2">
                       <div className="relative h-10 w-10 overflow-hidden rounded-full">
-                        <img
+                        <Image
                           src={aspect.testimonial.avatar}
                           alt={aspect.testimonial.author}
+                          fill
+                          sizes="40px"
                           className="object-cover"
                         />
                       </div>
@@ -192,10 +196,12 @@ export default function AboutSectionCompanyCulture() {
                     key={idx}
                     className="relative aspect-[4/3] overflow-hidden rounded-lg"
                   >
-                    <img
+                    <Image
                       src={image}
                       alt={`${aspect.title} culture`}
-                      className="transform object-cover transition-transform duration-500 hover:scale-105"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition-transform duration-500 hover:scale-105"
                     />
                   </div>
                 ))}
@@ -216,10 +222,10 @@ export default function AboutSectionCompanyCulture() {
               </p>
               <div className="flex gap-4">
                 <Button >
-                  <a href="#">View Open Positions</a>
+                  <Link href="#">View Open Positions</Link>
                 </Button>
                 <Button variant="outline" >
-                  <a href="#">Our Values</a>
+                  <Link href="#">Our Values</Link>
                 </Button>
               </div>
             </div>
@@ -233,7 +239,7 @@ export default function AboutSectionCompanyCulture() {
                   key={i}
                   className="relative aspect-square overflow-hidden rounded-md"
                 >
-                  <img src={src} alt="Team culture" className="object-cover" />
+                  <Image src={src} alt="Team culture" fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover" />
                 </div>
               ))}
             </div>

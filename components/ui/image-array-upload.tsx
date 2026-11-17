@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Upload, X, ImageIcon, Link as LinkIcon, Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
+import Image from "next/image";
 
 interface ImageArrayUploadProps {
   value: string[];
@@ -264,11 +265,13 @@ export function ImageArrayUpload({
                   </Button>
                 </div>
                 {url && (
-                  <div className="relative">
-                    <img
+                  <div className="relative h-32">
+                    <Image
                       src={url}
                       alt={`Preview ${index + 1}`}
-                      className="w-full h-32 object-cover rounded border border-border"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover rounded border border-border"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.style.display = "none";

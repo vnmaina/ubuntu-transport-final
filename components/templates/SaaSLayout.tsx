@@ -4,6 +4,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { BlockRenderer } from "@/components/BlockRenderer";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export default function SaaSLayout() {
   // Try to get the published home page from the page builder
@@ -32,9 +33,9 @@ export default function SaaSLayout() {
             Explore our services, projects, team, and products. Everything you need in one place.
           </p>
           <div className="flex gap-4 justify-center">
-            <a href="/collections" className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-10 px-4 py-2">
+            <Link href="/collections" className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-10 px-4 py-2">
               Browse Collections
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -51,7 +52,7 @@ export default function SaaSLayout() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {collections.map((collection) => (
-                <a key={collection._id} href={`/collections/${collection.slug}`} className="block">
+                <Link key={collection._id} href={`/collections/${collection.slug}`} className="block">
                   <div className="h-full hover:shadow-lg transition-shadow cursor-pointer group border rounded-lg bg-card text-card-foreground shadow-sm">
                     <div className="flex flex-col space-y-1.5 p-6">
                       <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
@@ -68,7 +69,7 @@ export default function SaaSLayout() {
                       </div>
                     </div>
                   </div>
-                </a>
+                </Link>
               ))}
             </div>
           )}

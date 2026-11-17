@@ -21,6 +21,8 @@ import {
   DownloadIcon,
 } from 'lucide-react';
 import { useState } from 'react';
+import Image from "next/image";
+import Link from "next/link";
 
 // Define types
 interface PodcastEpisode {
@@ -148,7 +150,7 @@ export default function BlogSectionPodcastList({ title, subtitle, posts }: Podca
               Subscribe Now
             </Button>
             <Button  variant="outline" size="lg">
-              <a href="#"><RssIcon className="mr-2 h-5 w-5" />RSS Feed</a>
+              <Link href="#"><RssIcon className="mr-2 h-5 w-5" />RSS Feed</Link>
             </Button>
           </div>
         </div>
@@ -199,11 +201,14 @@ export default function BlogSectionPodcastList({ title, subtitle, posts }: Podca
                 <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-4">
                   {/* Image & Play */}
                   <div className="group relative aspect-square overflow-hidden rounded-lg md:col-span-1">
-                    <img
+                    <Image
                       src={episode.imageUrl}
                       alt={episode.title}
                       className="object-cover"
-                    />
+                    
+              fill
+              sizes="100vw"
+            />
                     <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                       <Button
                         variant="ghost"
@@ -225,7 +230,7 @@ export default function BlogSectionPodcastList({ title, subtitle, posts }: Podca
                         </span>
                       </div>
                       <h3 className="hover:text-primary text-2xl font-semibold transition-colors">
-                        <a href="#">{episode.title}</a>
+                        <Link href="#">{episode.title}</Link>
                       </h3>
                       {episode.guest && (
                         <p className="text-muted-foreground mt-1">
@@ -262,7 +267,7 @@ export default function BlogSectionPodcastList({ title, subtitle, posts }: Podca
                           <a href={episode.audioUrl} download><DownloadIcon className="mr-1 h-4 w-4" />Download</a>
                         </Button>
                         <Button  size="sm">
-                          <a href="#"><PlayCircleIcon className="mr-1 h-4 w-4" />Play Now</a>
+                          <Link href="#"><PlayCircleIcon className="mr-1 h-4 w-4" />Play Now</Link>
                         </Button>
                       </div>
                     </div>

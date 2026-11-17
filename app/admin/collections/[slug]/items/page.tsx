@@ -59,6 +59,7 @@ import {
 } from "@tanstack/react-table";
 import { flexRender, type RowSelectionState } from "@tanstack/react-table";
 import { ItemFormSheet, ItemFormData } from "@/components/admin/item-form-sheet";
+import Image from "next/image";
 
 type ColumnFiltersState = Array<{
   id: string;
@@ -289,9 +290,11 @@ function AdminCollectionItemsContent() {
         cell: ({ row }: any) => (
           <div className="flex items-center gap-3 min-w-0 max-w-[240px] sm:max-w-[280px] lg:max-w-xs py-1">
             {row.original.imageUrl ? (
-              <img
+              <Image
                 src={row.original.imageUrl}
                 alt={row.original.title}
+                width={40}
+                height={40}
                 className="size-10 object-cover rounded-lg border border-border shrink-0"
               />
             ) : (

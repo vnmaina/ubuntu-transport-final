@@ -12,6 +12,7 @@ import {
   Tag,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { SectionHeader } from "./SectionHeader";
 import { MediaJsonLd } from "./media-seo";
 import type { Doc } from "@/convex/_generated/dataModel";
@@ -152,10 +153,12 @@ export function BlogCardsBlock({
                 >
                   <div className="relative h-28 w-36 shrink-0 overflow-hidden rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 sm:h-32 sm:w-48">
                     {post.featuredImage ? (
-                      <img
+                      <Image
                         src={post.featuredImage}
                         alt={post.title}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        fill
+                        sizes="(max-width: 640px) 144px, 192px"
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center">
@@ -205,10 +208,12 @@ export function BlogCardsBlock({
               >
                 <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-primary/10 to-primary/5">
                   {post.featuredImage ? (
-                    <img
+                    <Image
                       src={post.featuredImage}
                       alt={post.title}
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center">
@@ -236,9 +241,11 @@ export function BlogCardsBlock({
                   <div className="mt-4 flex items-center gap-3 border-t border-border/60 pt-3 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       {post.author?.avatar ? (
-                        <img
+                        <Image
                           src={post.author.avatar}
                           alt={post.author.name}
+                          width={20}
+                          height={20}
                           className="h-5 w-5 rounded-full object-cover"
                         />
                       ) : (

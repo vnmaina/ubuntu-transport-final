@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Play } from 'lucide-react';
 import { useState } from 'react';
+import Link from "next/link";
 
 interface VideoBackgroundHeroProps {
   title?: string;
@@ -51,8 +52,8 @@ export default function VideoBackgroundHero({ title, subtitle, ctaText, ctaLink,
 
         <div className="mt-6 flex flex-col gap-4 sm:flex-row">
           <Button size="lg" variant={'secondary'} >
-            <a href={ctaLink || "#"}>{ctaText || "Get Started Free"}
-              <ArrowRight className="ml-2 h-4 w-4" /></a>
+            <Link href={ctaLink || "#"}>{ctaText || "Get Started Free"}
+              <ArrowRight className="ml-2 h-4 w-4" /></Link>
           </Button>
           <Button
             size="lg"

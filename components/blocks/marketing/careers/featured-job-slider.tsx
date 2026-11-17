@@ -31,6 +31,8 @@ import {
   UsersIcon,
   CalendarIcon,
 } from 'lucide-react';
+import Image from "next/image";
+import Link from "next/link";
 
 interface JobPosition {
   id: string;
@@ -319,7 +321,7 @@ export default function FeaturedJobSlider() {
                       <div className="bg-card relative flex h-12 w-12 items-center justify-center rounded-md border">
                         <div className="absolute flex h-full w-full items-center justify-center">
                           {job.companyLogo ? (
-                            <img
+                            <Image
                               src={job.companyLogo}
                               alt={job.companyName}
                               width={48}
@@ -427,7 +429,7 @@ export default function FeaturedJobSlider() {
 
       <div className="mt-12 text-center">
         <Button  variant="default" size="lg" className="px-8">
-          <a href="#">View All Positions</a>
+          <Link href="#">View All Positions</Link>
         </Button>
       </div>
     </div>

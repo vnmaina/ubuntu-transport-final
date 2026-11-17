@@ -9,6 +9,7 @@ import { useTransition, memo, useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
+import Image from "next/image";
 import { getOrganizationSettings } from "@/app/actions/navbar";
 import { TopBar } from "@/components/TopBar";
 import { NavbarSearch } from "@/components/navbar-search";
@@ -425,10 +426,13 @@ const Navbar1Component = ({
     href={logo.url}
     className="flex items-center gap-3"
   >
-    <img
+    <Image
       src={logo.src}
-      className="h-14 w-auto max-w-45 object-fit"
+      width={200}
+      height={64}
+      className="h-14 w-auto max-w-45 object-contain"
       alt={logo.alt}
+      priority
     />
 
     {(logo.title || logo.subtitle) && (
@@ -515,9 +519,11 @@ const Navbar1Component = ({
             <div className="flex items-center justify-between">
               {/* Logo */}
               <Link href={logo.url} className="flex items-center gap-2">
-                <img
+                <Image
                   src={logo.src}
-                  className="max-h-8 dark:invert"
+                  width={120}
+                  height={40}
+                  className="h-8 w-auto max-w-32 object-contain dark:invert"
                   alt={logo.alt}
                 />
               </Link>
@@ -531,9 +537,11 @@ const Navbar1Component = ({
                   <SheetHeader>
                     <SheetTitle>
                       <Link href={logo.url} className="flex items-center gap-2">
-                        <img
+                        <Image
                           src={logo.src}
-                          className="max-h-8 dark:invert"
+                          width={120}
+                          height={40}
+                          className="h-8 w-auto max-w-32 object-contain dark:invert"
                           alt={logo.alt}
                         />
                       </Link>

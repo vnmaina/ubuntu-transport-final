@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import Image from "next/image";
 
 interface GalleryImage {
   src: string;
@@ -130,11 +131,13 @@ export default function GridGallery() {
             key={`img-${index}`}
             className="group relative aspect-square overflow-hidden rounded-lg"
           >
-            <img
+            <Image
               src={image.src}
               alt={image.alt}
               sizes={`(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw`}
               className="object-cover transition-transform duration-300 group-hover:scale-105"
+            
+              fill
             />
             <div className="absolute inset-0 flex items-end bg-black/30 p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
               <p className="line-clamp-2 text-sm font-medium text-white">

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { FaTwitter, FaLinkedin, FaGithub, FaInstagram, FaFacebook, FaYoutube, FaTiktok, FaDribbble, FaBehance, FaGlobe } from "react-icons/fa";
 import { Mail, MapPin, Calendar, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Id } from "@/convex/_generated/dataModel";
 
 interface TeamCardProps {
@@ -73,12 +74,14 @@ export function TeamCard({ item, collectionSlug, variant = "default" }: TeamCard
         <Card className="group cursor-pointer hover:shadow-lg transition-all duration-300 overflow-hidden">
           <CardContent className="p-6 text-center">
             <div className="relative inline-block mb-4">
-              <div className="w-20 h-20 rounded-full overflow-hidden bg-muted mx-auto">
+              <div className="relative w-20 h-20 rounded-full overflow-hidden bg-muted mx-auto">
                 {item.imageUrl ? (
-                  <img
+                  <Image
                     src={item.imageUrl}
                     alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    fill
+                    sizes="80px"
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-3xl">
@@ -108,10 +111,12 @@ export function TeamCard({ item, collectionSlug, variant = "default" }: TeamCard
         <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 overflow-hidden">
           <div className="relative aspect-[4/3] overflow-hidden">
             {item.imageUrl ? (
-              <img
+              <Image
                 src={item.imageUrl}
                 alt={item.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
             ) : (
               <div className="w-full h-full bg-muted flex items-center justify-center text-6xl">
@@ -161,10 +166,12 @@ export function TeamCard({ item, collectionSlug, variant = "default" }: TeamCard
           <div className="relative overflow-hidden">
             <div className="relative aspect-[3/4]">
               {item.imageUrl ? (
-                <img
+                <Image
                   src={item.imageUrl}
                   alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover group-hover:scale-110 transition-transform duration-500"
                 />
               ) : (
                 <div className="w-full h-full bg-muted flex items-center justify-center text-6xl">
@@ -209,12 +216,14 @@ export function TeamCard({ item, collectionSlug, variant = "default" }: TeamCard
         <CardContent className="p-6">
           <div className="flex flex-col items-center text-center">
             <div className="relative mb-4">
-              <div className="w-32 h-32 rounded-full overflow-hidden bg-muted ring-4 ring-muted/20 group-hover:ring-primary/30 transition-all">
+              <div className="relative w-32 h-32 rounded-full overflow-hidden bg-muted ring-4 ring-muted/20 group-hover:ring-primary/30 transition-all">
                 {item.imageUrl ? (
-                  <img
+                  <Image
                     src={item.imageUrl}
                     alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    fill
+                    sizes="128px"
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-5xl">

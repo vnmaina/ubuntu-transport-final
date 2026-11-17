@@ -3,6 +3,7 @@
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { BlockRenderer } from "@/components/BlockRenderer";
+import Link from "next/link";
 
 export default function MinimalLayout() {
   // Try to get the published home page from the page builder
@@ -43,7 +44,7 @@ export default function MinimalLayout() {
           ) : (
             <div className="space-y-4">
               {collections.map((collection) => (
-                <a 
+                <Link 
                   key={collection._id} 
                   href={`/collections/${collection.slug}`}
                   className="block"
@@ -57,7 +58,7 @@ export default function MinimalLayout() {
                       <span className="text-2xl opacity-50">{collection.icon || "→"}</span>
                     </div>
                   </div>
-                </a>
+                </Link>
               ))}
             </div>
           )}

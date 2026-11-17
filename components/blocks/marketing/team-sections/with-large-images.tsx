@@ -1,5 +1,6 @@
 import { Twitter, Github, Linkedin } from '@/components/ui/brand-icons';
 import { Button } from '@/components/ui/button';
+import Image from "next/image";
 
 const team = [
   {
@@ -43,7 +44,7 @@ export default function WithLargeImages() {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {team.map((member) => (
           <div key={member.name} className="flex flex-col">
-            <img
+            <Image
               className="aspect-[4/3] rounded-xl object-cover"
               src={member.image}
               alt={member.name}

@@ -23,6 +23,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import Image from "next/image";
+import Link from "next/link";
 
 interface BlogPost {
   id: number;
@@ -184,11 +186,14 @@ export default function BlogSectionCategoryFilter({ title, subtitle, posts }: Ca
             <Card key={post.id} className="flex h-full flex-col gap-0 pt-0">
               <CardHeader className="overflow-hidden p-0">
                 <div className="relative aspect-video">
-                  <img
+                  <Image
                     src={post.imageUrl}
                     alt={post.title}
                     className="object-cover transition-transform duration-300 hover:scale-105"
-                  />
+                  
+              fill
+              sizes="100vw"
+            />
                 </div>
               </CardHeader>
               <CardContent className="flex-grow pt-6 pb-0">
@@ -206,7 +211,7 @@ export default function BlogSectionCategoryFilter({ title, subtitle, posts }: Ca
                   <span>{post.readTime}</span>
                 </div>
                 <Button  variant="ghost" size="sm">
-                  <a href="#">Read more</a>
+                  <Link href="#">Read more</Link>
                 </Button>
               </CardFooter>
             </Card>
@@ -235,7 +240,7 @@ export default function BlogSectionCategoryFilter({ title, subtitle, posts }: Ca
       {activeCategory === 'All' && searchQuery === '' && (
         <div className="flex justify-center">
           <Button  variant="outline" className="w-full max-w-sm">
-            <a href="#">Load More Articles</a>
+            <Link href="#">Load More Articles</Link>
           </Button>
         </div>
       )}

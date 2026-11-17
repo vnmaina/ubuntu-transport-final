@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Upload, X, ImageIcon, Link as LinkIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import Image from "next/image";
 
 interface ImageUploadProps {
   value: string;
@@ -180,8 +181,8 @@ export function ImageUpload({
           />
           {value && (
             <div className="relative group rounded-xl overflow-hidden border border-border bg-muted/30">
-              <div className={getAspectRatioClass()}>
-                <img
+              <div className={"relative " + getAspectRatioClass()}>
+                <Image
                   src={value}
                   alt="Preview"
                   className="w-full h-full object-cover"
@@ -199,7 +200,10 @@ export function ImageUpload({
                       (target.nextElementSibling as HTMLElement).style.display = "none";
                     }
                   }}
-                />
+                
+              fill
+              sizes="100vw"
+            />
                 <div className="hidden absolute inset-0 items-center justify-center text-xs text-destructive bg-muted/50">
                   Failed to load image
                 </div>
@@ -252,8 +256,8 @@ export function ImageUpload({
           </p>
           {value && (
             <div className="relative group rounded-xl overflow-hidden border border-border bg-muted/30">
-              <div className={getAspectRatioClass()}>
-                <img
+              <div className={"relative " + getAspectRatioClass()}>
+                <Image
                   src={value}
                   alt="Uploaded preview"
                   className="w-full h-full object-cover"
@@ -271,7 +275,10 @@ export function ImageUpload({
                       (target.nextElementSibling as HTMLElement).style.display = "none";
                     }
                   }}
-                />
+                
+              fill
+              sizes="100vw"
+            />
                 <div className="hidden absolute inset-0 items-center justify-center text-xs text-destructive bg-muted/50">
                   Failed to load image
                 </div>

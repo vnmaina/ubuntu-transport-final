@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -27,11 +28,13 @@ export function GalleryRenderer({ images, type }: GalleryRendererProps) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {filteredImages.map((url, index) => (
-          <div key={index} className="aspect-square rounded-xl overflow-hidden border border-border/80 group cursor-pointer">
-            <img
+          <div key={index} className="relative aspect-square rounded-xl overflow-hidden border border-border/80 group cursor-pointer">
+            <Image
               src={url}
               alt={`Gallery ${index + 1}`}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              fill
+              sizes="(max-width: 768px) 50vw, 33vw"
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
             />
           </div>
         ))}
@@ -42,11 +45,13 @@ export function GalleryRenderer({ images, type }: GalleryRendererProps) {
   if (type === "carousel") {
     return (
       <div className="relative">
-        <div className="aspect-video rounded-xl overflow-hidden border border-border/80">
-          <img
+        <div className="relative aspect-video rounded-xl overflow-hidden border border-border/80">
+          <Image
             src={filteredImages[currentIndex]}
             alt={`Gallery ${currentIndex + 1}`}
-            className="w-full h-full object-cover"
+            fill
+            sizes="(max-width: 1024px) 100vw, 896px"
+            className="object-cover"
           />
         </div>
         {filteredImages.length > 1 && (
@@ -88,11 +93,14 @@ export function GalleryRenderer({ images, type }: GalleryRendererProps) {
     return (
       <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
         {filteredImages.map((url, index) => (
-          <div key={index} className="break-inside-avoid rounded-xl overflow-hidden border border-border/80 group cursor-pointer">
-            <img
+          <div key={index} className="relative break-inside-avoid rounded-xl overflow-hidden border border-border/80 group cursor-pointer">
+            <Image
               src={url}
               alt={`Gallery ${index + 1}`}
-              className="w-full object-cover group-hover:scale-105 transition-transform duration-300"
+              width={800}
+              height={600}
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300"
             />
           </div>
         ))}
@@ -105,11 +113,13 @@ export function GalleryRenderer({ images, type }: GalleryRendererProps) {
       <div className="flex gap-4 overflow-x-auto pb-4 snap-x">
         {filteredImages.map((url, index) => (
           <div key={index} className="flex-shrink-0 w-80 snap-center">
-            <div className="aspect-video rounded-xl overflow-hidden border border-border/80">
-              <img
+            <div className="relative aspect-video rounded-xl overflow-hidden border border-border/80">
+              <Image
                 src={url}
                 alt={`Gallery ${index + 1}`}
-                className="w-full h-full object-cover"
+                fill
+                sizes="320px"
+                className="object-cover"
               />
             </div>
           </div>

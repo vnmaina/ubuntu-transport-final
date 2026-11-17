@@ -17,6 +17,8 @@ import {
   BookmarkIcon,
   ArrowRightIcon,
 } from 'lucide-react';
+import Image from "next/image";
+import Link from "next/link";
 
 // Define blog post types
 interface Author {
@@ -118,11 +120,14 @@ export default function BlogSectionHeroFocus({ title, subtitle, posts }: HeroFoc
     <section className="relative">
       {/* Hero Post */}
       <div className="relative h-[600px] w-full md:h-[700px] lg:h-[800px]">
-        <img
+        <Image
           src={featuredPost.imageUrl}
           alt={featuredPost.title}
           className="object-cover brightness-[0.7]"
-        />
+        
+              fill
+              sizes="100vw"
+            />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
 
         <div className="absolute inset-0 container mx-auto flex flex-col justify-end px-4 pb-12 md:px-6 md:pb-16 lg:pb-24 2xl:max-w-[1400px]">
@@ -140,11 +145,14 @@ export default function BlogSectionHeroFocus({ title, subtitle, posts }: HeroFoc
             <div className="flex flex-wrap items-center gap-6">
               <div className="flex items-center gap-2">
                 <div className="relative h-10 w-10 overflow-hidden rounded-full border-2 border-white">
-                  <img
+                  <Image
                     src={featuredPost.author.avatar}
                     alt={featuredPost.author.name}
                     className="object-cover"
-                  />
+                  
+              fill
+              sizes="100vw"
+            />
                 </div>
                 <div>
                   <p className="font-medium text-white">
@@ -174,7 +182,7 @@ export default function BlogSectionHeroFocus({ title, subtitle, posts }: HeroFoc
 
             <div className="pt-4">
               <Button  size="lg">
-                <a href="#">Read Full Article</a>
+                <Link href="#">Read Full Article</Link>
               </Button>
             </div>
           </div>
@@ -194,7 +202,7 @@ export default function BlogSectionHeroFocus({ title, subtitle, posts }: HeroFoc
               </p>
             </div>
             <Button  variant="outline" className="mt-4 md:mt-0">
-              <a href="#">View All</a>
+              <Link href="#">View All</Link>
             </Button>
           </div>
 
@@ -213,11 +221,14 @@ export default function BlogSectionHeroFocus({ title, subtitle, posts }: HeroFoc
                 >
                   <Card className="h-full overflow-hidden p-0">
                     <div className="relative aspect-video">
-                      <img
+                      <Image
                         src={post.imageUrl}
                         alt={post.title}
                         className="object-cover transition-transform duration-300 hover:scale-105"
-                      />
+                      
+              fill
+              sizes="100vw"
+            />
                       <div className="absolute top-2 left-2">
                         <Badge variant="secondary">{post.category}</Badge>
                       </div>
@@ -233,11 +244,14 @@ export default function BlogSectionHeroFocus({ title, subtitle, posts }: HeroFoc
 
                       <div className="flex items-center gap-2">
                         <div className="relative h-8 w-8 overflow-hidden rounded-full">
-                          <img
+                          <Image
                             src={post.author.avatar}
                             alt={post.author.name}
                             className="object-cover"
-                          />
+                          
+              fill
+              sizes="100vw"
+            />
                         </div>
                         <span className="text-sm font-medium">
                           {post.author.name}
@@ -252,7 +266,7 @@ export default function BlogSectionHeroFocus({ title, subtitle, posts }: HeroFoc
                       </div>
 
                       <Button  variant="link" className="h-auto p-0">
-                        <a href="#">Read <ArrowRightIcon className="ml-1 h-4 w-4" /></a>
+                        <Link href="#">Read <ArrowRightIcon className="ml-1 h-4 w-4" /></Link>
                       </Button>
                     </CardFooter>
                   </Card>

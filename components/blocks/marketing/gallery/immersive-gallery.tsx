@@ -20,6 +20,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
+import Image from "next/image";
 
 interface SplitGalleryImage {
   src: string;
@@ -154,12 +155,14 @@ export default function SplitGallery() {
       <div className="relative h-full w-full">
         {/* Image container */}
         <div className="absolute inset-0 transition-opacity duration-500">
-          <img
+          <Image
             src={currentImage.src}
             alt={currentImage.alt}
             sizes="100vw"
             className="object-cover"
-          />
+          
+              fill
+            />
           {/* Gradient overlay for better text readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30" />
         </div>

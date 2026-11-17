@@ -805,12 +805,14 @@ export function BlogPostView({
                   className="group rounded-3xl border border-border/80 overflow-hidden bg-card shadow-xs hover:shadow-xl hover:border-primary/40 hover:-translate-y-1.5 transition-all flex flex-col"
                 >
                   {/* Thumbnail */}
-                  <div className="aspect-[16/10] w-full bg-muted overflow-hidden relative">
+                  <div className="relative aspect-[16/10] w-full bg-muted overflow-hidden">
                     {related.featuredImage ? (
-                      <img
+                      <Image
                         src={related.featuredImage}
                         alt={related.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 via-muted to-secondary/10">

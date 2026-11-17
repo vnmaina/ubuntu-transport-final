@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { ArrowRightIcon } from 'lucide-react';
 import { TwitterIcon } from '@/components/ui/brand-icons';
 import { InstagramIcon, YoutubeIcon, LinkedinIcon } from '@/components/ui/brand-icons';
+import Link from "next/link";
 
 const footerLinks = [
   {
@@ -87,9 +88,9 @@ export default function FooterSubscribe() {
         {/* Footer Links */}
         <div className="grid grid-cols-2 gap-8 py-12 md:grid-cols-4 lg:grid-cols-5">
           <div className="col-span-2 lg:col-span-1">
-            <a href="#" className="flex items-center space-x-2">
+            <Link href="#" className="flex items-center space-x-2">
               <span className="text-xl font-bold">Your Company</span>
-            </a>
+            </Link>
             <p className="text-muted-foreground mt-4 text-sm">
               Empowering the next generation of creators and innovators.
             </p>
@@ -136,24 +137,24 @@ export default function FooterSubscribe() {
               reserved.
             </p>
             <nav className="flex gap-6">
-              <a
+              <Link
                 href="#"
                 className="text-muted-foreground hover:text-primary text-sm"
               >
                 Privacy
-              </a>
-              <a
+              </Link>
+              <Link
                 href="#"
                 className="text-muted-foreground hover:text-primary text-sm"
               >
                 Terms
-              </a>
-              <a
+              </Link>
+              <Link
                 href="#"
                 className="text-muted-foreground hover:text-primary text-sm"
               >
                 Cookies
-              </a>
+              </Link>
             </nav>
           </div>
         </div>

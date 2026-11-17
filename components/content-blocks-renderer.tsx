@@ -4,6 +4,7 @@ import { Calendar, ChevronRight, Star, ArrowRight, Check, FileText, Image as Ima
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { HeroBlock as MarketingHeroBlock } from "@/components/blocks/HeroBlock";
+import Image from "next/image";
 
 interface ContentBlock {
   id: string;
@@ -189,11 +190,15 @@ function CTABlock({ block }: { block: ContentBlock }) {
 function ImageBlock({ block }: { block: ContentBlock }) {
   return (
     <div className="rounded-2xl overflow-hidden border border-border/80">
-      <img
-        src={block.content}
-        alt={block.title || "Image"}
-        className="w-full h-auto object-cover"
-      />
+      <div className="relative aspect-[4/3]">
+        <Image
+          src={block.content ?? ""}
+          alt={block.title || "Image"}
+          fill
+          sizes="(max-width: 768px) 100vw, 768px"
+          className="object-cover"
+        />
+      </div>
       {block.title && (
         <div className="p-4 bg-background">
           <p className="font-semibold text-foreground">{block.title}</p>

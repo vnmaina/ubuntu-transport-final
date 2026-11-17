@@ -2,6 +2,7 @@ import { Twitter, Github, Linkedin } from '@/components/ui/brand-icons';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useState } from 'react';
+import Image from "next/image";
 
 const team = [
   {
@@ -77,7 +78,7 @@ export default function WithFilters() {
           <Card key={member.name} className="pt-0 text-center">
             <CardContent className="pt-6">
               <div className="relative inline-block">
-                <img
+                <Image
                   className="size-24 rounded-full object-cover"
                   src={member.image}
                   alt={member.name}

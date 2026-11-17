@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Sparkles } from 'lucide-react';
+import Link from "next/link";
 
 export default function GradientCTA() {
   return (
@@ -28,10 +29,10 @@ export default function GradientCTA() {
             </div>
             <div className="mt-4 flex flex-col gap-4 sm:flex-row">
               <Button size="lg" className="shadow-md" >
-                <a href="#">Upgrade Now</a>
+                <Link href="#">Upgrade Now</Link>
               </Button>
               <Button size="lg" variant="outline" className="bg-background/80 shadow-sm backdrop-blur-sm" >
-                <a href="#">Compare Plans</a>
+                <Link href="#">Compare Plans</Link>
               </Button>
             </div>
           </div>

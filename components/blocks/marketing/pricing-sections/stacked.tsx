@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckIcon, ArrowRightIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Link from "next/link";
 
 const plans = [
   {
@@ -136,7 +137,7 @@ export default function PricingSectionStacked() {
 
               <div className="mt-6 flex justify-end">
                 <Button className="group" variant={plan.popular ? 'default' : 'outline'} >
-                  <a href="#">{plan.cta}<ArrowRightIcon className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" /></a>
+                  <Link href="#">{plan.cta}<ArrowRightIcon className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" /></Link>
                 </Button>
               </div>
             </div>
@@ -145,12 +146,12 @@ export default function PricingSectionStacked() {
 
         <div className="text-muted-foreground mt-12 text-center text-sm">
           Need help choosing the right plan?{' '}
-          <a
+          <Link
             href="#"
             className="text-primary underline underline-offset-4"
           >
             Talk to our sales team
-          </a>
+          </Link>
         </div>
       </div>
     </section>

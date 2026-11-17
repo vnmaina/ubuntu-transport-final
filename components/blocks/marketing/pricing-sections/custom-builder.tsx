@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CheckIcon, PlusIcon, MinusIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Link from "next/link";
 
 // Base plans
 const basePlans = [
@@ -445,7 +446,7 @@ export default function PricingSectionCustomBuilder() {
                     </CardContent>
                     <CardFooter>
                       <Button className="w-full">
-                        <a href="#">Get Started</a>
+                        <Link href="#">Get Started</Link>
                       </Button>
                     </CardFooter>
                   </Card>
@@ -464,7 +465,7 @@ export default function PricingSectionCustomBuilder() {
             specific requirements.
           </p>
           <Button className="mt-6" variant="outline" >
-            <a href="#">Contact Sales</a>
+            <Link href="#">Contact Sales</Link>
           </Button>
         </div>
       </div>

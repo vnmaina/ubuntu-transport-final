@@ -2,6 +2,7 @@
 
 import { ArrowUpIcon } from 'lucide-react';
 import { TwitterIcon, InstagramIcon, GithubIcon } from '@/components/ui/brand-icons';
+import Link from "next/link";
 
 const footerLinks = [
   {
@@ -54,9 +55,9 @@ export default function FooterMinimal() {
       <div className="container mx-auto px-4 py-12 md:px-6 2xl:max-w-[1400px]">
         <div className="flex flex-col justify-between md:flex-row">
           <div className="mb-8 md:mb-0">
-            <a href="#" className="flex items-center space-x-2">
+            <Link href="#" className="flex items-center space-x-2">
               <span className="text-xl font-bold">Your Company</span>
-            </a>
+            </Link>
             <p className="text-muted-foreground mt-4 max-w-xs text-sm">
               Simplifying complexity, one interface at a time.
             </p>

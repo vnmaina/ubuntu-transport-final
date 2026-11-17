@@ -12,6 +12,7 @@ import {
   PartyPopper,
   Users,
 } from 'lucide-react';
+import Image from "next/image";
 
 interface CultureValue {
   id: string;
@@ -222,7 +223,7 @@ export default function WorkplaceCulture() {
               </div>
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 overflow-hidden rounded-full">
-                  <img
+                  <Image
                     src={testimonial.imageUrl}
                     alt={testimonial.name}
                     width={48}
@@ -263,11 +264,14 @@ export default function WorkplaceCulture() {
                   key={activity.id}
                   className="group relative aspect-video overflow-hidden rounded-md"
                 >
-                  <img
+                  <Image
                     src={activity.imageUrl}
                     alt={activity.title}
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
+                  
+              fill
+              sizes="100vw"
+            />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
                     <div className="absolute bottom-0 left-0 p-4">
                       <h4 className="text-lg font-medium text-white">
@@ -285,11 +289,14 @@ export default function WorkplaceCulture() {
               {activities.map((activity) => (
                 <Card key={activity.id} className="pt-0">
                   <div className="relative aspect-video overflow-hidden">
-                    <img
+                    <Image
                       src={activity.imageUrl}
                       alt={activity.title}
                       className="rounded-t-xl object-cover"
-                    />
+                    
+              fill
+              sizes="100vw"
+            />
                   </div>
                   <CardContent className="">
                     <h4 className="mb-2 text-lg font-medium">

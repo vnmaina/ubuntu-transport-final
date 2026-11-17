@@ -12,11 +12,10 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "outstanding-seahorse-956.eu-west-1.convex.cloud",
+        hostname: "**",
       },
     ],
   },

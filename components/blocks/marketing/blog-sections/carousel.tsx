@@ -11,6 +11,8 @@ import {
   ChevronRightIcon,
   ArrowRightIcon,
 } from 'lucide-react';
+import Image from "next/image";
+import Link from "next/link";
 
 interface BlogPost {
   id: number;
@@ -272,11 +274,14 @@ export default function BlogSectionSlider({ title, subtitle, posts }: CarouselPr
               >
                 <Card className="flex h-full flex-col overflow-hidden p-0 shadow-sm transition-shadow hover:shadow-md">
                   <div className="relative h-40 overflow-hidden sm:h-48 md:h-52">
-                    <img
+                    <Image
                       src={post.imageUrl}
                       alt={post.title}
                       className="object-cover transition-transform duration-300 hover:scale-105"
-                    />
+                    
+              fill
+              sizes="100vw"
+            />
                     <div className="absolute top-3 left-3">
                       <Badge className="bg-primary hover:bg-primary/90">
                         {post.category}
@@ -297,8 +302,8 @@ export default function BlogSectionSlider({ title, subtitle, posts }: CarouselPr
                   </CardContent>
                   <CardFooter className="pb-6">
                     <Button  variant="ghost" size="sm" className="w-full text-sm">
-                      <a href="#" className="flex items-center justify-center">Read Article
-                        <ArrowRightIcon className="ml-1 h-4 w-4" /></a>
+                      <Link href="#" className="flex items-center justify-center">Read Article
+                        <ArrowRightIcon className="ml-1 h-4 w-4" /></Link>
                     </Button>
                   </CardFooter>
                 </Card>
@@ -336,7 +341,7 @@ export default function BlogSectionSlider({ title, subtitle, posts }: CarouselPr
 
         <div className="mt-2 flex justify-center sm:mt-8">
           <Button  variant="outline" className="w-full max-w-sm">
-            <a href="#">Browse All Articles</a>
+            <Link href="#">Browse All Articles</Link>
           </Button>
         </div>
       </div>

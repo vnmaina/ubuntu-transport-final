@@ -30,6 +30,7 @@ import {
   MessageSquareQuote,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { GalleryRenderer } from "@/components/gallery-renderer";
 import { ContentBlocksRenderer } from "@/components/content-blocks-renderer";
@@ -302,8 +303,8 @@ export function ItemView({ collection, item, relatedItems = [], organization }: 
 
             {/* Featured image */}
             {imageUrl && (
-              <div className="aspect-video w-full overflow-hidden rounded-2xl border border-border/80 shadow-sm">
-                <img src={imageUrl} alt={title} className="w-full h-full object-cover" />
+              <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-border/80 shadow-sm">
+                <Image src={imageUrl} alt={title} fill sizes="(max-width: 1024px) 100vw, 66vw" className="object-cover" />
               </div>
             )}
 
@@ -589,12 +590,14 @@ export function ItemView({ collection, item, relatedItems = [], organization }: 
                       href={`/collections/${collection.slug}/${related.slug}`}
                       className="group border border-border/80 rounded-2xl overflow-hidden bg-card shadow-sm hover:shadow-md hover:border-primary/40 transition-all"
                     >
-                      <div className="aspect-video w-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center overflow-hidden">
+                      <div className="relative aspect-video w-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center overflow-hidden">
                         {related.imageUrl ? (
-                          <img
+                          <Image
                             src={related.imageUrl}
                             alt={related.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            fill
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         ) : (
                           <span className="text-5xl">{getIconDisplay(related.icon)}</span>

@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function SetupPage() {
   const initializeCollections = useMutation(api.collections.initializeDefaultCollections);
@@ -47,7 +48,7 @@ export default function SetupPage() {
                   Default collections have been initialized. You can now manage them from the admin panel.
                 </p>
                 <Button  className="w-full">
-                  <a href="/admin/collections">Go to Admin Collections</a>
+                  <Link href="/admin/collections">Go to Admin Collections</Link>
                 </Button>
               </div>
             </div>

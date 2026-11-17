@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import Link from "next/link";
 
 const principles = [
   {
@@ -51,8 +52,8 @@ export default function AboutSectionMissionStatement() {
 
           <div className="pt-2">
             <Button className="group" >
-              <a href="#" className="inline-flex items-center">See our impact
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" /></a>
+              <Link href="#" className="inline-flex items-center">See our impact
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" /></Link>
             </Button>
           </div>
         </div>
@@ -89,8 +90,8 @@ export default function AboutSectionMissionStatement() {
           </div>
           <div className="flex justify-center lg:col-span-1 lg:justify-end">
             <Button size="lg" variant="outline" className="group" >
-              <a href="#" className="inline-flex items-center">View our strategy
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" /></a>
+              <Link href="#" className="inline-flex items-center">View our strategy
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" /></Link>
             </Button>
           </div>
         </div>

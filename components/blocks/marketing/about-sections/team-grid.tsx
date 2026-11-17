@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Github } from '@/components/ui/brand-icons';
 import { Linkedin, Twitter } from '@/components/ui/brand-icons';
@@ -88,11 +89,12 @@ export default function AboutSectionTeamGrid() {
         {teamMembers.map((member) => (
           <Card key={member.name} className="overflow-hidden p-0">
             <div className="relative aspect-[4/3]">
-              <img
+              <Image
                 src={member.image}
                 alt={member.name}
-                className="object-cover object-center"
+                fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover object-center"
               />
             </div>
             <CardContent className="space-y-4 p-6 pt-0">

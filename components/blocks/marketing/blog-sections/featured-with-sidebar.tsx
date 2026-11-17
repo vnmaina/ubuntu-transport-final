@@ -17,6 +17,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useState } from 'react';
+import Image from "next/image";
+import Link from "next/link";
 
 // Define types
 interface Author {
@@ -142,10 +144,13 @@ export default function BlogSectionFeaturedWithSidebar({ title, subtitle, posts 
         {/* Featured Post - Takes up 2/3 of the space on desktop */}
         <div className="space-y-6 lg:col-span-2">
           <div className="relative aspect-video overflow-hidden rounded-lg">
-            <img
+            <Image
               src={featuredPost.imageUrl}
               alt={featuredPost.title}
               className="object-cover"
+            
+              fill
+              sizes="100vw"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
             <div className="absolute bottom-0 p-6 text-white">
@@ -167,11 +172,14 @@ export default function BlogSectionFeaturedWithSidebar({ title, subtitle, posts 
           <div className="space-y-5">
             <div className="flex items-center gap-3">
               <div className="relative h-10 w-10 overflow-hidden rounded-full">
-                <img
+                <Image
                   src={featuredPost.author.avatar}
                   alt={featuredPost.author.name}
                   className="object-cover"
-                />
+                
+              fill
+              sizes="100vw"
+            />
               </div>
               <div>
                 <p className="font-medium">{featuredPost.author.name}</p>
@@ -182,7 +190,7 @@ export default function BlogSectionFeaturedWithSidebar({ title, subtitle, posts 
             </div>
             <p className="text-muted-foreground">{featuredPost.excerpt}</p>
             <Button >
-              <a href="#">Read Full Article</a>
+              <Link href="#">Read Full Article</Link>
             </Button>
           </div>
         </div>
@@ -214,7 +222,7 @@ export default function BlogSectionFeaturedWithSidebar({ title, subtitle, posts 
                   <SidebarPost key={post.id} post={post} />
                 ))}
                 <Button  variant="link" className="pl-0">
-                  <a href="#">See all popular posts{' '}<ArrowRightIcon className="ml-1 h-4 w-4" /></a>
+                  <Link href="#">See all popular posts{' '}<ArrowRightIcon className="ml-1 h-4 w-4" /></Link>
                 </Button>
               </TabsContent>
 
@@ -223,7 +231,7 @@ export default function BlogSectionFeaturedWithSidebar({ title, subtitle, posts 
                   <SidebarPost key={post.id} post={post} />
                 ))}
                 <Button  variant="link" className="pl-0">
-                  <a href="#">See all recent posts{' '}<ArrowRightIcon className="ml-1 h-4 w-4" /></a>
+                  <Link href="#">See all recent posts{' '}<ArrowRightIcon className="ml-1 h-4 w-4" /></Link>
                 </Button>
               </TabsContent>
             </Tabs>
@@ -254,9 +262,9 @@ export default function BlogSectionFeaturedWithSidebar({ title, subtitle, posts 
                 <SidebarPost key={post.id} post={post} />
               ))}
               <Button  variant="link" className="pl-0">
-                <a href="#">{tabValue === 'popular'
+                <Link href="#">{tabValue === 'popular'
                                               ? 'See all popular posts'
-                                              : 'See all recent posts'}{' '}<ArrowRightIcon className="ml-1 h-4 w-4" /></a>
+                                              : 'See all recent posts'}{' '}<ArrowRightIcon className="ml-1 h-4 w-4" /></Link>
               </Button>
             </div>
           </div>
@@ -268,14 +276,17 @@ export default function BlogSectionFeaturedWithSidebar({ title, subtitle, posts 
 
 function SidebarPost({ post }: { post: SidebarPostType }) {
   return (
-    <a href="#" className="group">
+    <Link href="#" className="group">
       <Card className="overflow-hidden p-0">
         <CardContent className="flex p-0">
           <div className="relative aspect-[4/3] w-1/3">
-            <img
+            <Image
               src={post.imageUrl}
               alt={post.title}
               className="object-cover transition-transform duration-300 group-hover:scale-105"
+            
+              fill
+              sizes="100vw"
             />
           </div>
           <div className="w-2/3 p-4">
@@ -292,6 +303,6 @@ function SidebarPost({ post }: { post: SidebarPostType }) {
           </div>
         </CardContent>
       </Card>
-    </a>
+    </Link>
   );
 }

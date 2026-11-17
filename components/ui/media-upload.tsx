@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Upload, X, Link as LinkIcon, Loader2, Film } from "lucide-react";
 import { toast } from "sonner";
+import Image from "next/image";
 
 interface MediaUploadProps {
   value: string;
@@ -105,7 +106,7 @@ export function MediaUpload({
 
   const preview = value ? (
     <div className="relative group rounded-xl overflow-hidden border border-border bg-muted/30">
-      <div className={getAspectRatioClass()}>
+      <div className={"relative " + getAspectRatioClass()}>
         {isVideoUrl(value) ? (
           <video
             src={value}
@@ -115,7 +116,7 @@ export function MediaUpload({
             className="w-full h-full object-cover"
           />
         ) : (
-          <img
+          <Image
             src={value}
             alt="Media preview"
             className="w-full h-full object-cover"
@@ -126,7 +127,10 @@ export function MediaUpload({
                 (target.nextElementSibling as HTMLElement).style.display = "flex";
               }
             }}
-          />
+          
+              fill
+              sizes="100vw"
+            />
         )}
         <div className="hidden absolute inset-0 items-center justify-center text-xs text-destructive bg-muted/50">
           Failed to load media

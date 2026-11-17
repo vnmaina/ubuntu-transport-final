@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import Link from "next/link";
 
 interface GradientMeshHeroProps {
   title?: string;
@@ -41,11 +42,11 @@ export default function GradientMeshHero({
 
           <div className="mx-auto flex w-full max-w-md flex-col gap-4 sm:flex-row">
             <Button size="lg" className="w-full" >
-              <a href={ctaLink}>{ctaText}
-                <ArrowRight className="ml-2 h-4 w-4" /></a>
+              <Link href={ctaLink}>{ctaText}
+                <ArrowRight className="ml-2 h-4 w-4" /></Link>
             </Button>
             <Button size="lg" variant="outline" className="dark:text-foreground dark:hover:text-primary w-full" >
-              <a href="#">Watch Demo</a>
+              <Link href="#">Watch Demo</Link>
             </Button>
           </div>
 

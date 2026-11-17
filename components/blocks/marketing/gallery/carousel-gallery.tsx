@@ -4,6 +4,7 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Image from "next/image";
 
 interface GalleryImage {
   src: string;
@@ -113,7 +114,7 @@ export default function CarouselGallery({
                     : 'translate-x-full opacity-0'
               )}
             >
-              <img
+              <Image
                 src={image.src}
                 alt={image.alt}
                 width={image.width}
@@ -161,7 +162,7 @@ export default function CarouselGallery({
               )}
               onClick={() => setCurrentIndex(index)}
             >
-              <img
+              <Image
                 src={image.src}
                 alt={`Thumbnail ${index + 1}`}
                 width={80}

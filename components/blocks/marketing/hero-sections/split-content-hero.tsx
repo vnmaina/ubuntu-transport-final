@@ -1,5 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Check, Sparkles, Zap, ShieldCheck, Headphones } from 'lucide-react';
+import Image from "next/image";
+import Link from "next/link";
 
 interface SplitContentHeroProps {
   title?: string;
@@ -88,10 +90,10 @@ export default function SplitContentHero({
                 size="lg"
                 className="group h-12 rounded-xl px-7 text-sm font-semibold shadow-lg shadow-primary/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30"
               >
-                <a href={ctaLink}>
+                <Link href={ctaLink}>
                   <span>{ctaText}</span>
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-                </a>
+                </Link>
               </Button>
 
               {secondaryCtaText && (
@@ -101,7 +103,7 @@ export default function SplitContentHero({
                   variant="outline"
                   className="h-12 rounded-xl border-border/80 bg-background/60 px-7 text-sm font-semibold backdrop-blur-sm transition-all duration-200 hover:bg-muted/60"
                 >
-                  <a href={secondaryCtaLink}>{secondaryCtaText}</a>
+                  <Link href={secondaryCtaLink}>{secondaryCtaText}</Link>
                 </Button>
               )}
             </div>
@@ -152,11 +154,14 @@ export default function SplitContentHero({
             {/* Outer Glass Bezel Frame */}
             <div className="relative mx-auto max-w-[540px] rounded-2xl border border-border/70 bg-muted/30 p-2.5 shadow-2xl backdrop-blur-sm">
               <div className="relative aspect-[4/4.2] w-full overflow-hidden rounded-xl bg-muted">
-                <img
+                <Image
                   src={imageUrl}
                   alt="Team collaborating on digital projects"
                   className="h-full w-full object-cover object-center transition-transform duration-700 hover:scale-105"
-                />
+                
+              fill
+              sizes="100vw"
+            />
                 {/* Rich Vignette Overlay for Contrast */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
 

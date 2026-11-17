@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export interface TestimonialsProps {
   title?: string;
   testimonials?: Array<{
@@ -22,10 +24,12 @@ export function Testimonials({ title = "What Our Customers Say", testimonials = 
             <div key={index} className="p-6 rounded-lg bg-gray-50">
               <div className="flex items-center mb-4">
                 {testimonial.avatar ? (
-                  <img 
+                  <Image 
                     src={testimonial.avatar} 
                     alt={testimonial.name}
-                    className="w-12 h-12 rounded-full mr-4"
+                    width={48}
+                    height={48}
+                    className="w-12 h-12 rounded-full mr-4 object-cover"
                   />
                 ) : (
                   <div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold mr-4">

@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/carousel';
 import { Badge } from '@/components/ui/badge';
 import { Bot, Cloud, Code, Lock, Zap, Shield, Globe, Cpu } from 'lucide-react';
+import Image from "next/image";
 
 interface FeatureSectionWithCarouselProps {
   title?: string;
@@ -103,11 +104,14 @@ export default function FeatureSectionWithCarousel({ title, subtitle, features }
             >
               <Card className="relative flex flex-1 flex-col overflow-hidden p-0">
                 <div className="relative aspect-video">
-                  <img
+                  <Image
                     src={feature.image}
                     alt={feature.title}
                     className="object-cover"
-                  />
+                  
+              fill
+              sizes="100vw"
+            />
                   <div className="from-background/80 to-background/0 absolute inset-0 bg-gradient-to-t" />
                   <div className="absolute bottom-4 left-4">
                     <Badge variant="secondary" className="gap-1">

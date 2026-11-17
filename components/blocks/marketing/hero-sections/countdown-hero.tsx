@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import Image from "next/image";
 
 interface CountdownHeroProps {
   title?: string;
@@ -40,11 +41,14 @@ export default function CountdownHero({ title, subtitle, ctaText = "Notify Me", 
 
   return (
     <div className="bg-background relative overflow-hidden">
-      <img
+      <Image
         src="https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?w=1920&h=1080&fit=crop&crop=center"
         alt="Rocket launch"
         className="absolute inset-0 h-full w-full object-cover opacity-10"
-      />
+      
+              fill
+              sizes="100vw"
+            />
       <div className="relative z-10 container mx-auto px-4 py-24 md:px-6 lg:py-32 2xl:max-w-[1400px]">
         <div className="mx-auto max-w-4xl text-center">
           <Badge

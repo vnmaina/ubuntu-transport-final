@@ -8,6 +8,8 @@ import {
   CalendarIcon, Clock3Icon, ArrowRightIcon, GlobeIcon } from 'lucide-react';
 import { TwitterIcon, LinkedinIcon } from '@/components/ui/brand-icons';
 import { Separator } from '@/components/ui/separator';
+import Image from "next/image";
+import Link from "next/link";
 
 // Define types
 interface Author {
@@ -186,11 +188,14 @@ export default function BlogSectionAuthorSpotlight({ title, subtitle, posts }: A
                 className="flex items-center gap-2 px-4 py-3 whitespace-nowrap"
               >
                 <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-full">
-                  <img
+                  <Image
                     src={author.avatar}
                     alt={author.name}
                     className="object-cover"
-                  />
+                  
+              fill
+              sizes="100vw"
+            />
                 </div>
                 <span className="truncate">{author.name}</span>
               </TabsTrigger>
@@ -207,11 +212,14 @@ export default function BlogSectionAuthorSpotlight({ title, subtitle, posts }: A
             {/* Author Bio */}
             <div className="bg-muted flex flex-col items-center gap-8 rounded-lg p-6 md:flex-row">
               <div className="border-background relative h-36 w-36 overflow-hidden rounded-full border-4">
-                <img
+                <Image
                   src={author.avatar}
                   alt={author.name}
                   className="object-cover"
-                />
+                
+              fill
+              sizes="100vw"
+            />
               </div>
 
               <div className="flex-1 text-center md:text-left">
@@ -253,11 +261,14 @@ export default function BlogSectionAuthorSpotlight({ title, subtitle, posts }: A
                   <Card key={post.id} className="h-full overflow-hidden p-0">
                     <div className="grid h-full gap-6 sm:grid-cols-5">
                       <div className="relative aspect-square sm:col-span-2 sm:aspect-auto">
-                        <img
+                        <Image
                           src={post.imageUrl}
                           alt={post.title}
                           className="object-cover"
-                        />
+                        
+              fill
+              sizes="100vw"
+            />
                       </div>
 
                       <div className="flex flex-col p-4 sm:col-span-3 sm:p-6">
@@ -281,7 +292,7 @@ export default function BlogSectionAuthorSpotlight({ title, subtitle, posts }: A
                           </div>
 
                           <Button  variant="link" className="px-0">
-                            <a href="#">Read Article{' '}<ArrowRightIcon className="ml-1 h-4 w-4" /></a>
+                            <Link href="#">Read Article{' '}<ArrowRightIcon className="ml-1 h-4 w-4" /></Link>
                           </Button>
                         </div>
                       </div>
@@ -296,7 +307,7 @@ export default function BlogSectionAuthorSpotlight({ title, subtitle, posts }: A
 
       <div className="flex justify-center pt-8">
         <Button className="gap-2">
-          <a href="#">Meet Our Full Team</a>
+          <Link href="#">Meet Our Full Team</Link>
           <ArrowRightIcon className="h-4 w-4" />
         </Button>
       </div>

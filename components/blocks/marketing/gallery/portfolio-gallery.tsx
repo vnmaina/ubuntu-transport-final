@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Eye, Tag } from 'lucide-react';
+import Image from "next/image";
 
 interface PortfolioImage {
   src: string;
@@ -164,12 +165,14 @@ export default function PortfolioGallery() {
               className={`group relative overflow-hidden rounded-lg ${spanClasses[image.size]}`}
             >
               <div className="relative aspect-square sm:aspect-auto sm:h-64 md:h-80">
-                <img
+                <Image
                   src={image.src}
                   alt={image.alt}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
+                
+              fill
+            />
 
                 {/* Overlay with details */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 p-4 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">

@@ -27,6 +27,7 @@ import {
   MapPinIcon,
   ShareIcon,
 } from 'lucide-react';
+import Link from "next/link";
 
 type LocationType = 'remote' | 'hybrid' | 'onsite';
 type EmploymentType = 'full-time' | 'part-time' | 'contract' | 'internship';
@@ -164,13 +165,13 @@ export default function JobDetails() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
-        <a
+        <Link
           href="#"
           className="text-muted-foreground mb-4 inline-flex items-center text-sm font-medium hover:underline"
         >
           <ArrowLeftIcon className="mr-1 h-4 w-4" />
           Back to all jobs
-        </a>
+        </Link>
 
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
@@ -349,9 +350,9 @@ export default function JobDetails() {
                 <GlobeIcon className="text-muted-foreground mt-0.5 h-5 w-5" />
                 <div>
                   <p className="font-medium">Company Website</p>
-                  <a href="#" className="text-primary text-sm hover:underline">
+                  <Link href="#" className="text-primary text-sm hover:underline">
                     example.com
-                  </a>
+                  </Link>
                 </div>
               </div>
             </CardContent>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, BookOpen, Briefcase, Compass, Layers, MapPin, SearchX } from "lucide-react";
 import type { SearchResult, SearchResultType } from "@/lib/search";
 
@@ -85,12 +86,12 @@ export function SearchResults({
                 >
                   {item.image ? (
                     <div className="relative aspect-[16/9] overflow-hidden bg-muted">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <Image
                         src={item.image}
                         alt={item.title}
-                        loading="lazy"
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                     </div>
                   ) : (

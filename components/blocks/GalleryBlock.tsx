@@ -10,6 +10,7 @@ import {
 import { Camera } from "lucide-react";
 import { SectionHeader } from "./SectionHeader";
 import { MediaJsonLd, normalizeMediaItems, mediaAlt, type MediaSeoItem } from "./media-seo";
+import Image from "next/image";
 
 export type GalleryImage = MediaSeoItem;
 
@@ -57,11 +58,12 @@ function GalleryFigure({
           <source src={image.url} />
         </video>
       ) : (
-        <img
+        <Image
           src={image.url}
           alt={alt}
           title={image.title || alt}
-          loading="lazy"
+          width={800}
+          height={600}
           className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       )}

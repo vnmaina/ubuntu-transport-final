@@ -24,6 +24,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import Image from "next/image";
+import Link from "next/link";
 
 interface VideoPost {
   id: number;
@@ -180,10 +182,13 @@ export default function BlogSectionVideoBlog({ title, subtitle, posts }: VideoBl
       {featuredVideo && (
         <div className="mb-12">
           <div className="relative aspect-video overflow-hidden rounded-lg">
-            <img
+            <Image
               src={featuredVideo.thumbnailUrl}
               alt={featuredVideo.title}
               className="object-cover"
+            
+              fill
+              sizes="100vw"
             />
             <div className="absolute inset-0 flex items-center justify-center bg-black/30">
               <Button  variant="outline" size="lg" className="rounded-full border-white bg-black/50 text-white backdrop-blur-sm hover:bg-black/70 hover:text-white">
@@ -252,11 +257,14 @@ export default function BlogSectionVideoBlog({ title, subtitle, posts }: VideoBl
             className="flex h-full flex-col overflow-hidden pt-0"
           >
             <div className="relative aspect-video">
-              <img
+              <Image
                 src={video.thumbnailUrl}
                 alt={video.title}
                 className="object-cover"
-              />
+              
+              fill
+              sizes="100vw"
+            />
               <div className="absolute inset-0 flex items-center justify-center bg-black/10 opacity-0 transition-colors hover:bg-black/30 hover:opacity-100">
                 <Button  variant="outline" size="icon" className="rounded-full border-white bg-black/50 text-white hover:bg-black/70 hover:text-white">
                   <a href={video.videoUrl}><PlayCircleIcon className="h-10 w-10" /></a>
@@ -292,7 +300,7 @@ export default function BlogSectionVideoBlog({ title, subtitle, posts }: VideoBl
 
       <div className="mt-12 flex justify-center">
         <Button  variant="outline" className="w-full max-w-sm">
-          <a href="#">Browse All Videos</a>
+          <Link href="#">Browse All Videos</Link>
         </Button>
       </div>
     </section>

@@ -20,6 +20,8 @@ import {
   TrendingUpIcon,
   ArrowUpRightIcon,
 } from 'lucide-react';
+import Image from "next/image";
+import Link from "next/link";
 
 interface BlogPost {
   id: number;
@@ -188,11 +190,14 @@ export default function BlogSectionCompactList({ title, subtitle, posts }: Compa
                 >
                   <div className="flex-none sm:w-1/4">
                     <div className="relative aspect-[4/3] overflow-hidden rounded-md">
-                      <img
+                      <Image
                         src={post.imageUrl}
                         alt={post.title}
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
+                      
+              fill
+              sizes="100vw"
+            />
                     </div>
                   </div>
                   <div className="flex flex-col sm:w-3/4">
@@ -208,7 +213,7 @@ export default function BlogSectionCompactList({ title, subtitle, posts }: Compa
                       )}
                     </div>
                     <h3 className="group-hover:text-primary mb-1 text-lg font-semibold transition-colors">
-                      <a href="#">{post.title}</a>
+                      <Link href="#">{post.title}</Link>
                     </h3>
                     <p className="text-muted-foreground mb-2 line-clamp-2 text-sm">
                       {post.excerpt}
@@ -224,7 +229,7 @@ export default function BlogSectionCompactList({ title, subtitle, posts }: Compa
                         {post.readTime}
                       </span>
                       <Button  variant="ghost" size="sm" className="ml-auto h-auto p-0 text-xs font-medium">
-                        <a href="#" className="flex items-center gap-1">Read Article <ArrowUpRightIcon className="h-3 w-3" /></a>
+                        <Link href="#" className="flex items-center gap-1">Read Article <ArrowUpRightIcon className="h-3 w-3" /></Link>
                       </Button>
                     </div>
                   </div>
@@ -250,7 +255,7 @@ export default function BlogSectionCompactList({ title, subtitle, posts }: Compa
           {filteredPosts.length > 0 && (
             <div className="mt-8 flex justify-center">
               <Button  variant="outline" className="w-full max-w-xs">
-                <a href="#">Load More Articles{' '}<ChevronRightIcon className="ml-2 h-4 w-4" /></a>
+                <Link href="#">Load More Articles{' '}<ChevronRightIcon className="ml-2 h-4 w-4" /></Link>
               </Button>
             </div>
           )}
@@ -274,7 +279,7 @@ export default function BlogSectionCompactList({ title, subtitle, posts }: Compa
                     </div>
                     <div>
                       <h4 className="group-hover:text-primary line-clamp-2 font-medium transition-colors">
-                        <a href="#">{post.title}</a>
+                        <Link href="#">{post.title}</Link>
                       </h4>
                       <div className="text-muted-foreground mt-1 flex items-center text-xs">
                         <Badge variant="outline" className="mr-2 text-xs">
@@ -292,7 +297,7 @@ export default function BlogSectionCompactList({ title, subtitle, posts }: Compa
             </CardContent>
             <CardFooter className="pt-0">
               <Button  variant="ghost" size="sm" className="w-full">
-                <a href="#">See All Trending</a>
+                <Link href="#">See All Trending</Link>
               </Button>
             </CardFooter>
           </Card>
@@ -310,15 +315,18 @@ export default function BlogSectionCompactList({ title, subtitle, posts }: Compa
                 <div key={post.id} className="group">
                   <div className="flex items-start gap-3">
                     <div className="relative h-14 w-14 flex-none overflow-hidden rounded">
-                      <img
+                      <Image
                         src={post.imageUrl}
                         alt={post.title}
                         className="object-cover"
-                      />
+                      
+              fill
+              sizes="100vw"
+            />
                     </div>
                     <div>
                       <h4 className="group-hover:text-primary line-clamp-2 font-medium transition-colors">
-                        <a href="#">{post.title}</a>
+                        <Link href="#">{post.title}</Link>
                       </h4>
                       <div className="text-muted-foreground mt-1 flex items-center text-xs">
                         <Clock3Icon className="mr-1 h-3 w-3" />
@@ -334,7 +342,7 @@ export default function BlogSectionCompactList({ title, subtitle, posts }: Compa
             </CardContent>
             <CardFooter className="pt-0">
               <Button  variant="ghost" size="sm" className="w-full">
-                <a href="#">See All Popular</a>
+                <Link href="#">See All Popular</Link>
               </Button>
             </CardFooter>
           </Card>
@@ -348,7 +356,7 @@ export default function BlogSectionCompactList({ title, subtitle, posts }: Compa
               {Array.from(new Set(blogPosts.map((post) => post.category))).map(
                 (category) => (
                   <Button key={category}  variant="outline" size="sm" className="justify-start">
-                    <a href="#">{category}</a>
+                    <Link href="#">{category}</Link>
                   </Button>
                 )
               )}

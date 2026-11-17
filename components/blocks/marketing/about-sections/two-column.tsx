@@ -1,6 +1,8 @@
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 
 import { CheckCircle2 } from 'lucide-react';
+import Link from "next/link";
 
 const competencies = [
   'User-centered design approach',
@@ -16,11 +18,12 @@ export default function AboutSectionTwoColumn() {
     <section className="container mx-auto px-4 py-24 md:px-6 2xl:max-w-[1400px]">
       <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
         <div className="relative aspect-square overflow-hidden rounded-xl">
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2000"
             alt="Team collaborating in modern office"
-            className="object-cover"
+            fill
             sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
           />
         </div>
 
@@ -53,10 +56,10 @@ export default function AboutSectionTwoColumn() {
 
           <div className="flex flex-wrap gap-4 pt-2">
             <Button >
-              <a href="#">Learn our approach</a>
+              <Link href="#">Learn our approach</Link>
             </Button>
             <Button variant="outline" >
-              <a href="#">View case studies</a>
+              <Link href="#">View case studies</Link>
             </Button>
           </div>
         </div>

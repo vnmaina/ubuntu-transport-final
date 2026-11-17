@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import Link from "next/link";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -183,19 +184,19 @@ export default function ImpactNumbers() {
             Ready to See These Results in Your Business?
           </h3>
           <div className="flex flex-wrap justify-center gap-4">
-            <a
+            <Link
               href="#"
               className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center gap-2 rounded-md px-8 py-3 text-sm font-medium shadow"
             >
               Get Started
               <ArrowRight className="h-4 w-4" />
-            </a>
-            <a
+            </Link>
+            <Link
               href="#"
               className="border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center rounded-md border px-8 py-3 text-sm font-medium shadow-sm"
             >
               View Case Studies
-            </a>
+            </Link>
           </div>
         </div>
       </div>

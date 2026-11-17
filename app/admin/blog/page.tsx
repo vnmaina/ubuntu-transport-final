@@ -24,6 +24,7 @@ import { BlogPreview } from "@/components/blog-preview";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Link from "next/link";
+import Image from "next/image";
 
 type BlogRow = {
   _id: Id<"blogPosts">;
@@ -375,11 +376,14 @@ export default function AdminBlogPage() {
                 {/* Image */}
                 <div className="relative aspect-video bg-gradient-to-br from-primary/10 to-primary/5 overflow-hidden">
                   {post.featuredImage ? (
-                    <img
+                    <Image
                       src={post.featuredImage}
                       alt={post.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+                    
+              fill
+              sizes="100vw"
+            />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <FileText className="w-10 h-10 text-muted-foreground/40" />
@@ -418,7 +422,7 @@ export default function AdminBlogPage() {
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mt-3">
                     <span className="flex items-center gap-1">
                       {post.author?.avatar ? (
-                        <img src={post.author.avatar} alt={post.author.name} className="w-5 h-5 rounded-full object-cover" />
+                        <Image src={post.author.avatar} alt={post.author.name} width={20} height={20} className="w-5 h-5 rounded-full object-cover" />
                       ) : (
                         <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">
                           {(post.author?.name || "?").charAt(0).toUpperCase()}
