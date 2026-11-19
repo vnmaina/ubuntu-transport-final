@@ -211,7 +211,8 @@ export interface SearchPageMeta {
 export function buildSearchMeta(
   results: SearchResult[],
   query: string,
-  orgName = "Ubuntu Logistics"
+  orgName = "Ubuntu Logistics",
+  orgKeywords: string[] = []
 ): SearchPageMeta {
   const top = results[0];
   const cleanQuery = query
@@ -219,22 +220,41 @@ export function buildSearchMeta(
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ");
 
-  const title = results.length
-    ? `${cleanQuery} — ${results.length} Result${results.length === 1 ? "" : "s"} | ${orgName}`
-    : `No results for "${cleanQuery}" | ${orgName}`;
+  if (!results.length) {
+    return {
+      title: `${cleanQuery} | ${orgName}`.slice(0, 60),
+      description: `Explore ${cleanQuery.toLowerCase()} with ${orgName}. Browse our services, fleet, destinations and travel guides.`,
+      image: undefined,
+    };
+  }
 
-  const description = results.length
-    ? truncate(
-        `${results.length} result${results.length === 1 ? "" : "s"} for "${cleanQuery}": ${results
-          .slice(0, 3)
-          .map((r) => r.title)
-          .join(", ")}. ${top?.summary || ""}`,
-        160
-      )
-    : `No results found for "${cleanQuery}". Browse our services, fleet, destinations and travel guides.`;
+  // Pick a contextual org keyword that isn't already in the query (adds topical depth)
+  const queryLower = query.toLowerCase();
+  const contextKw = orgKeywords.find(
+    (k) => k.length > 3 && !queryLower.includes(k.toLowerCase())
+  ) || "";
+
+  // Title: keyword-first, no counts
+  const titleSuffix = contextKw
+    ? `${cleanQuery} & ${contextKw.charAt(0).toUpperCase() + contextKw.slice(1)} | ${orgName}`
+    : `${cleanQuery} | ${orgName}`;
+  const title = titleSuffix.slice(0, 60);
+
+  // Description: natural sentence from top real result titles, no "X results" or generic "Home"
+  const realTitles = results
+    .slice(0, 5)
+    .map((r) => r.title)
+    .filter((t) => t.toLowerCase() !== "home");
+
+  const topSummary = top?.summary ? ` ${top.summary}` : "";
+
+  const description = truncate(
+    `${cleanQuery} options from ${orgName}: ${realTitles.slice(0, 3).join(", ")}.${topSummary}`,
+    160
+  );
 
   return {
-    title: title.slice(0, 60),
+    title,
     description,
     image: top?.image,
   };

@@ -32,8 +32,9 @@ export async function generateMetadata({ params }: SearchSlugProps): Promise<Met
 
   const org = await fetchQuery(api.organization.getOrganization).catch(() => null);
   const orgName = org?.name || "Ubuntu Logistics";
+  const orgKeywords: string[] = org?.defaultKeywords || [];
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ubuntulogistics.co.ke";
-  const meta = buildSearchMeta(data.resolved.results, data.resolved.query, orgName);
+  const meta = buildSearchMeta(data.resolved.results, data.resolved.query, orgName, orgKeywords);
   const canonical = `${siteUrl}/search/${data.slug.join("-")}`;
 
   return {
