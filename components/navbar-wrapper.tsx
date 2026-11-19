@@ -38,9 +38,9 @@ export function NavbarWrapper() {
     <>
       <header
         ref={headerRef}
-        className={`w-full z-50 transition-all duration-300 ${
+        className={`w-full z-50 transition-all duration-300 bg-white ${
           isScrolled
-            ? "fixed top-0 left-0 right-0 shadow-md bg-background/95 backdrop-blur-sm"
+            ? "fixed top-0 left-0 right-0 shadow-md"
             : "relative"
         }`}
       >
