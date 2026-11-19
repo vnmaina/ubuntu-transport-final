@@ -3596,16 +3596,16 @@ function AdminOrganizationContent() {
                   <p className="text-xs text-muted-foreground mt-2">Default description for pages without custom SEO</p>
                 </div>
                 <div>
-                  <Label htmlFor="defaultOgImage" className="mb-2 text-sm font-medium">Default OG Image</Label>
-                  <Input
-                    id="defaultOgImage"
-                    type="url"
-                    placeholder="https://yourcompany.com/og-image.png"
+                  <ImageUpload
                     value={formData.defaultOgImage}
-                    onChange={(e) => setFormData({ ...formData, defaultOgImage: e.target.value })}
-                    className="h-11 rounded-xl text-sm"
+                    onChange={(value) => setFormData({ ...formData, defaultOgImage: value })}
+                    label="Default Open Graph Image (Social Sharing)"
+                    placeholder="https://yourcompany.com/og-image.png"
+                    aspectRatio="video"
                   />
-                  <p className="text-xs text-muted-foreground mt-2">Default Open Graph image for social sharing</p>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Default image for social media previews (Facebook, Twitter/X, LinkedIn, WhatsApp). Recommended size: 1200×630px.
+                  </p>
                 </div>
                 <div>
                   <Label htmlFor="defaultTwitterCard" className="mb-2 text-sm font-medium">Default Twitter Card Type</Label>
