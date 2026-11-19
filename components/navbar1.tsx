@@ -526,6 +526,19 @@ const Navbar1Component = ({
                   className="h-8 w-auto max-w-32 object-contain dark:invert"
                   alt={logo.alt}
                 />
+                {logo.title && (
+                  <div className="flex flex-col justify-center leading-tight">
+                    <span className="text-sm font-extrabold tracking-tight">
+                      <span className="text-primary">{logo.title.split(" ")[0]}</span>{" "}
+                      <span className="text-secondary">{logo.title.split(" ").slice(1).join(" ")}</span>
+                    </span>
+                    {logo.subtitle && (
+                      <span className="text-[10px] text-muted-foreground leading-tight hidden sm:block">
+                        {logo.subtitle}
+                      </span>
+                    )}
+                  </div>
+                )}
               </Link>
               <Sheet>
                 <SheetTrigger
