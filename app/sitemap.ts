@@ -10,6 +10,31 @@ import {
 
 export const dynamic = "force-dynamic";
 
+/** Escape XML special characters to guarantee valid sitemap XML */
+function escapeXml(str: string): string {
+  if (!str) return "";
+  return str
+    .trim()
+    .replace(/&amp;/g, "&") // normalize first to prevent double-escaping &amp;amp;
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+/** Ensure image URLs are absolute and XML-escaped */
+function toAbsoluteImageUrl(siteUrl: string, pathOrUrl?: string): string | undefined {
+  if (!pathOrUrl || typeof pathOrUrl !== "string") return undefined;
+  const trimmed = pathOrUrl.trim();
+  if (!trimmed) return undefined;
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    return escapeXml(trimmed);
+  }
+  const cleanPath = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  return escapeXml(`${siteUrl}${cleanPath}`);
+}
+
 const STATIC_ROUTES: { path: string; priority: number; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
   { path: "/", priority: 1.0, changeFrequency: "weekly" },
   { path: "/collections", priority: 0.9, changeFrequency: "weekly" },
@@ -25,7 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl(org) || "https://ubuntulogistics.co.ke";
 
   const entries: MetadataRoute.Sitemap = STATIC_ROUTES.map((r) => ({
-    url: `${siteUrl}${r.path === "/" ? "" : r.path}`,
+    url: escapeXml(`${siteUrl}${r.path === "/" ? "" : r.path}`),
     changeFrequency: r.changeFrequency,
     priority: r.priority,
   }));
@@ -36,12 +61,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (page.published !== true) continue;
     const path = page.slug === "home" || page.slug === "/" ? "/" : `/${page.slug}`;
     if (path === "/") continue; // already in static routes
+    const image = toAbsoluteImageUrl(siteUrl, page.ogImage);
     entries.push({
-      url: `${siteUrl}${path}`,
+      url: escapeXml(`${siteUrl}${path}`),
       lastModified: page.publishedAt ? new Date(page.publishedAt) : undefined,
       changeFrequency: "weekly",
       priority: 0.8,
-      ...(page.ogImage ? { images: [page.ogImage] } : {}),
+      ...(image ? { images: [image] } : {}),
     });
   }
 
@@ -49,7 +75,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const collections = await fetchQuery(api.collections.listPublishedCollections).catch(() => []);
   for (const collection of collections) {
     entries.push({
-      url: `${siteUrl}/collections/${collection.slug}`,
+      url: escapeXml(`${siteUrl}/collections/${collection.slug}`),
       changeFrequency: "weekly",
       priority: 0.8,
     });
@@ -58,12 +84,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       collectionId: collection._id,
     }).catch(() => []);
     for (const item of items) {
+      const image = toAbsoluteImageUrl(siteUrl, item.imageUrl);
       entries.push({
-        url: `${siteUrl}/collections/${collection.slug}/${item.slug}`,
+        url: escapeXml(`${siteUrl}/collections/${collection.slug}/${item.slug}`),
         lastModified: item.publishedAt ? new Date(item.publishedAt) : undefined,
         changeFrequency: "monthly",
         priority: 0.7,
-        ...(item.imageUrl ? { images: [item.imageUrl] } : {}),
+        ...(image ? { images: [image] } : {}),
       });
     }
   }
@@ -71,12 +98,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Blog posts
   const posts = await fetchQuery(api.blog.listPublishedBlogPosts).catch(() => []);
   for (const post of posts) {
+    const image = toAbsoluteImageUrl(siteUrl, post.featuredImage || post.ogImage);
     entries.push({
-      url: `${siteUrl}/blogs/${post.slug}`,
+      url: escapeXml(`${siteUrl}/blogs/${post.slug}`),
       lastModified: post.publishedAt ? new Date(post.publishedAt) : undefined,
       changeFrequency: "weekly",
       priority: 0.7,
-      ...(post.featuredImage ? { images: [post.featuredImage] } : {}),
+      ...(image ? { images: [image] } : {}),
     });
   }
 
@@ -84,23 +112,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const forms = await fetchQuery(api.forms.listPublishedFormDefinitions).catch(() => []);
   for (const form of forms) {
     entries.push({
-      url: `${siteUrl}/forms/${form.slug}`,
+      url: escapeXml(`${siteUrl}/forms/${form.slug}`),
       lastModified: form.publishedAt ? new Date(form.publishedAt) : undefined,
       changeFrequency: "monthly",
       priority: 0.5,
     });
   }
 
-  // Programmatic search pages — only include slugs that actually return results
+  // Programmatic search pages — generate all valid search pages with results
   if (corpus.length > 0) {
-    const candidateSlugs = getProgrammaticSearchSlugs(corpus);
+    const extraKeywords = [
+      ...(org?.defaultKeywords || []),
+      ...(org?.areasOfOperation || []),
+    ];
+    const candidateSlugs = getProgrammaticSearchSlugs(corpus, extraKeywords);
     for (const slug of candidateSlugs) {
       const { results, isIndexable } = resolveProgrammaticSearch(corpus, [slug]);
       if (!isIndexable || results.length === 0) continue;
       entries.push({
-        url: `${siteUrl}/search/${slug}`,
+        url: escapeXml(`${siteUrl}/search/${slug}`),
         changeFrequency: "monthly",
-        priority: 0.5,
+        priority: 0.6,
       });
     }
   }

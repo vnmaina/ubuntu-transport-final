@@ -261,38 +261,68 @@ export function buildSearchMeta(
 }
 
 /** Generate candidate programmatic slugs for the sitemap. */
-export function getProgrammaticSearchSlugs(entries: SearchEntry[]): string[] {
-  const termCount = new Map<string, number>();
+export function getProgrammaticSearchSlugs(
+  entries: SearchEntry[],
+  extraKeywords: string[] = []
+): string[] {
   const slugs = new Set<string>();
 
-  const addTerm = (raw: string) => {
-    for (const term of tokenize(raw)) {
-      if (term.length < 3) continue;
-      const slug = toSlug(term);
-      if (!slug) continue;
-      termCount.set(slug, (termCount.get(slug) || 0) + 1);
-      slugs.add(slug);
+  const addSlug = (text: string) => {
+    if (!text) return;
+    const s = toSlug(text);
+    if (s && s.length >= 3) {
+      slugs.add(s);
     }
   };
 
-  for (const entry of entries) {
-    for (const kw of entry.keywords) addTerm(kw);
-    // Item-title phrases give useful 2-3 word pages
-    const titleTerms = tokenize(entry.title).slice(0, 3);
-    if (titleTerms.length >= 2) slugs.add(toSlug(titleTerms.join("-")));
+  const addPhraseAndTokens = (raw: string) => {
+    if (!raw) return;
+    addSlug(raw);
+    const tokens = tokenize(raw);
+    for (const token of tokens) {
+      if (token.length >= 3) addSlug(token);
+    }
+    // Also add consecutive 2-word pairs from multi-word phrases
+    for (let i = 0; i < tokens.length - 1; i++) {
+      addSlug(`${tokens[i]}-${tokens[i + 1]}`);
+    }
+  };
+
+  // 1. Extra organization keywords & areas of operation
+  for (const kw of extraKeywords) {
+    addPhraseAndTokens(kw);
   }
 
-  // Pair combos across entity types: top terms from services × destinations/areas
+  // 2. Entries: keywords, tags, titles, subtitles
+  for (const entry of entries) {
+    addPhraseAndTokens(entry.title);
+    if (entry.subtitle) addPhraseAndTokens(entry.subtitle);
+    for (const kw of entry.keywords) {
+      addPhraseAndTokens(kw);
+    }
+    // Item-title phrases: 2 and 3 word combos
+    const titleTokens = tokenize(entry.title);
+    if (titleTokens.length >= 2) {
+      addSlug(titleTokens.slice(0, 2).join("-"));
+    }
+    if (titleTokens.length >= 3) {
+      addSlug(titleTokens.slice(0, 3).join("-"));
+    }
+  }
+
+  // 3. Category/Type cross-pairings
   const groupTerms = (types: SearchResultType[]) => {
     const counts = new Map<string, number>();
     for (const e of entries) {
       if (!types.includes(e.type)) continue;
       for (const kw of e.keywords) {
-        const slug = toSlug(kw);
-        if (slug.length >= 3) counts.set(slug, (counts.get(slug) || 0) + 1);
+        const s = toSlug(kw);
+        if (s && s.length >= 3) {
+          counts.set(s, (counts.get(s) || 0) + 1);
+        }
       }
     }
-    return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 25).map(([s]) => s);
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 35).map(([s]) => s);
   };
 
   const serviceTerms = groupTerms(["service"]);
@@ -307,13 +337,14 @@ export function getProgrammaticSearchSlugs(entries: SearchEntry[]): string[] {
   };
 
   for (const s of serviceTerms) {
-    for (const d of destTerms.slice(0, 15)) pair(s, d);
-    for (const f of fleetTerms.slice(0, 10)) pair(s, f);
-    for (const a of areaTerms.slice(0, 10)) pair(s, a);
+    for (const d of destTerms.slice(0, 20)) pair(s, d);
+    for (const f of fleetTerms.slice(0, 15)) pair(s, f);
+    for (const a of areaTerms.slice(0, 15)) pair(s, a);
   }
-  for (const f of fleetTerms.slice(0, 15)) {
-    for (const d of destTerms.slice(0, 10)) pair(f, d);
+  for (const f of fleetTerms) {
+    for (const d of destTerms.slice(0, 15)) pair(f, d);
+    for (const a of areaTerms.slice(0, 10)) pair(f, a);
   }
 
-  return [...slugs].filter((s) => s.length >= 3).slice(0, 800);
+  return [...slugs].filter((s) => s.length >= 3).slice(0, 2000);
 }
