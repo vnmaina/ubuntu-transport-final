@@ -1,13 +1,8 @@
+
 "use client";
 
-import { useState } from "react";
-import { Download, Globe, Mail, Phone, Loader2, MapPin } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useQuotation } from "@/context/quotation-context";
+import { MapPin, Mail, Phone, Globe } from "lucide-react";
 import { formatDate } from "@/utils/formatters";
-import { generateQuotationPDF } from "@/utils/pdf-generator";
-import { saveQuotationToHistory } from "@/utils/history";
-import { toast } from "sonner";
 import { QuotationData } from "@/types/quotation";
 
 interface QuotationDocumentProps {
@@ -15,70 +10,89 @@ interface QuotationDocumentProps {
   id?: string;
 }
 
-/**
- * The pristine, print-ready A4 document view for Quotations.
- * Styled with generous padding and professional layout.
- */
 export function QuotationDocument({
   quotation,
   id = "quotation-document",
 }: QuotationDocumentProps) {
   const currency = quotation.currency || "KES";
+
+  const formatMoney = (value: number) =>
+    Number(value || 0).toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+  // Financial calculations
+  const itemsSubtotal = (quotation.items || []).reduce(
+    (sum, item) => sum + Number(item.amount || 0),
+    0
+  );
+
+  const subtotal = Number(quotation.subtotal ?? itemsSubtotal);
+  const taxRate = Number(quotation.taxRate || 0);
+  const taxAmount = Number(quotation.taxAmount || 0);
+  const discountAmount = Number(quotation.discountAmount || 0);
+
+  const total = Number(
+    quotation.total ?? subtotal + taxAmount - discountAmount
+  );
+
   return (
     <div
       id={id}
-      className="relative bg-white text-slate-800 flex flex-col justify-between p-8 sm:p-12 md:p-14"
+      className="relative flex flex-col justify-between bg-white p-8 text-slate-800 sm:p-12 md:p-14"
       style={{ minHeight: "1120px", aspectRatio: "1 / 1.414" }}
     >
-      {/* Subtle Background Watermark */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.035] z-0">
+      {/* Watermark */}
+      <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center opacity-[0.035]">
         <img
           src="/ubuntu.webp"
           alt="watermark"
-          className="w-96 h-96 object-contain"
+          className="h-96 w-96 object-contain"
         />
       </div>
 
-      {/* ════════════════════════════════════════
-          TOP HEADER ZONE
-      ════════════════════════════════════════ */}
+      {/* HEADER */}
       <div className="relative z-10">
-        {/* Top Accent Stripe */}
-        <div className="h-1.5 w-full bg-[#262559] rounded-full mb-6" />
+        <div className="mb-6 h-1.5 w-full rounded-full bg-[#262559]" />
 
-        {/* Logo + Company (Side-by-side) & Quotation Title Row */}
-        <div className="flex flex-row justify-between items-start gap-4">
-          {/* Logo & Company Name NEXT TO LOGO */}
+        {/* Logo and Quotation Details */}
+        <div className="flex flex-row items-start justify-between gap-4">
           <div className="flex items-center gap-4">
             <img
               src="/ubuntu.webp"
               alt="Ubuntu Logistics & Transport"
-              className="h-20 sm:h-24 w-auto object-contain shrink-0"
+              className="h-20 w-auto shrink-0 object-contain sm:h-24"
             />
+
             <div>
-              <h2 className="text-lg sm:text-xl font-black text-[#262559] tracking-tight leading-tight">
+              <h2 className="text-lg font-black leading-tight tracking-tight text-[#262559] sm:text-xl">
                 Ubuntu Logistics &amp; Transport
               </h2>
-              <p className="text-xs sm:text-sm font-medium text-slate-500 mt-0.5">
+
+              <p className="mt-0.5 text-xs font-medium text-slate-500 sm:text-sm">
                 Reliable &amp; Efficient Transport Logistics
               </p>
             </div>
           </div>
 
           <div className="text-right">
-            <h1 className="text-2xl sm:text-3xl font-black text-[#262559] tracking-wider uppercase">
+            <h1 className="text-2xl font-black uppercase tracking-wider text-[#262559] sm:text-3xl">
               QUOTATION
             </h1>
+
             <div className="mt-1 flex items-center justify-end">
-              <span className="font-mono font-bold text-xs sm:text-sm px-2.5 py-0.5 rounded bg-[#262559]/10 text-[#262559] border border-[#262559]/20">
+              <span className="rounded border border-[#262559]/20 bg-[#262559]/10 px-2.5 py-0.5 font-mono text-xs font-bold text-[#262559] sm:text-sm">
                 #{quotation.quotationNumber}
               </span>
             </div>
-            <div className="text-right text-xs text-slate-600 mt-2 space-y-0.5">
+
+            <div className="mt-2 space-y-0.5 text-right text-xs text-slate-600">
               <p>
-                <span className="text-slate-400 font-bold uppercase text-[10px] mr-1.5">
+                <span className="mr-1.5 text-[10px] font-bold uppercase text-slate-400">
                   Date:
                 </span>
+
                 <span className="font-semibold text-slate-800">
                   {formatDate(quotation.date)}
                 </span>
@@ -87,48 +101,56 @@ export function QuotationDocument({
           </div>
         </div>
 
-        {/* Divider */}
-        <hr className="border-slate-200/90 my-5" />
+        <hr className="my-5 border-slate-200/90" />
 
-        {/* FROM / PREPARED FOR Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3.5 sm:p-4">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+        {/* FROM / PREPARED FOR */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="rounded-xl border border-slate-200/70 bg-slate-50/80 p-3.5 sm:p-4">
+            <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">
               From
             </p>
-            <p className="font-bold text-sm sm:text-base text-slate-900">
+
+            <p className="text-sm font-bold text-slate-900 sm:text-base">
               {quotation.fromName || "Ubuntu Logistics & Transport"}
             </p>
+
             <div className="mt-2 space-y-1 text-xs text-slate-600">
               <div className="flex items-start gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
-                <span>North Airport Road, Embakasi, Nairobi, Kenya</span>
+                <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-400" />
+                <span>
+                  North Airport Road, Embakasi, Nairobi, Kenya
+                </span>
               </div>
+
               <div className="flex items-center gap-1.5">
-                <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <Mail className="h-3.5 w-3.5 shrink-0 text-slate-400" />
                 <span>info@ubuntulogistics.co.ke</span>
               </div>
+
               <div className="flex items-center gap-1.5">
-                <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <Phone className="h-3.5 w-3.5 shrink-0 text-slate-400" />
                 <span>+254 728 798589</span>
               </div>
+
               <div className="flex items-center gap-1.5">
-                <Globe className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <Globe className="h-3.5 w-3.5 shrink-0 text-slate-400" />
                 <span>www.ubuntulogistics.co.ke</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3.5 sm:p-4">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+          <div className="rounded-xl border border-slate-200/70 bg-slate-50/80 p-3.5 sm:p-4">
+            <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">
               Prepared For
             </p>
-            <p className="font-bold text-sm sm:text-base text-slate-900">
+
+            <p className="text-sm font-bold text-slate-900 sm:text-base">
               {quotation.toName || "Valued Client"}
             </p>
+
             {quotation.toEmail && (
-              <p className="text-xs text-slate-600 flex items-center gap-1.5 mt-2">
-                <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <p className="mt-2 flex items-center gap-1.5 text-xs text-slate-600">
+                <Mail className="h-3.5 w-3.5 shrink-0 text-slate-400" />
                 <span>{quotation.toEmail}</span>
               </p>
             )}
@@ -136,263 +158,242 @@ export function QuotationDocument({
         </div>
       </div>
 
-      {/* ════════════════════════════════════════
-          CONTENT ZONE: ITEMS TABLE
-      ════════════════════════════════════════ */}
+      {/* ITEMS TABLE */}
       <div className="relative z-10 my-4 flex-1">
-        <div className="border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+        <div className="overflow-hidden rounded-xl border border-slate-200 shadow-xs">
           <table className="w-full text-xs sm:text-sm">
             <thead className="bg-[#262559] text-white">
               <tr>
-                <th className="text-left py-2.5 px-3.5 font-semibold text-[11px] sm:text-xs tracking-wider uppercase">
+                <th className="px-3.5 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider sm:text-xs">
                   Date
                 </th>
-                <th className="text-center py-2.5 px-2 font-semibold text-[11px] sm:text-xs tracking-wider uppercase w-16 sm:w-20">
+
+                <th className="w-16 px-2 py-2.5 text-center text-[11px] font-semibold uppercase tracking-wider sm:w-20 sm:text-xs">
                   Days
                 </th>
-                <th className="text-left py-2.5 px-3 font-semibold text-[11px] sm:text-xs tracking-wider uppercase">
+
+                <th className="px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider sm:text-xs">
                   Pickup Point
                 </th>
-                <th className="text-left py-2.5 px-3 font-semibold text-[11px] sm:text-xs tracking-wider uppercase">
+
+                <th className="px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider sm:text-xs">
                   Dropoff / Return
                 </th>
-                <th className="text-right py-2.5 px-3.5 font-semibold text-[11px] sm:text-xs tracking-wider uppercase w-28 sm:w-32">
+
+                <th className="w-28 px-3.5 py-2.5 text-right text-[11px] font-semibold uppercase tracking-wider sm:w-32 sm:text-xs">
                   Amount ({currency})
                 </th>
               </tr>
             </thead>
+
             <tbody>
-              {quotation.items.map((item, idx) => (
+              {(quotation.items || []).map((item, idx) => (
                 <tr
-                  key={item.id}
+                  key={item.id || idx}
                   className={`border-t border-slate-100 ${
                     idx % 2 === 1 ? "bg-slate-50/50" : "bg-white"
                   }`}
                 >
-                  <td className="py-2.5 px-3.5 whitespace-nowrap text-slate-700">
+                  <td className="whitespace-nowrap px-3.5 py-2.5 text-slate-700">
                     {item.date ? formatDate(item.date) : "—"}
                   </td>
-                  <td className="py-2.5 px-2 text-center text-slate-600 font-mono">
+
+                  <td className="px-2 py-2.5 text-center font-mono text-slate-600">
                     {item.numberOfDays === ""
                       ? 1
                       : Number(item.numberOfDays) || 1}
                   </td>
-                  <td className="py-2.5 px-3 font-medium text-slate-800">
+
+                  <td className="px-3 py-2.5 font-medium text-slate-800">
                     {item.pickupPaid || "—"}
                   </td>
-                  <td className="py-2.5 px-3 text-slate-700">
+
+                  <td className="px-3 py-2.5 text-slate-700">
                     {item.dropoffReturnTrip || "—"}
                   </td>
-                  <td className="py-2.5 px-3.5 text-right font-bold text-slate-900 font-mono">
-                    {Number(item.amount).toLocaleString(undefined, {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
+
+                  <td className="px-3.5 py-2.5 text-right font-mono font-bold text-slate-900">
+                    {formatMoney(Number(item.amount || 0))}
                   </td>
                 </tr>
               ))}
+
+              {(!quotation.items || quotation.items.length === 0) && (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="px-3 py-8 text-center text-slate-400"
+                  >
+                    No quotation items available.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
 
-        {/* Totals & Notes Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 mt-4 items-start">
-          <div className="sm:col-span-7 bg-slate-50/80 border border-slate-200/80 rounded-xl p-3.5 text-xs">
-            <h4 className="font-bold text-[10px] uppercase tracking-wider text-slate-500 mb-2">
+        {/* TOTALS & PAYMENT INFORMATION */}
+        <div className="mt-4 grid grid-cols-1 items-start gap-4 sm:grid-cols-12">
+
+          {/* Payment Information */}
+          <div className="rounded-xl border border-slate-200/80 bg-slate-50/80 p-3.5 text-xs sm:col-span-7">
+            <h4 className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">
               Payment &amp; Booking Information
             </h4>
+
             <div className="space-y-1.5 text-slate-700">
               <p>
                 <span className="font-semibold text-slate-800">
                   Bank Transfer:
                 </span>{" "}
                 KCB Bank • Acc:{" "}
-                <strong className="font-mono text-slate-900">1350132330</strong>
+                <strong className="font-mono text-slate-900">
+                  1350132330
+                </strong>
               </p>
+
               <p className="text-[10px] text-slate-500">
                 Acc Name: TAI UBUNTU LOGISTICS LTD
               </p>
-              <div className="pt-1.5 border-t border-slate-200/80">
+
+              <div className="border-t border-slate-200/80 pt-1.5">
                 <p>
                   <span className="font-semibold text-slate-800">
                     M-PESA Paybill:
                   </span>{" "}
                   Business:{" "}
-                  <strong className="font-mono text-slate-900">522533</strong> •
-                  Acc:{" "}
-                  <strong className="font-mono text-slate-900">8077526</strong>
+                  <strong className="font-mono text-slate-900">
+                    522533
+                  </strong>{" "}
+                  • Acc:{" "}
+                  <strong className="font-mono text-slate-900">
+                    8077526
+                  </strong>
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="sm:col-span-5 flex justify-end">
-            <div className="w-full bg-slate-50/90 border border-slate-200 rounded-xl p-3.5 text-xs space-y-2">
-              <div className="flex justify-between font-black text-sm sm:text-base text-[#262559]">
-                <span>Quotation Total</span>
-                <span className="font-mono">
-                  {currency}{" "}
-                  {Number(quotation.total).toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
+          {/* Financial Summary */}
+          <div className="rounded-xl border border-slate-200 bg-slate-50/90 p-3.5 text-xs sm:col-span-5">
+
+            {/* Subtotal */}
+            <div className="mb-1.5 flex justify-between text-slate-500">
+              <span>Subtotal</span>
+              <span className="font-mono text-slate-700">
+                {currency} {formatMoney(subtotal)}
+              </span>
+            </div>
+
+            {/* VAT */}
+            {taxAmount > 0 && (
+              <div className="mb-1.5 flex justify-between text-slate-500">
+                <span>VAT ({taxRate}%)</span>
+
+                <span className="font-mono text-slate-700">
+                  {currency} {formatMoney(taxAmount)}
                 </span>
               </div>
+            )}
+
+            {/* Discount */}
+            {discountAmount > 0 && (
+              <div className="mb-1.5 flex justify-between text-slate-500">
+                <span>Discount</span>
+
+                <span className="font-mono text-emerald-600">
+                  -{currency} {formatMoney(discountAmount)}
+                </span>
+              </div>
+            )}
+
+            {/* Grand Total */}
+            <div className="mt-2 flex justify-between border-t border-slate-200 pt-2 text-sm font-black text-[#262559] sm:text-base">
+              <span>Grand Total</span>
+
+              <span className="font-mono">
+                {currency} {formatMoney(total)}
+              </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ════════════════════════════════════════
-          FOOTER ZONE: TERMS & OFFICIAL STAMP
-      ════════════════════════════════════════ */}
-      <div className="relative z-10 border-t border-slate-200/90 pt-3 mt-4">
+      {/* FOOTER */}
+      <div className="relative z-10 mt-4 border-t border-slate-200/90 pt-3">
         <div>
-          <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+          <h3 className="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
             Terms &amp; Conditions
           </h3>
+
           {quotation.terms ? (
-            <p className="text-[9px] text-slate-500 leading-tight whitespace-pre-line">
+            <p className="whitespace-pre-line text-[9px] leading-tight text-slate-500">
               {quotation.terms}
             </p>
           ) : (
-            <ul className="list-disc pl-3.5 space-y-0.5 text-[9px] text-slate-500 leading-tight">
-              <li>This quotation is valid for 14 days from the date of issue.</li>
-              <li>Prices are subject to change without prior notice.</li>
-              <li>Payment terms: 50% advance, 50% upon completion.</li>
-              <li>Accepted payments: Cash, Cheque, Bank Transfer, M-PESA.</li>
+            <ul className="list-disc space-y-0.5 pl-3.5 text-[9px] leading-tight text-slate-500">
+              <li>
+                This quotation is valid for 14 days from the date of issue.
+              </li>
+
+              <li>
+                Prices are subject to change without prior notice.
+              </li>
+
+              <li>
+                Payment terms: 50% advance, 50% upon completion.
+              </li>
+
+              <li>
+                Accepted payments: Cash, Cheque, Bank Transfer, M-PESA.
+              </li>
             </ul>
           )}
         </div>
 
-        {/* Stamp & Authorized Signatory Row */}
-        <div className="flex justify-between items-end mt-3 pt-2">
-          {/* Official Stamp with Inside Red Verification Text */}
-          <div className="relative w-28 sm:w-32 aspect-square flex items-center justify-center select-none">
+        {/* Stamp & Signature */}
+        <div className="mt-3 flex items-end justify-between pt-2">
+          <div className="relative flex aspect-square w-28 select-none items-center justify-center sm:w-32">
             <img
               src="/stamp-ubuntu.webp"
               alt="Official Stamp"
-              className="w-full h-full object-contain pointer-events-none"
+              className="pointer-events-none h-full w-full object-contain"
             />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none px-2 -rotate-2">
-              <span className="text-red-600 font-extrabold text-[8.5px] sm:text-[10px] tracking-wider uppercase leading-none font-sans">
+
+            <div className="pointer-events-none absolute inset-0 flex -rotate-2 flex-col items-center justify-center px-2 text-center">
+              <span className="font-sans text-[8.5px] font-extrabold uppercase leading-none tracking-wider text-red-600 sm:text-[10px]">
                 --Verified Document
               </span>
-              <span className="text-red-600 font-mono font-bold text-[8px] sm:text-[9.5px] tracking-tight leading-none mt-1">
+
+              <span className="mt-1 font-mono text-[8px] font-bold leading-none tracking-tight text-red-600 sm:text-[9.5px]">
                 {formatDate(quotation.date) || "Oct 5, 2026"} --
               </span>
             </div>
           </div>
 
-          <div className="text-center w-44 sm:w-52">
-            <div className="h-9 flex items-end justify-center mb-1">
+          <div className="w-44 text-center sm:w-52">
+            <div className="mb-1 flex h-9 items-end justify-center">
               <img
                 src="/signature.webp"
-                alt="Signature"
+                alt="Authorized Signature"
                 className="h-8 object-contain"
               />
             </div>
+
             <div className="border-t border-slate-400 pt-1">
-              <p className="text-[10px] sm:text-[11px] font-bold text-slate-800 leading-none">
+              <p className="text-[10px] font-bold leading-none text-slate-800 sm:text-[11px]">
                 Authorized Signatory
               </p>
-              <p className="text-[9px] text-slate-500 mt-0.5">
+
+              <p className="mt-0.5 text-[9px] text-slate-500">
                 Ubuntu Logistics &amp; Transport
               </p>
             </div>
           </div>
         </div>
 
-        {/* Bottom Decorative Stripe */}
-        <div className="h-1 w-full bg-[#262559] rounded-full mt-3" />
-      </div>
-    </div>
-  );
-}
-
-interface QuotationPreviewProps {
-  onBack: () => void;
-  onDownloadComplete?: () => void;
-}
-
-export default function QuotationPreview({
-  onBack,
-  onDownloadComplete,
-}: QuotationPreviewProps) {
-  const { quotation } = useQuotation();
-  const [isGenerating, setIsGenerating] = useState(false);
-
-  const handleDownloadPDF = async () => {
-    const toastId = "quotation-pdf-download";
-    setIsGenerating(true);
-    toast.loading(
-      `Generating PDF for Quotation #${quotation.quotationNumber}...`,
-      { id: toastId }
-    );
-
-    try {
-      await saveQuotationToHistory(quotation);
-      await generateQuotationPDF(
-        quotation,
-        `quotation-${quotation.quotationNumber}`
-      );
-      toast.success(
-        `Quotation #${quotation.quotationNumber} PDF downloaded successfully!`,
-        { id: toastId }
-      );
-      onDownloadComplete?.();
-    } catch (err) {
-      console.error("PDF generation failed:", err);
-      toast.error("Failed to generate and download quotation PDF.", {
-        id: toastId,
-      });
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-slate-100/80 px-4 py-8 sm:px-6 lg:px-12">
-      <div className="max-w-4xl mx-auto">
-        {/* Page controls */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              Quotation Preview
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-              Review formatting and layout before downloading official PDF
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <Button
-              variant="outline"
-              onClick={onBack}
-              className="w-full sm:w-auto border-slate-300 hover:bg-slate-50"
-            >
-              Back
-            </Button>
-            <Button
-              onClick={handleDownloadPDF}
-              disabled={isGenerating}
-              className="w-full sm:w-auto bg-[#262559] hover:bg-[#1f1e47] text-white shadow-sm"
-            >
-              {isGenerating ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Download className="w-4 h-4 mr-2" />
-              )}
-              {isGenerating ? "Generating PDF…" : "Download PDF (<200KB)"}
-            </Button>
-          </div>
-        </div>
-
-        {/* ─── Paper Preview Frame with Shadow ─── */}
-        <div className="bg-white shadow-2xl rounded-2xl border border-slate-200/80 overflow-hidden mb-12">
-          {/* Printable / Capturable A4 Document with Generous Padding */}
-          <QuotationDocument quotation={quotation} />
-        </div>
+        {/* Bottom Stripe */}
+        <div className="mt-3 h-1 w-full rounded-full bg-[#262559]" />
       </div>
     </div>
   );
