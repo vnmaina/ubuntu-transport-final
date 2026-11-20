@@ -44,6 +44,10 @@ const defaultQuotation = (): QuotationData => {
     toName: "",
     toEmail: "",
     items: [defaultItem()],
+    subtotal: 0,
+    taxRate: "",
+    taxAmount: 0,
+    discountAmount: "",
     total: 0,
     currency: "KES",
     notes: "",
@@ -55,13 +59,19 @@ const defaultQuotation = (): QuotationData => {
 const recalculateTotals = (
   state: QuotationData
 ): QuotationData => {
-  const total = state.items.reduce((sum, item) => {
-    const amount = Number(item.amount) || 0;
-    return sum + amount;
+  const subtotal = state.items.reduce((sum, item) => {
+    return sum + (Number(item.amount) || 0);
   }, 0);
+
+  const taxRate = Number(state.taxRate) || 0;
+  const taxAmount = subtotal * (taxRate / 100);
+  const discountAmount = Number(state.discountAmount) || 0;
+  const total = subtotal + taxAmount - discountAmount;
 
   return {
     ...state,
+    subtotal,
+    taxAmount,
     total,
   };
 };
@@ -158,6 +168,13 @@ export function QuotationProvider({
       toName: quotation.toName,
       toEmail: quotation.toEmail,
       items: itemsForConvex,
+      subtotal: quotation.subtotal,
+      taxRate: quotation.taxRate === "" ? 0 : quotation.taxRate,
+      taxAmount: quotation.taxAmount,
+      discountAmount:
+        quotation.discountAmount === "" || quotation.discountAmount === undefined
+          ? undefined
+          : String(quotation.discountAmount),
       total: quotation.total,
       currency: quotation.currency || "KES",
       notes: quotation.notes || undefined,

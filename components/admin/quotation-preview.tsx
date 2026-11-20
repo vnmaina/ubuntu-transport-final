@@ -25,6 +25,14 @@ export function QuotationDocument({
   id = "quotation-document",
 }: QuotationDocumentProps) {
   const currency = quotation.currency || "KES";
+  const subtotal = Number(
+    quotation.subtotal ??
+      quotation.items.reduce((sum, item) => sum + Number(item.amount || 0), 0)
+  );
+  const taxRate = Number(quotation.taxRate || 0);
+  const taxAmount = Number(quotation.taxAmount || 0);
+  const discountAmount = Number(quotation.discountAmount || 0);
+  const total = Number(quotation.total ?? subtotal + taxAmount - discountAmount);
 
   return (
     <div
@@ -266,13 +274,7 @@ export function QuotationDocument({
                 <span>Subtotal</span>
                 <span className="font-mono">
                   {currency}{" "}
-                  {Number(
-                    quotation.subtotal ??
-                    quotation.items.reduce(
-                      (sum, item) => sum + Number(item.amount || 0),
-                      0
-                    )
-                  ).toLocaleString(undefined, {
+                  {subtotal.toLocaleString(undefined, {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}
@@ -280,32 +282,27 @@ export function QuotationDocument({
               </div>
 
               {/* VAT */}
-              {Number(quotation.taxAmount) > 0 && (
-                <div className="flex justify-between text-slate-500">
-                  <span>VAT ({quotation.taxRate || 0}%)</span>
-                  <span className="font-mono">
-                    {currency}{" "}
-                    {Number(quotation.taxAmount).toLocaleString(undefined, {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                  </span>
-                </div>
-              )}
+              <div className="flex justify-between text-slate-500">
+                <span>VAT{taxRate > 0 ? ` (${taxRate}%)` : ""}</span>
+                <span className="font-mono">
+                  {currency}{" "}
+                  {taxAmount.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </span>
+              </div>
 
               {/* Discount */}
-              {Number(quotation.discountAmount) > 0 && (
+              {discountAmount > 0 && (
                 <div className="flex justify-between text-slate-500">
                   <span>Discount</span>
                   <span className="font-mono text-emerald-600">
                     -{currency}{" "}
-                    {Number(quotation.discountAmount).toLocaleString(
-                      undefined,
-                      {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }
-                    )}
+                    {discountAmount.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
                   </span>
                 </div>
               )}
@@ -315,7 +312,7 @@ export function QuotationDocument({
                 <span>Grand Total</span>
                 <span className="font-mono">
                   {currency}{" "}
-                  {Number(quotation.total).toLocaleString(undefined, {
+                  {total.toLocaleString(undefined, {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}

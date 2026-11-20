@@ -333,17 +333,15 @@ export function UbuntuQuotationPreview({
                 </div>
 
                 {/* VAT / Tax */}
-                {taxAmount > 0 && (
-                  <div className="mb-1.5 flex justify-between text-[10px] text-gray-500 sm:text-xs">
-                    <span>
-                      VAT ({taxRate}%)
-                    </span>
+                <div className="mb-1.5 flex justify-between text-[10px] text-gray-500 sm:text-xs">
+                  <span>
+                    VAT{taxRate > 0 ? ` (${taxRate}%)` : ""}
+                  </span>
 
-                    <span>
-                      {currency} {taxAmount.toFixed(2)}
-                    </span>
-                  </div>
-                )}
+                  <span>
+                    {currency} {taxAmount.toFixed(2)}
+                  </span>
+                </div>
 
                 {/* Discount */}
                 {discountAmount > 0 && (

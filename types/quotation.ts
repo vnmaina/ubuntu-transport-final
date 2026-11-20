@@ -23,11 +23,11 @@ export interface QuotationData {
   items: QuotationItem[];
 
   // Financial details
-  subtotal?: number;
-  taxRate?: number;
-  taxAmount?: number;
-  discountAmount?: number;
-  total: number;
+  subtotal?: number | string;
+  taxRate?: number | string;
+  taxAmount?: number | string;
+  discountAmount?: number | string;
+  total: number | string;
   currency?: string;
 
   // Additional information

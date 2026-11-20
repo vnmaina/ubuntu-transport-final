@@ -76,6 +76,7 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
         : undefined;
 
     const dueDateLabel = document.type === "quotation" ? "Valid Until" : "Due Date";
+    const taxLabel = document.type === "quotation" ? "VAT" : "Tax";
 
     // Format currency amount safely
     const formatCurrency = (val: string | number | undefined) => {
@@ -340,11 +341,11 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
                     </div>
                   </div>
 
-                  {document.taxAmount && parseFloat(String(document.taxAmount)) > 0 && (
+                  {(document.type === "quotation" || (document.taxAmount && parseFloat(String(document.taxAmount)) > 0)) && (
                     <div className="flex gap-8">
                       <div className="text-right">
                         <span className="font-medium text-slate-700">
-                          Tax {document.taxRate ? `(${document.taxRate}%)` : ""}
+                          {taxLabel} {document.taxRate ? `(${document.taxRate}%)` : ""}
                         </span>
                       </div>
                       <div className="font-mono font-semibold text-slate-900">
@@ -609,9 +610,9 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
                 <span>Subtotal</span>
                 <span className="font-mono font-semibold">{formatCurrency(document.subtotal)}</span>
               </div>
-              {document.taxAmount && parseFloat(String(document.taxAmount)) > 0 && (
+              {(document.type === "quotation" || (document.taxAmount && parseFloat(String(document.taxAmount)) > 0)) && (
                 <div className="flex justify-between text-slate-600">
-                  <span>Tax ({document.taxRate || 0}%)</span>
+                  <span>{taxLabel} ({document.taxRate || 0}%)</span>
                   <span className="font-mono font-semibold">{formatCurrency(document.taxAmount)}</span>
                 </div>
               )}
@@ -836,9 +837,9 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
                 <span>Subtotal</span>
                 <span className="font-mono font-semibold">{formatCurrency(document.subtotal)}</span>
               </div>
-              {document.taxAmount && parseFloat(String(document.taxAmount)) > 0 && (
+              {(document.type === "quotation" || (document.taxAmount && parseFloat(String(document.taxAmount)) > 0)) && (
                 <div className="flex justify-between text-slate-600">
-                  <span>Tax ({document.taxRate || 0}%)</span>
+                  <span>{taxLabel} ({document.taxRate || 0}%)</span>
                   <span className="font-mono font-semibold">{formatCurrency(document.taxAmount)}</span>
                 </div>
               )}

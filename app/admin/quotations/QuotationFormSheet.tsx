@@ -77,6 +77,8 @@ export function QuotationFormSheet({
     status: "draft" as "draft" | "sent" | "accepted" | "rejected" | "expired",
     currency: "KES" as string,
     items: [] as LineItem[],
+    taxRate: "" as number | string,
+    discountAmount: "",
     notes: "",
     terms: "",
   });
@@ -106,6 +108,8 @@ export function QuotationFormSheet({
           ...item,
           itemDate: item.itemDate ? new Date(item.itemDate).toISOString().split('T')[0] : undefined,
         })),
+        taxRate: quotation.taxRate ?? "",
+        discountAmount: quotation.discountAmount ?? "",
         notes: quotation.notes || "",
         terms: quotation.terms || "",
       });
@@ -118,6 +122,8 @@ export function QuotationFormSheet({
         status: "draft" as "draft" | "sent" | "accepted" | "rejected" | "expired",
         currency: "KES",
         items: [],
+        taxRate: "" as number | string,
+        discountAmount: "",
         notes: "",
         terms: "",
       });
@@ -153,9 +159,14 @@ export function QuotationFormSheet({
 
   const calculateTotals = () => {
     const subtotal = formData.items.reduce((sum, item) => sum + parseFloat(item.total || "0"), 0);
+    const taxRate = Number(formData.taxRate) || 0;
+    const taxAmount = (subtotal * (taxRate / 100)).toFixed(2);
+    const discount = parseFloat(formData.discountAmount) || 0;
+    const total = (subtotal + parseFloat(taxAmount) - discount).toFixed(2);
     return {
       subtotal: subtotal.toFixed(2),
-      total: subtotal.toFixed(2),
+      taxAmount,
+      total,
     };
   };
 
@@ -173,6 +184,8 @@ export function QuotationFormSheet({
           ...item,
           itemDate: item.itemDate ? new Date(item.itemDate).getTime() : undefined,
         })),
+        taxRate: formData.taxRate === "" ? 0 : Number(formData.taxRate),
+        discountAmount: formData.discountAmount || undefined,
         ...totals,
       };
 
@@ -288,7 +301,7 @@ export function QuotationFormSheet({
             {/* Step 1: Basic Information */}
             {currentStep === 0 && (
               <div className="space-y-5">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="quotationNumber" className="text-[10px]">Quotation Number *</Label>
                     <div className="flex gap-2">
@@ -358,6 +371,23 @@ export function QuotationFormSheet({
                         ))}
                       </SelectContent>
                     </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="taxRate" className="text-[10px]">VAT Rate (%)</Label>
+                    <Input
+                      id="taxRate"
+                      type="number"
+                      value={formData.taxRate}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          taxRate: e.target.value === "" ? "" : parseFloat(e.target.value) || 0,
+                        })
+                      }
+                      min="0"
+                      step="0.1"
+                      className="h-7 text-xs"
+                    />
                   </div>
                 </div>
 
@@ -434,14 +464,31 @@ export function QuotationFormSheet({
                 />
 
                 {/* Totals */}
-                <div className="grid grid-cols-2 gap-4 p-4 bg-muted rounded-lg">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-muted rounded-lg">
                   <div>
                     <Label className="text-[10px]">Subtotal</Label>
                     <p className="text-lg font-bold">{formatCurrency(totals.subtotal, formData.currency)}</p>
                   </div>
                   <div>
+                    <Label className="text-[10px]">VAT ({Number(formData.taxRate) || 0}%)</Label>
+                    <p className="text-lg font-bold">{formatCurrency(totals.taxAmount, formData.currency)}</p>
+                  </div>
+                  <div>
+                    <Label className="text-[10px]">Discount</Label>
+                    <Input
+                      type="number"
+                      value={formData.discountAmount}
+                      onChange={(e) =>
+                        setFormData({ ...formData, discountAmount: e.target.value })
+                      }
+                      min="0"
+                      step="0.01"
+                      className="h-9 text-sm"
+                    />
+                  </div>
+                  <div>
                     <Label className="text-[10px]">Total</Label>
-                    <p className="text-lg font-bold">{formatCurrency(totals.total, formData.currency)}</p>
+                    <p className="text-xl font-bold">{formatCurrency(totals.total, formData.currency)}</p>
                   </div>
                 </div>
               </div>
